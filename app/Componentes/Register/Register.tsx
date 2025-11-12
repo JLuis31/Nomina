@@ -4,15 +4,26 @@ import { useState } from "react";
 import "../../Componentes/Register/Register.scss";
 import banco from "../../../public/Assets/edificio-del-banco.png";
 import Image from "next/image";
+import { toast } from "react-hot-toast";
+import { useRouter } from "next/navigation";
 
 const RegisterForm = () => {
+  const router = useRouter();
   const [data, setData] = useState({
     email: "",
     password: "",
+    confirmPassword: "",
   });
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    console.log(data);
+    if (data.password !== data.confirmPassword) {
+      toast.error("Passwords do not match", { duration: 2000 });
+      return;
+    }
+    router.push("/Login");
+    toast.success("Registered successfully!", { duration: 2000 });
   };
   return (
     <div className="login-form">
@@ -71,10 +82,20 @@ const RegisterForm = () => {
           name="password"
           required
         />
+        <label htmlFor="confirmPassword">Confirm Password</label>
+        <input
+          onChange={(e) =>
+            setData({ ...data, confirmPassword: e.target.value })
+          }
+          type="password"
+          id="confirmPassword"
+          name="confirmPassword"
+          required
+        />
 
         <button type="submit">Register</button>
         <label className="register" htmlFor="register">
-          <a href="/Login">Login</a>
+          <a href="/Login">Have an account? Login</a>
         </label>
 
         <h5 className="copy">@2024 Nomina. All rights reserved.</h5>

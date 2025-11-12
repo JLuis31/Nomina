@@ -3,6 +3,9 @@
 }
 
 .nav-bar {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
   width: 90%;
   margin: auto;
   display: flex;
@@ -17,6 +20,12 @@
   left: 2rem;
   font-weight: bold;
   font-size: 1.2rem;
+
+  .titulo-interior {
+    list-style: none;
+    color: black;
+    text-decoration: none;
+  }
 }
 
 .nav-desktop {

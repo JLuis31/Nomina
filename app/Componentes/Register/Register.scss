@@ -1,10 +1,11 @@
-@media (max-width: 575.98px) {
+@media (max-width: 915.98px) {
   .images-stack {
     display: none;
   }
 
   form {
-    width: 90%;
+    width: auto;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   }
 
   .login-form {
@@ -12,7 +13,7 @@
   }
 }
 
-@media (min-width: 575.99px) {
+@media (min-width: 915.99px) {
   form {
     width: 30%;
   }

@@ -1,0 +1,121 @@
+.additions-employee {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 70%;
+  margin: auto;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  padding: 2rem;
+  border-radius: 8px;
+  z-index: 10;
+  background-color: rgb(243, 243, 243);
+  max-height: 90vh;
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: #ccc transparent;
+  &::-webkit-scrollbar {
+    width: 8px;
+  }
+  &::-webkit-scrollbar-thumb {
+    background-color: #ccc;
+    border-radius: 4px;
+  }
+
+  h2 {
+    margin-bottom: 1rem;
+  }
+  hr {
+    margin-top: 1rem;
+    opacity: 0.5;
+  }
+  .hr2 {
+    margin: 0;
+    opacity: 0.3;
+  }
+}
+
+.personal-information {
+  .add-employee-button {
+    margin-top: 1rem;
+    padding: 0.5rem 1rem;
+    background-color: #0070f3;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+  }
+  .job-details {
+    margin-top: 20rem;
+  }
+  .cancel-button {
+    margin-top: 1rem;
+    padding: 0.5rem 1rem;
+    background-color: #ccc;
+    color: black;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    margin-left: 1rem;
+  }
+
+  .buttons-container {
+    display: flex;
+    justify-content: flex-end;
+    gap: 1rem;
+  }
+}
+
+.personal-information-container {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1rem;
+  margin-top: 1rem;
+  margin-bottom: 2rem;
+
+  div {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+
+    input,
+    select {
+      padding: 0.5rem;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+    }
+    input:focus {
+      outline: none;
+      border-color: #0070f3;
+    }
+
+    label {
+      font-weight: bold;
+      font-size: 0.8rem;
+      opacity: 0.7;
+    }
+  }
+}
+
+.form-container {
+  display: flex;
+  flex-direction: column;
+  padding: 1rem;
+
+  .form1,
+  .form2 {
+    background-color: white;
+    padding: 1rem;
+  }
+}
+
+@media (max-width: 600.99px) {
+  .personal-information-container {
+    display: grid;
+    grid-template-columns: repeat(1, 1fr);
+  }
+
+  .additions-employee {
+    width: 90%;
+  }
+}

@@ -6,6 +6,7 @@ import Image from "next/image";
 import banco from "../../../public/Assets/edificio-del-banco.png";
 
 import { useRouter } from "next/navigation";
+import toast from "react-hot-toast";
 const LoginForm = () => {
   const router = useRouter();
   const [data, setData] = useState({
@@ -17,6 +18,7 @@ const LoginForm = () => {
     e.preventDefault();
 
     router.push("/Dashboard");
+    toast.success("Login successful! Welcome back.");
   };
 
   return (

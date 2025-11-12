@@ -1,3 +1,40 @@
 .employees-container {
   width: 80%;
+  margin: auto;
+  margin-top: 2rem;
+
+  .employee-button {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+
+    button {
+      padding: 0.5rem;
+      border-radius: 0.25rem;
+      border: none;
+      background-color: #007bff;
+      color: white;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+
+    button:hover {
+      background-color: #0056b3;
+    }
+
+    button:active {
+      background-color: #004085;
+    }
+  }
+}
+
+.overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(4px);
+  z-index: 999;
 }

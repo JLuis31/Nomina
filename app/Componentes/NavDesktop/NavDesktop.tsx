@@ -25,12 +25,23 @@ const NavDesktop = () => {
   return (
     <div className="contenedor">
       <nav className="nav-bar">
-        <FontAwesomeIcon
-          icon={faBars}
-          className="menu-icon"
-          onClick={() => setShowMenu(!showMenu)}
-        />
-        <span className="titulo">Nomina</span>
+        <div>
+          {" "}
+          <FontAwesomeIcon
+            icon={faBars}
+            className="menu-icon"
+            onClick={() => setShowMenu(!showMenu)}
+          />
+          <span className="titulo">
+            <Link className="titulo-interior" href="/Dashboard">
+              Nomina
+            </Link>
+          </span>
+        </div>
+        <div>
+          {" "}
+          <label htmlFor="nombreUsuario">Jose Luis - Payroll Manager</label>
+        </div>
       </nav>
 
       {showMenu && (

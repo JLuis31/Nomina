@@ -9,14 +9,22 @@
     "lint": "eslint"
   },
   "dependencies": {
+    "@emotion/react": "^11.14.0",
+    "@emotion/styled": "^11.14.1",
     "@fortawesome/fontawesome-svg-core": "^7.1.0",
     "@fortawesome/free-solid-svg-icons": "^7.1.0",
     "@fortawesome/react-fontawesome": "^3.1.0",
+    "@mui/icons-material": "^7.3.5",
+    "@mui/material": "^7.3.5",
     "fa-icon": "^0.0.0",
+    "framer-motion": "^12.23.24",
+    "icons-material": "^0.0.1-security",
     "next": "16.0.1",
     "react": "19.2.0",
     "react-chartjs-2": "^5.3.1",
     "react-dom": "19.2.0",
+    "react-hot-toast": "^2.6.0",
+    "react-toastify": "^11.0.5",
     "sass": "^1.93.3"
   },
   "devDependencies": {

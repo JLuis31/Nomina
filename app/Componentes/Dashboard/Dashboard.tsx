@@ -10,6 +10,8 @@ import {
   Legend,
 } from "chart.js";
 
+import { useRouter } from "next/navigation";
+
 ChartJS.register(
   CategoryScale,
   LinearScale,
@@ -28,6 +30,7 @@ import empleado from "../../../public/Assets/empleado-de-oficina.png";
 import Image from "next/image";
 
 const Dashboard = () => {
+  const router = useRouter();
   const data = {
     labels: ["January", "February", "March", "April", "May"],
     datasets: [
@@ -43,9 +46,13 @@ const Dashboard = () => {
     responsive: true,
     aspectRatio: 2,
     plugins: {
-      legend: { position: "top" },
+      legend: { position: "top" as const },
       title: { display: true, text: "Payroll Cost Over Time" },
     },
+  };
+
+  const handleEmployees = () => {
+    router.push("/Employees");
   };
 
   return (
@@ -93,9 +100,11 @@ const Dashboard = () => {
             <div className="actions2div1">
               <div
                 style={{
-                  marginLeft: "5%",
-                  width: "auto",
+                  display: "flex",
+                  justifyContent: "center",
+                  alignItems: "center",
                   height: "250px",
+                  width: "100%",
                 }}
               >
                 <Bar data={data} options={options} />
@@ -103,7 +112,7 @@ const Dashboard = () => {
             </div>
             <div className="actions2div2">
               <p>Quick Links</p>
-              <div className="quick-links">
+              <div onClick={handleEmployees} className="quick-links">
                 <Image
                   className="quick-links-image"
                   src={empleado}

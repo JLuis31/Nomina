@@ -173,6 +173,7 @@
   display: flex;
   flex-direction: row;
   gap: 10px;
+  transition: transform 0.5s ease;
 
   .quick-links-image {
     width: 25px;
@@ -182,4 +183,12 @@
   span {
     margin-top: 3px;
   }
+}
+
+.quick-links:hover {
+  cursor: pointer;
+  background-color: #f0f0f0;
+  border-radius: 3px;
+  transition: background-color 0.3s ease;
+  transform: scale(1.05);
 }

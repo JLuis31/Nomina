@@ -28,9 +28,14 @@ import { Bar } from "react-chartjs-2";
 import bolsaDinero from "../../../public/Assets/bolsa-de-dinero.png";
 import empleado from "../../../public/Assets/empleado-de-oficina.png";
 import Image from "next/image";
+import { useSession } from "next-auth/react";
+import axios from "axios";
+import { useEffect, useState } from "react";
 
 const Dashboard = () => {
+  const session = useSession();
   const router = useRouter();
+
   const data = {
     labels: ["January", "February", "March", "April", "May"],
     datasets: [
@@ -54,6 +59,25 @@ const Dashboard = () => {
   const handleEmployees = () => {
     router.push("/Employees");
   };
+
+  useEffect(() => {
+    const obtainUserInfo = async () => {
+      const sesionDeUsuario = session?.data?.user?.id;
+      const response = await axios.get("api/Users/InformationUsers", {
+        params: { idUsuario: sesionDeUsuario },
+      });
+      return response;
+    };
+    const infoObtenida = obtainUserInfo();
+
+    infoObtenida.then((res) => {
+      localStorage.setItem("userDepartment", res.data.Id_Department);
+
+      localStorage.setItem("userName", res.data.Name);
+    });
+  }, []);
+
+  const department = localStorage.getItem("userDepartment");
 
   return (
     <div className="global-dash-container">

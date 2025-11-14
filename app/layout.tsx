@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.scss";
 import { Toaster } from "react-hot-toast";
-
+import SessionWraper from "../../nomina/app/SessionWrapper";
 const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],
@@ -29,7 +29,7 @@ export default function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
         <Toaster position="top-right" reverseOrder={false} />
-        {children}
+        <SessionWraper>{children}</SessionWraper>
       </body>
     </html>
   );

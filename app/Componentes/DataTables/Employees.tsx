@@ -31,7 +31,7 @@ interface Employee {
   status: number;
 }
 
-const EmployeesTable = () => {
+const EmployeesTable = (props) => {
   const [order, setOrder] = useState<Order>("asc");
   const [orderBy, setOrderBy] = useState<keyof Employee>("name");
   const [selected, setSelected] = useState<number[]>([]);
@@ -266,7 +266,7 @@ const EmployeesTable = () => {
                       </TableCell>
                       <TableCell align="center">
                         <Tooltip title="Edit">
-                          <IconButton>
+                          <IconButton onClick={() => props.onActions(true)}>
                             <EditIcon />
                           </IconButton>
                         </Tooltip>

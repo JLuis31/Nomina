@@ -1,5 +1,6 @@
 "use client";
 
+import axios from "axios";
 import { useState } from "react";
 import "../../Componentes/Register/Register.scss";
 import banco from "../../../public/Assets/edificio-del-banco.png";
@@ -10,20 +11,39 @@ import { useRouter } from "next/navigation";
 const RegisterForm = () => {
   const router = useRouter();
   const [data, setData] = useState({
+    name: "",
     email: "",
+    department: "Humane Resources",
     password: "",
     confirmPassword: "",
   });
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     console.log(data);
     if (data.password !== data.confirmPassword) {
       toast.error("Passwords do not match", { duration: 2000 });
       return;
     }
-    router.push("/Login");
-    toast.success("Registered successfully!", { duration: 2000 });
+
+    try {
+      await axios.post("api/Users/RegisterUsers", {
+        Name: data.name,
+        Email: data.email,
+        Department: data.department,
+        Password: data.password,
+      });
+      toast.success("Registration successful!", { duration: 2000 });
+      router.push("/Login");
+    } catch (error) {
+      const err = error as any;
+
+      if (err.status === 409) {
+        toast.error("User already exists.", {
+          duration: 2000,
+        });
+      }
+    }
   };
   return (
     <div className="login-form">
@@ -65,6 +85,15 @@ const RegisterForm = () => {
       <form onSubmit={handleSubmit}>
         <h1>Register for Free</h1>
         <h4>Welcome! Please enter your details</h4>
+        <label htmlFor="name">Name</label>
+        <input
+          onChange={(e) => setData({ ...data, name: e.target.value })}
+          type="text"
+          id="name"
+          name="name"
+          required
+          placeholder="Enter your name"
+        />
         <label htmlFor="email">Email Address</label>
         <input
           onChange={(e) => setData({ ...data, email: e.target.value })}
@@ -72,7 +101,18 @@ const RegisterForm = () => {
           id="email"
           name="email"
           required
+          placeholder="example@.com"
         />
+        <label htmlFor="department">Department</label>
+        <select
+          onChange={(e) => setData({ ...data, department: e.target.value })}
+          name=""
+          id=""
+        >
+          <option value="HR">Human Resources</option>
+          <option value="Finance">Finance</option>
+          <option value="IT">IT</option>
+        </select>
 
         <label htmlFor="password">Password</label>
         <input
@@ -81,6 +121,7 @@ const RegisterForm = () => {
           id="password"
           name="password"
           required
+          placeholder="Enter your password"
         />
         <label htmlFor="confirmPassword">Confirm Password</label>
         <input
@@ -91,6 +132,7 @@ const RegisterForm = () => {
           id="confirmPassword"
           name="confirmPassword"
           required
+          placeholder="Confirm your password"
         />
 
         <button type="submit">Register</button>

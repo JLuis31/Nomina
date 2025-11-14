@@ -4,21 +4,38 @@ import { useState } from "react";
 import "../../Componentes/Login/Login.scss";
 import Image from "next/image";
 import banco from "../../../public/Assets/edificio-del-banco.png";
-
 import { useRouter } from "next/navigation";
 import toast from "react-hot-toast";
+import { signIn } from "next-auth/react";
+import { useSession } from "next-auth/react";
+
 const LoginForm = () => {
+  const session = useSession();
+  console.log("Current session:", session);
+
   const router = useRouter();
   const [data, setData] = useState({
     email: "",
     password: "",
   });
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    console.log("Intento de login para:", data.email);
 
-    router.push("/Dashboard");
-    toast.success("Login successful! Welcome back.");
+    try {
+      const result = await signIn("credentials", {
+        email: data.email,
+        password: data.password,
+        redirect: false,
+      });
+      if (result?.ok) {
+        router.push("/Dashboard");
+        toast.success("Login successful!", { duration: 2000 });
+      }
+    } catch (error) {
+      toast.error("Login failed. Please check your credentials." + error);
+    }
   };
 
   return (
@@ -68,6 +85,7 @@ const LoginForm = () => {
           id="email"
           name="email"
           required
+          placeholder="example@.com"
         />
 
         <label htmlFor="password">Password</label>
@@ -77,6 +95,7 @@ const LoginForm = () => {
           id="password"
           name="password"
           required
+          placeholder="Enter your password"
         />
         <label className="forgot-password" htmlFor="forgotPassword">
           <a href="#">Forgot Password?</a>
@@ -84,7 +103,7 @@ const LoginForm = () => {
 
         <button type="submit">Log In</button>
         <label className="register" htmlFor="register">
-          <a href="/Register">Register</a>
+          <a href="/Register">Dont have an account? Register</a>
         </label>
 
         <h5 className="copy">@2024 Nomina. All rights reserved.</h5>

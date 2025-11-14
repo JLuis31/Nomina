@@ -11,9 +11,17 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useState } from "react";
+import { signOut } from "next-auth/react";
+import { useRouter } from "next/navigation";
+import { parse } from "path";
 
 const NavDesktop = () => {
+  const router = useRouter();
   const [showMenu, setShowMenu] = useState(false);
+
+  const localStorageName = localStorage.getItem("userName");
+
+  const localStorageDepartment = localStorage.getItem("userDepartment");
 
   const menuOptions = [
     { label: "Home", href: "/Dashboard", icon: faHouse },
@@ -21,6 +29,13 @@ const NavDesktop = () => {
     { label: "Reports", href: "/Reports", icon: faFileLines },
     { label: "Settings", href: "/Settings", icon: faGear },
   ];
+
+  const handleLogOut = async () => {
+    await signOut({ redirect: false });
+    router.push("/Login");
+    localStorage.removeItem("userName");
+    localStorage.removeItem("userDepartment");
+  };
 
   return (
     <div className="contenedor">
@@ -40,7 +55,19 @@ const NavDesktop = () => {
         </div>
         <div>
           {" "}
-          <label htmlFor="nombreUsuario">Jose Luis - Payroll Manager</label>
+          <label htmlFor="nombreUsuario">
+            {localStorageName} -{" "}
+            {String(localStorageDepartment) === "1"
+              ? "Human Resources"
+              : String(localStorageDepartment) === "2"
+              ? "Finance"
+              : String(localStorageDepartment) === "3"
+              ? "IT"
+              : "Otro"}
+          </label>{" "}
+          <button onClick={handleLogOut} className="logout">
+            Logout
+          </button>
         </div>
       </nav>
 

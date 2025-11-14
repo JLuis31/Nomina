@@ -77,3 +77,25 @@
 .nav-desktop {
   display: none !important;
 }
+
+.logout {
+  background-color: #0070f3;
+  border: none;
+  color: white;
+  padding: 8px 16px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 14px;
+  margin-left: 10px;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.logout:hover {
+  background-color: #005bb5;
+}
+
+.logout:active {
+  background-color: #003f7f;
+}

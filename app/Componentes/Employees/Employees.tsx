@@ -5,9 +5,11 @@ import "../../Componentes/Employees/Employees.scss";
 import EmployeesTable from "../DataTables/Employees";
 import EmployeeAdition from "../EmployeeAdition/EmployeeAdition";
 import { AnimatePresence } from "framer-motion";
+import UserActions from "../UserActions/UserActions";
 
 const Employees = () => {
   const [showEmployeeAddition, setShowEmployeeAddition] = useState(false);
+  const [showUserActions, setShowUserActions] = useState(false);
 
   const handleNewEmployee = () => {
     setShowEmployeeAddition(true);
@@ -15,6 +17,11 @@ const Employees = () => {
 
   const datoRecibido = (dato: boolean) => {
     setShowEmployeeAddition(dato);
+  };
+
+  const handleUserActions = (dato: boolean) => {
+    console.log("Dato recibido en Employees:", dato);
+    setShowUserActions(dato);
   };
 
   return (
@@ -33,7 +40,14 @@ const Employees = () => {
             </div>
           )}
         </AnimatePresence>
-        <EmployeesTable />
+        <AnimatePresence>
+          {showUserActions === true && (
+            <div className="overlay">
+              <UserActions cancelData={handleUserActions} />
+            </div>
+          )}
+        </AnimatePresence>
+        <EmployeesTable onActions={handleUserActions} />
       </div>
     </div>
   );

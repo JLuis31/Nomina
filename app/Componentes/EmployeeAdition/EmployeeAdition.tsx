@@ -3,6 +3,7 @@ import "../EmployeeAdition/EmployeeAdition.scss";
 import { motion } from "framer-motion";
 import { useState } from "react";
 import { toast } from "react-hot-toast";
+import axios from "axios";
 
 const EmployeeAdition = (props: { cancelData: (dato: boolean) => void }) => {
   const [personalInformation, setPersonalInformation] = useState({
@@ -16,9 +17,10 @@ const EmployeeAdition = (props: { cancelData: (dato: boolean) => void }) => {
   const [jobDetails, setJobDetails] = useState({
     jobTitle: "Developer",
     department: "Human Resources",
-    EmployeeType: "Full-time",
-    startDate: "",
+    employeeType: "Full-time",
+    startDate: new Date().toISOString().slice(0, 10),
     salary: "",
+    status: "Active",
   });
   const modalVariants = {
     hidden: { opacity: 0, scale: 1 },
@@ -40,7 +42,7 @@ const EmployeeAdition = (props: { cancelData: (dato: boolean) => void }) => {
     },
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (
       personalInformation.name === "" ||
@@ -49,31 +51,50 @@ const EmployeeAdition = (props: { cancelData: (dato: boolean) => void }) => {
       personalInformation.phone === "" ||
       personalInformation.address === "" ||
       jobDetails.startDate === "" ||
-      jobDetails.salary === ""
+      jobDetails.salary === "" ||
+      !personalInformation.email.includes("@") ||
+      !personalInformation.email.includes(".com")
     ) {
       toast.error(
         "Please fill in all required personal or job details fields."
       );
       return;
     }
+    console.log(jobDetails);
     const combinedData = { ...personalInformation, ...jobDetails };
-    toast.success("Employee added successfully!");
-    setJobDetails({
-      jobTitle: "",
-      department: "",
-      EmployeeType: "",
-      startDate: "",
-      salary: "",
-    });
-    setPersonalInformation({
-      name: "",
-      firstSurname: "",
-      secondSurname: "",
-      email: "",
-      phone: "",
-      address: "",
-    });
-    console.log("Personal Information:", combinedData);
+
+    try {
+      const response = await axios.post(
+        "/api/Employees/EmployeesAddition",
+        combinedData
+      );
+      if (response.status === 201) {
+        toast.success("Employee added successfully!");
+        setJobDetails({
+          jobTitle: "Developer",
+          department: "Human Resources",
+          employeeType: "Full-time",
+          startDate: new Date().toISOString().slice(0, 10),
+          salary: "",
+          status: "Active",
+        });
+        setPersonalInformation({
+          name: "",
+          firstSurname: "",
+          secondSurname: "",
+          email: "",
+          phone: "",
+          address: "",
+        });
+      }
+    } catch (error) {
+      if (axios.isAxiosError(error) && error.response) {
+        const data = error.response.data;
+        toast.error(`${data.message || "Ocurrió un error"}`);
+      } else {
+        toast.error("Failed to add employee. Please try again.");
+      }
+    }
   };
 
   return (
@@ -84,17 +105,19 @@ const EmployeeAdition = (props: { cancelData: (dato: boolean) => void }) => {
       exit="exit"
     >
       <div className="additions-employee">
-        <h2>Add New Employee</h2>
         <div className="form-container">
           <form className="personal-information form1">
+            <h2>Add New Employee</h2>
+
             <label className="label1" htmlFor="personal-information">
-              Personal Information
+              <b> Personal Information</b>
             </label>
             <hr />
             <div className="personal-information-container">
               <div>
                 <label htmlFor="name">Name</label>
                 <input
+                  required
                   placeholder="Enter name"
                   type="text"
                   id="name"
@@ -111,6 +134,7 @@ const EmployeeAdition = (props: { cancelData: (dato: boolean) => void }) => {
               <div>
                 <label htmlFor="first-surname">First Surname</label>
                 <input
+                  required
                   placeholder="Enter first surname"
                   type="text"
                   id="first-surname"
@@ -143,6 +167,7 @@ const EmployeeAdition = (props: { cancelData: (dato: boolean) => void }) => {
               <div>
                 <label htmlFor="email">Email</label>
                 <input
+                  required
                   placeholder="example@.com"
                   type="email"
                   id="email"
@@ -160,11 +185,13 @@ const EmployeeAdition = (props: { cancelData: (dato: boolean) => void }) => {
                 {" "}
                 <label htmlFor="phone">Phone</label>
                 <input
+                  required
                   placeholder="Enter phone number"
                   type="tel"
                   id="phone"
                   name="phone"
                   value={personalInformation.phone}
+                  maxLength={10}
                   onChange={(e) =>
                     setPersonalInformation({
                       ...personalInformation,
@@ -176,6 +203,7 @@ const EmployeeAdition = (props: { cancelData: (dato: boolean) => void }) => {
               <div>
                 <label htmlFor="address">Address</label>
                 <input
+                  required
                   placeholder="Enter address"
                   type="text"
                   id="address"
@@ -196,68 +224,75 @@ const EmployeeAdition = (props: { cancelData: (dato: boolean) => void }) => {
 
           <form onSubmit={handleSubmit} className="personal-information form2">
             <label className="label1 job-details" htmlFor="job-details">
-              Job Details
+              <b> Job Details</b>
             </label>
             <hr />
             <div className="personal-information-container">
               <div>
-                <label htmlFor="name">Job Title</label>
+                <label htmlFor="job-title">Job Title</label>
                 <select
+                  required
                   name="job-title"
-                  id=""
+                  id="job-title"
                   value={jobDetails.jobTitle}
                   onChange={(e) =>
                     setJobDetails({ ...jobDetails, jobTitle: e.target.value })
                   }
                 >
-                  <option value="developer">Developer</option>
-                  <option value="designer">Designer</option>
-                  <option value="manager">Manager</option>
+                  <option value="Developer">Developer</option>
+                  <option value="Designer">Designer</option>
+                  <option value="Manager">Manager</option>
                 </select>
               </div>
               <div>
-                <label htmlFor="first-surname">Department</label>
+                <label htmlFor="department">Department</label>
                 <select
-                  value={jobDetails.department}
+                  required
                   name="department"
-                  id=""
+                  id="department"
+                  value={jobDetails.department}
                   onChange={(e) =>
                     setJobDetails({ ...jobDetails, department: e.target.value })
                   }
                 >
-                  <option value="hr">Human Resources</option>
-                  <option value="it">IT</option>
-                  <option value="finance">Finance</option>
+                  <option value="Human Resources">Human Resources</option>
+                  <option value="Finance">Finance</option>
+                  <option value="IT">IT</option>
                 </select>
               </div>
               <div>
-                <label htmlFor="second-surname">Employee Type</label>
+                <label htmlFor="employee-type">Employee Type</label>
                 <select
-                  value={jobDetails.EmployeeType}
+                  required
                   name="employee-type"
-                  id=""
+                  id="employee-type"
+                  value={jobDetails.employeeType}
                   onChange={(e) =>
                     setJobDetails({
                       ...jobDetails,
-                      EmployeeType: e.target.value,
+                      employeeType: e.target.value,
                     })
                   }
                 >
-                  <option value="full-time">Full-time</option>
-                  <option value="part-time">Part-time</option>
-                  <option value="contractor">Contractor</option>
+                  <option value="Full-Time">Full-time</option>
+                  <option value="Part-Time">Part-time</option>
+                  <option value="Contractor">Contractor</option>
                 </select>
               </div>
               <div>
                 <label htmlFor="start-date">Start Date</label>
                 <input
-                  value={jobDetails.startDate}
                   type="date"
                   id="start-date"
                   name="start-date"
+                  value={jobDetails.startDate}
+                  style={{
+                    borderColor: jobDetails.startDate === "" ? "red" : "",
+                  }}
                   onChange={(e) =>
                     setJobDetails({ ...jobDetails, startDate: e.target.value })
                   }
+                  required
                 />
               </div>
               <div>
@@ -272,7 +307,24 @@ const EmployeeAdition = (props: { cancelData: (dato: boolean) => void }) => {
                   onChange={(e) =>
                     setJobDetails({ ...jobDetails, salary: e.target.value })
                   }
+                  required
                 />
+              </div>
+
+              <div>
+                {" "}
+                <label htmlFor="status">Status</label>
+                <select
+                  required
+                  onChange={(e) =>
+                    setJobDetails({ ...jobDetails, status: e.target.value })
+                  }
+                  name="status"
+                  id=""
+                >
+                  <option value="Active">Active</option>
+                  <option value="InProcess">In Process</option>
+                </select>
               </div>
             </div>
             <div className="buttons-container">

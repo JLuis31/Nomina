@@ -31,6 +31,7 @@ import Image from "next/image";
 import { useSession } from "next-auth/react";
 import axios from "axios";
 import { useEffect, useState } from "react";
+import toast from "react-hot-toast";
 
 const Dashboard = () => {
   const session = useSession();
@@ -61,23 +62,11 @@ const Dashboard = () => {
   };
 
   useEffect(() => {
-    const obtainUserInfo = async () => {
-      const sesionDeUsuario = session?.data?.user?.id;
-      const response = await axios.get("api/Users/InformationUsers", {
-        params: { idUsuario: sesionDeUsuario },
-      });
-      return response;
-    };
-    const infoObtenida = obtainUserInfo();
-
-    infoObtenida.then((res) => {
-      localStorage.setItem("userDepartment", res.data.Id_Department);
-
-      localStorage.setItem("userName", res.data.Name);
-    });
-  }, []);
-
-  const department = localStorage.getItem("userDepartment");
+    if (session.status === "unauthenticated") {
+      toast.error("You must be logged in to access the dashboard.");
+      router.push("/Login");
+    }
+  }, [session.status, router]);
 
   return (
     <div className="global-dash-container">

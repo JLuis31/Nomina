@@ -2,20 +2,22 @@
 import { useState } from "react";
 import "../UserActions/UserActions.scss";
 import { motion } from "framer-motion";
+import axios from "axios";
+import toast from "react-hot-toast";
 
-const UserActions = (props: { cancelData: (value: boolean) => void }) => {
+const UserActions = (props) => {
   const [userActions, setSecondUserActions] = useState({
-    employeeID: "",
-    name: "",
-    firstSurname: "",
-    secondSurname: "",
-    email: "",
-    phone: "",
-    address: "",
-    jobTitle: "",
-    department: "",
-    employeeStatus: "",
-    salary: "",
+    employeeID: props.selectedEmployee?.Id_Employee || "",
+    name: props.selectedEmployee?.Name || "",
+    firstSurname: props.selectedEmployee?.First_SurName || "",
+    secondSurname: props.selectedEmployee?.Second_SurName || "",
+    email: props.selectedEmployee?.Email || "",
+    phone: props.selectedEmployee?.Phone_Number || "",
+    address: props.selectedEmployee?.Address || "",
+    jobTitle: props.selectedEmployee?.Id_Job || "",
+    department: props.selectedEmployee?.Id_Department || "",
+    employeeStatus: props.selectedEmployee?.Status || "",
+    salary: props.selectedEmployee?.Salary || "",
     payFrequency: "",
     bankAccountNumber: "",
   });
@@ -40,6 +42,25 @@ const UserActions = (props: { cancelData: (value: boolean) => void }) => {
     },
   };
 
+  const handlePut = async (e) => {
+    e.preventDefault();
+    try {
+      const response = await axios.put("/api/Employees/SpecificEmployee", {
+        Id_Employee: props.selectedEmployee?.Id_Employee,
+        UserData: userActions,
+      });
+      console.log("Employee updated successfully:", response.data);
+      if (response.status === 200) {
+        props.onUpdate();
+        toast.success("Employee updated successfully!", { duration: 2000 });
+      }
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        console.log("Axios error:", error.response?.data);
+      }
+    }
+  };
+
   return (
     <motion.div
       variants={modalVariants}
@@ -49,7 +70,10 @@ const UserActions = (props: { cancelData: (value: boolean) => void }) => {
     >
       <div className="UserActions-container">
         <div className="UserActions-information">
-          <h4>Jose Luis (Id: {124575})</h4>
+          <h4>
+            {props.selectedEmployee?.Name} (Id:{" "}
+            {props.selectedEmployee?.Id_Employee})
+          </h4>
           <label htmlFor="position"> Position: Software Engineer</label>
           <label htmlFor="department">Department: IT</label>
         </div>
@@ -59,13 +83,19 @@ const UserActions = (props: { cancelData: (value: boolean) => void }) => {
             <div className="UserActions-buttons">
               {" "}
               <button
-                onClick={() => props.cancelData(false)}
+                onClick={() => {
+                  props.cancelData(false);
+                }}
                 className="cancel-button"
                 type="button"
               >
                 Cancel
               </button>
-              <button className="submit-button" type="submit">
+              <button
+                onClick={(e) => handlePut(e)}
+                className="submit-button"
+                type="submit"
+              >
                 Save Changes
               </button>
             </div>
@@ -81,7 +111,7 @@ const UserActions = (props: { cancelData: (value: boolean) => void }) => {
                   name="name"
                   placeholder="Enter your name"
                   required
-                  value={userActions.name}
+                  defaultValue={props.selectedEmployee.Name}
                   onChange={(e) =>
                     setSecondUserActions({
                       ...userActions,
@@ -98,7 +128,7 @@ const UserActions = (props: { cancelData: (value: boolean) => void }) => {
                   name="first-surname"
                   placeholder="Enter your first surname "
                   required
-                  value={userActions.firstSurname}
+                  defaultValue={props.selectedEmployee.First_SurName}
                   onChange={(e) =>
                     setSecondUserActions({
                       ...userActions,
@@ -115,7 +145,7 @@ const UserActions = (props: { cancelData: (value: boolean) => void }) => {
                   id="second-surname"
                   name="second-surname"
                   placeholder="Enter your second surname"
-                  value={userActions.secondSurname}
+                  defaultValue={props.selectedEmployee.Second_SurName}
                   onChange={(e) =>
                     setSecondUserActions({
                       ...userActions,
@@ -133,7 +163,7 @@ const UserActions = (props: { cancelData: (value: boolean) => void }) => {
                   name="email"
                   placeholder="Enter your email"
                   required
-                  value={userActions.email}
+                  defaultValue={props.selectedEmployee.Email}
                   onChange={(e) =>
                     setSecondUserActions({
                       ...userActions,
@@ -150,7 +180,7 @@ const UserActions = (props: { cancelData: (value: boolean) => void }) => {
                   name="phone"
                   placeholder="Enter your phone number"
                   required
-                  value={userActions.phone}
+                  defaultValue={props.selectedEmployee.Phone_Number}
                   onChange={(e) =>
                     setSecondUserActions({
                       ...userActions,
@@ -168,7 +198,7 @@ const UserActions = (props: { cancelData: (value: boolean) => void }) => {
                   name="address"
                   placeholder="Enter your address"
                   required
-                  value={userActions.address}
+                  defaultValue={props.selectedEmployee.Address}
                   onChange={(e) =>
                     setSecondUserActions({
                       ...userActions,
@@ -188,7 +218,7 @@ const UserActions = (props: { cancelData: (value: boolean) => void }) => {
                   type="text"
                   id="employee-id"
                   name="employee-id"
-                  value={userActions.employeeID}
+                  defaultValue={props.selectedEmployee.Id_Employee}
                   readOnly
                   disabled
                 />
@@ -203,13 +233,19 @@ const UserActions = (props: { cancelData: (value: boolean) => void }) => {
                       jobTitle: e.target.value,
                     })
                   }
-                  value={userActions.jobTitle}
+                  defaultValue={
+                    props.selectedEmployee.Id_Job === 1
+                      ? "Developer"
+                      : props.selectedEmployee.Id_Job === 2
+                      ? "Designer"
+                      : "Manager"
+                  }
                   name=""
                   id=""
                 >
-                  <option value="software-engineer">Software Engineer</option>
-                  <option value="product-manager">Product Manager</option>
-                  <option value="designer">Designer</option>
+                  <option value="Developer">Developer</option>
+                  <option value="Designer">Designer</option>
+                  <option value="Manager">Manager</option>
                 </select>
               </div>
               <div>
@@ -222,13 +258,19 @@ const UserActions = (props: { cancelData: (value: boolean) => void }) => {
                       department: e.target.value,
                     })
                   }
-                  value={userActions.department}
+                  defaultValue={
+                    props.selectedEmployee.Id_Department === 1
+                      ? "Human Resources"
+                      : props.selectedEmployee.Id_Department === 2
+                      ? "Finance"
+                      : "IT"
+                  }
                   name=""
                   id=""
                 >
-                  <option value="it">IT</option>
-                  <option value="hr">HR</option>
-                  <option value="finance">Finance</option>
+                  <option value="Human Resources">Human Resources</option>
+                  <option value="Finance">Finance</option>
+                  <option value="IT">IT</option>
                 </select>
               </div>
               <div>
@@ -240,13 +282,22 @@ const UserActions = (props: { cancelData: (value: boolean) => void }) => {
                       employeeStatus: e.target.value,
                     })
                   }
-                  value={userActions.employeeStatus}
+                  defaultValue={
+                    props.selectedEmployee.Id_Status === "1"
+                      ? "Active"
+                      : props.selectedEmployee.Id_Status === "2"
+                      ? "Inactive"
+                      : props.selectedEmployee.Id_Status === "3"
+                      ? "On-leave"
+                      : "In-Process"
+                  }
                   name=""
                   id=""
                 >
-                  <option value="active">Active</option>
-                  <option value="inactive">Inactive</option>
-                  <option value="on-leave">On Leave</option>
+                  <option value="Active">Active</option>
+                  <option value="Inactive">Inactive</option>
+                  <option value="On Leave">On Leave</option>
+                  <option value="In Process">In Process</option>
                 </select>
               </div>
             </div>
@@ -267,7 +318,7 @@ const UserActions = (props: { cancelData: (value: boolean) => void }) => {
                   type="money"
                   id="salary"
                   name="salary"
-                  value={userActions.salary}
+                  defaultValue={props.selectedEmployee.Salary}
                 />
               </div>
               <div>
@@ -280,7 +331,6 @@ const UserActions = (props: { cancelData: (value: boolean) => void }) => {
                       payFrequency: e.target.value,
                     })
                   }
-                  value={userActions.payFrequency}
                   name=""
                   id=""
                 >

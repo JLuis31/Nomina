@@ -39,3 +39,19 @@ model Employees {
   Salary   String
   Status   String
 }
+
+
+model Departments {
+  Id_Department   Int    @id @default(autoincrement())
+  Description      String
+}
+
+model Jobs {
+  Id_Job   Int    @id @default(autoincrement())
+  Description      String
+}
+
+model Employee_Type {
+  Id_Employee_type   Int    @id @default(autoincrement())
+  Description      String
+}

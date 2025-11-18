@@ -74,3 +74,29 @@ export async function POST(req) {
     { status: 201 }
   );
 }
+
+export async function GET(req) {
+  const response = await prisma.Employees.findMany();
+  if (response.length === 0) {
+    return new Response(JSON.stringify({ message: "No employees found" }), {
+      status: 404,
+    });
+  }
+  return new Response(JSON.stringify(response), { status: 201 });
+}
+
+export async function DELETE(req) {
+  const { searchParams } = new URL(req.url);
+  const idEmployee = searchParams.get("idEmployee");
+
+  console.log("Deleting employee with ID:", idEmployee);
+
+  await prisma.Employees.delete({
+    where: { Id_Employee: Number(idEmployee) },
+  });
+
+  return new Response(
+    JSON.stringify({ message: "Employee deleted successfully" }),
+    { status: 200 }
+  );
+}

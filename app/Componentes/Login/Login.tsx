@@ -8,10 +8,10 @@ import { useRouter } from "next/navigation";
 import toast from "react-hot-toast";
 import { signIn } from "next-auth/react";
 import { useSession } from "next-auth/react";
+import axios from "axios";
 
 const LoginForm = () => {
   const session = useSession();
-  console.log("Current session:", session);
 
   const router = useRouter();
   const [data, setData] = useState({
@@ -29,6 +29,7 @@ const LoginForm = () => {
         password: data.password,
         redirect: false,
       });
+
       if (result?.ok) {
         router.push("/Dashboard");
         toast.success("Login successful!", { duration: 2000 });

@@ -8,26 +8,46 @@ import {
   faUserGroup,
   faFileLines,
   faGear,
+  faSliders,
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { signOut } from "next-auth/react";
 import { useRouter } from "next/navigation";
-import { parse } from "path";
+import { useSession } from "next-auth/react";
+import Image from "next/image";
+import nominaImage from "../../../public/Assets/nomina-de-sueldos.png";
 
 const NavDesktop = () => {
   const router = useRouter();
   const [showMenu, setShowMenu] = useState(false);
+  const [localStorageName, setLocalStorageName] = useState(
+    localStorage.getItem("userName")
+  );
+  const [localStorageDepartment, setLocalStorageDepartment] = useState(
+    localStorage.getItem("userDepartment")
+  );
+  const session = useSession();
 
-  const localStorageName = localStorage.getItem("userName");
-
-  const localStorageDepartment = localStorage.getItem("userDepartment");
+  useEffect(() => {
+    if (session.data?.user) {
+      localStorage.setItem("userName", session.data.user.name);
+      localStorage.setItem("userDepartment", session.data.user.department);
+      setLocalStorageName(session.data.user.name);
+      setLocalStorageDepartment(session.data.user.department);
+    }
+  }, [session.data]);
 
   const menuOptions = [
     { label: "Home", href: "/Dashboard", icon: faHouse },
     { label: "Employees", href: "/Employees", icon: faUserGroup },
     { label: "Reports", href: "/Reports", icon: faFileLines },
     { label: "Settings", href: "/Settings", icon: faGear },
+    {
+      label: "Values Configuration",
+      href: "/ValuesConfiguration",
+      icon: faSliders,
+    },
   ];
 
   const handleLogOut = async () => {
@@ -71,21 +91,28 @@ const NavDesktop = () => {
         </div>
       </nav>
 
-      {showMenu && (
-        <ul className="menu-horizontal">
-          {menuOptions.map((option) => (
-            <li key={option.label}>
-              <Link href={option.href} onClick={() => setShowMenu(false)}>
-                <FontAwesomeIcon
-                  icon={option.icon}
-                  style={{ marginRight: "10px", width: "15px" }}
-                ></FontAwesomeIcon>
-                {option.label}
-              </Link>
-            </li>
-          ))}
-        </ul>
-      )}
+      <ul className={`menu-horizontal${showMenu ? "" : " menu-hidden"}`}>
+        <div className="menu-separacion">
+          {" "}
+          <FontAwesomeIcon
+            icon={faBars}
+            className="menu-icon"
+            onClick={() => setShowMenu(!showMenu)}
+          />
+          <b>Nomina - DOCHUB</b>
+        </div>
+        {menuOptions.map((option) => (
+          <li key={option.label}>
+            <Link href={option.href} onClick={() => setShowMenu(false)}>
+              <FontAwesomeIcon
+                icon={option.icon}
+                style={{ marginRight: "10px", width: "15px" }}
+              />
+              {option.label}
+            </Link>
+          </li>
+        ))}
+      </ul>
     </div>
   );
 };

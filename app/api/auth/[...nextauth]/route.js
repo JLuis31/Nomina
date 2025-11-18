@@ -27,7 +27,6 @@ export const authOptions = {
         if (!isValid) {
           return null;
         }
-        console.log({ id: user.Id_User, name: user.Name, email: user.Email });
         return {
           id: user.Id_User,
           name: user.Name,

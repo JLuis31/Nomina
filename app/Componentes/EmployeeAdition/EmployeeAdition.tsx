@@ -5,7 +5,13 @@ import { useState } from "react";
 import { toast } from "react-hot-toast";
 import axios from "axios";
 
-const EmployeeAdition = (props: { cancelData: (dato: boolean) => void }) => {
+const EmployeeAdition = ({
+  cancelData,
+  actualizarTabla,
+}: {
+  cancelData: (dato: boolean) => void;
+  actualizarTabla: (dato: boolean) => void;
+}) => {
   const [personalInformation, setPersonalInformation] = useState({
     name: "",
     firstSurname: "",
@@ -69,6 +75,7 @@ const EmployeeAdition = (props: { cancelData: (dato: boolean) => void }) => {
         combinedData
       );
       if (response.status === 201) {
+        window.location.reload();
         toast.success("Employee added successfully!");
         setJobDetails({
           jobTitle: "Developer",
@@ -330,13 +337,17 @@ const EmployeeAdition = (props: { cancelData: (dato: boolean) => void }) => {
             <div className="buttons-container">
               {" "}
               <button
-                onClick={() => props.cancelData(false)}
+                onClick={() => cancelData(false)}
                 type="button"
                 className="cancel-button"
               >
                 Cancel
               </button>
-              <button type="submit" className="add-employee-button">
+              <button
+                onClick={() => actualizarTabla(true)}
+                type="submit"
+                className="add-employee-button"
+              >
                 Add Employee
               </button>
             </div>

@@ -22,8 +22,9 @@ import {
 
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
-import { useState, useMemo } from "react";
-
+import { useState, useMemo, useEffect } from "react";
+import axios from "axios";
+import Email from "next-auth/providers/email";
 interface Employee {
   id: number;
   name: string;
@@ -38,13 +39,52 @@ const EmployeesTable = (props) => {
   const [page, setPage] = useState(0);
   const [dense, setDense] = useState(false);
   const [rowsPerPage, setRowsPerPage] = useState(5);
+  const [rows, setEmployees] = useState<Employee[]>([]);
+  const [actualizarTabla, setActualizarTabla] = useState(false);
+  const [findEmployee, setFindEmployee] = useState({
+    Address: "",
+    Email: "",
+    First_Surname: "",
+    Id_Department: "",
+    Id_Employee: "",
+    Id_Employee_type: "",
+    Id_Job: "",
+    Name: "",
+    Phone_Nmber: "",
+    Salary: "",
+    Second_Surname: "",
+    Start_Date: "",
+    Status: "",
+  });
 
-  const rows: Employee[] = [
-    { id: 1, name: "John Doe", jobTitle: "Software Engineer", status: 1 },
-    { id: 2, name: "Jane Smith", jobTitle: "Project Manager", status: 1 },
-    { id: 3, name: "Carlos Pérez", jobTitle: "QA Tester", status: 0 },
-    { id: 4, name: "Ana López", jobTitle: "UX Designer", status: 1 },
-  ];
+  useEffect(() => {
+    const EmployeesData = async function () {
+      try {
+        const response = await axios.get("/api/Employees/EmployeesAddition");
+        console.log("Selected employee IDs:", response.data);
+
+        const empleados = response.data.map((employee) => ({
+          id: employee.Id_Employee,
+          name: employee.Name,
+          jobTitle:
+            employee.Id_Job === 1
+              ? "Developer"
+              : employee.Id_Job === 2
+              ? "Designer"
+              : "Manager",
+          status: Number(employee.Status),
+        }));
+        setEmployees(empleados);
+        setActualizarTabla(false);
+        setPage(0);
+      } catch (error) {
+        if (axios.isAxiosError(error)) {
+          console.log("Axios error:", error.message);
+        }
+      }
+    };
+    EmployeesData();
+  }, [props.refreshTable]);
 
   // ==================== TABLA ====================
   type Order = "asc" | "desc";
@@ -73,31 +113,19 @@ const EmployeesTable = (props) => {
     setOrderBy(property);
   };
 
-  const handleSelectAllClick = (event: React.ChangeEvent<HTMLInputElement>) => {
-    if (event.target.checked) {
-      const newSelected = rows.map((n) => n.id);
-      setSelected(newSelected);
-      return;
+  const handleClick = async (employee: Employee) => {
+    try {
+      const response = await axios.get(`/api/Employees/SpecificEmployee`, {
+        params: { idEmployee: employee.id },
+      });
+      setFindEmployee({ ...response.data });
+      props.selectedEmployee(response.data);
+      props.onActions(true);
+    } catch (error) {
+      console.log("Error handling click:", error);
     }
-    setSelected([]);
-  };
 
-  const handleClick = (id: number) => {
-    const selectedIndex = selected.indexOf(id);
-    let newSelected: number[] = [];
-
-    if (selectedIndex === -1) newSelected = newSelected.concat(selected, id);
-    else if (selectedIndex === 0)
-      newSelected = newSelected.concat(selected.slice(1));
-    else if (selectedIndex === selected.length - 1)
-      newSelected = newSelected.concat(selected.slice(0, -1));
-    else if (selectedIndex > 0)
-      newSelected = newSelected.concat(
-        selected.slice(0, selectedIndex),
-        selected.slice(selectedIndex + 1)
-      );
-
-    setSelected(newSelected);
+    setSelected([employee.id]);
   };
 
   const handleChangePage = (event: unknown, newPage: number) => {
@@ -116,11 +144,24 @@ const EmployeesTable = (props) => {
       [...rows]
         .sort(getComparator(order, orderBy))
         .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage),
-    [order, orderBy, page, rowsPerPage]
+    [order, orderBy, page, rowsPerPage, rows]
   );
 
-  function handleDelete(id: number) {
-    toast.success("Usuario borrado", { duration: 2000 });
+  async function handleDelete(id: number) {
+    try {
+      const response = await axios.delete(`/api/Employees/EmployeesAddition`, {
+        params: { idEmployee: id },
+      });
+      if (response.status === 200) {
+        toast.success("Usuario borrado con éxito", { duration: 2000 });
+        props.onUpdate();
+      }
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        toast.error("Error al borrar el usuario", { duration: 2000 });
+        return;
+      }
+    }
     console.log("Deleted user with id:", id);
   }
 
@@ -205,18 +246,7 @@ const EmployeesTable = (props) => {
             <Table size={dense ? "small" : "medium"}>
               <TableHead>
                 <TableRow>
-                  <TableCell padding="checkbox">
-                    <Checkbox
-                      color="primary"
-                      indeterminate={
-                        selected.length > 0 && selected.length < rows.length
-                      }
-                      checked={
-                        rows.length > 0 && selected.length === rows.length
-                      }
-                      onChange={handleSelectAllClick}
-                    />
-                  </TableCell>
+                  <TableCell padding="checkbox"></TableCell>
                   <TableCell>
                     <TableSortLabel
                       active={orderBy === "name"}
@@ -239,39 +269,65 @@ const EmployeesTable = (props) => {
                     <TableRow
                       hover
                       key={row.id}
-                      onClick={() => handleClick(row.id)}
+                      onClick={() => {
+                        handleClick(row);
+                      }}
                       selected={isSelected}
                       sx={{ cursor: "pointer" }}
                     >
                       <TableCell padding="checkbox">
-                        <Checkbox color="primary" checked={isSelected} />
+                        <Checkbox
+                          color="primary"
+                          checked={isSelected}
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setSelected(isSelected ? [] : [row.id]);
+                          }}
+                        />{" "}
                       </TableCell>
                       <TableCell>{row.name}</TableCell>
                       <TableCell>{row.jobTitle}</TableCell>
                       <TableCell>
                         <span
                           style={{
-                            color: row.status === 1 ? "green" : "gray",
+                            color:
+                              row.status === 1
+                                ? "green"
+                                : row.status === 2
+                                ? "gray"
+                                : row.status === 3
+                                ? "#e95b5bff"
+                                : "#f0c544ff",
                             fontWeight: "bold",
                             backgroundColor:
                               row.status === 1
                                 ? "rgba(0, 128, 0, 0.1)"
-                                : "rgba(128, 128, 128, 0.1)",
+                                : row.status === 2
+                                ? "rgba(128, 128, 128, 0.1)"
+                                : row.status === 3
+                                ? "rgba(233, 91, 91, 0.1)"
+                                : "rgba(240, 197, 68, 0.1)",
                             padding: "4px 8px",
                             borderRadius: "10px",
                           }}
                         >
-                          {row.status === 1 ? "Active" : "Inactive"}
+                          {row.status === 1
+                            ? "Active"
+                            : row.status === 2
+                            ? "Inactive"
+                            : row.status === 3
+                            ? "On Leave"
+                            : "In Process"}
                         </span>
                       </TableCell>
                       <TableCell align="center">
-                        <Tooltip title="Edit">
-                          <IconButton onClick={() => props.onActions(true)}>
-                            <EditIcon />
-                          </IconButton>
-                        </Tooltip>
                         <Tooltip title="Delete">
-                          <IconButton onClick={() => confirmDelete(row.id)}>
+                          <IconButton
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              confirmDelete(row.id);
+                            }}
+                          >
                             <DeleteIcon color="error" />
                           </IconButton>
                         </Tooltip>

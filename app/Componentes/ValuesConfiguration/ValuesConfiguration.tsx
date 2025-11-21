@@ -8,11 +8,15 @@ import NavDesktop from "../NavDesktop/NavDesktop";
 import JobsTable from "../DataTables/Jobs";
 import axios from "axios";
 import toast from "react-hot-toast";
-import { use, useState } from "react";
+import { useState } from "react";
+import TablesToConfigure from "./TablesToConfigure/TablesToConfigure";
+import { AnimatePresence } from "framer-motion";
 
 const ValuesConfiguration = () => {
   const { departmentDetails, employeeTypesDetails, jobPositionsDetails } =
     useUsersDetails();
+  const [showItemAddition, setShowItemAddition] = useState(false);
+
   const [selectedTable, setSelectedTable] = useState("Department");
 
   const handleDelete = async ({ id, description }) => {
@@ -41,27 +45,29 @@ const ValuesConfiguration = () => {
     }
   };
 
-  const handleEditTable = () => {
-    console.log("Edit table:", selectedTable);
+  const handleEditTable = async () => {
+    setShowItemAddition(true);
+  };
+
+  const datoRecibidoCancel = (dato: boolean) => {
+    setShowItemAddition(dato);
   };
 
   return (
     <div>
       <NavDesktop />
+      <AnimatePresence>
+        {showItemAddition === true && (
+          <div className="overlay">
+            <TablesToConfigure cancelData={datoRecibidoCancel} />
+          </div>
+        )}
+      </AnimatePresence>
       <div className="configuration-Container">
         <h2>Configuacion de valores</h2>
         <div className="edicion-valores">
           {" "}
-          <select
-            onChange={(e) => setSelectedTable(e.target.value)}
-            name="edit"
-            id=""
-          >
-            <option value="Department">Department</option>
-            <option value="Employee Type">Employee Type</option>
-            <option value="Job Positions">Job Positions</option>
-          </select>
-          <button onClick={handleEditTable} className="edit">
+          <button onClick={() => handleEditTable()} className="edit">
             Edit
           </button>
         </div>

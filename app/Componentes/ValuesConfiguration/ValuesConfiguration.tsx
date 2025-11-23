@@ -1,7 +1,6 @@
 "use client";
 
 import "../ValuesConfiguration/ValuesConfiguration.scss";
-import { useUsersDetails } from "@/app/Context/UsersDetailsContext";
 import DepartmentsTable from "../DataTables/Departments";
 import EmployeeTypeTable from "../DataTables/EmployeeType";
 import NavDesktop from "../NavDesktop/NavDesktop";
@@ -11,13 +10,19 @@ import toast from "react-hot-toast";
 import { useState } from "react";
 import TablesToConfigure from "./TablesToConfigure/TablesToConfigure";
 import { AnimatePresence } from "framer-motion";
+import { useUsersDetails } from "@/app/Context/UsersDetailsContext";
 
 const ValuesConfiguration = () => {
   const { departmentDetails, employeeTypesDetails, jobPositionsDetails } =
     useUsersDetails();
   const [showItemAddition, setShowItemAddition] = useState(false);
-
-  const [selectedTable, setSelectedTable] = useState("Department");
+  const {
+    setDepartmentDetails,
+    setEmployeeTypesDetails,
+    setJobPositionsDetails,
+    setValorMoneda,
+    valorMoneda,
+  } = useUsersDetails();
 
   const handleDelete = async ({ id, description }) => {
     console.log("Delete item with id:", id, "and description:", description);
@@ -27,10 +32,20 @@ const ValuesConfiguration = () => {
       });
 
       if (response.status === 200) {
-        window.location.reload();
-        setTimeout(() => {
-          toast.success("Item deleted successfully");
-        }, 2000);
+        const newDepartmentDetails = await axios.get(
+          "/api/UsersDetails/Departments"
+        );
+        const newEmployeeTypesDetails = await axios.get(
+          "/api/UsersDetails/EmployeeTypes"
+        );
+        const newJobPositionsDetails = await axios.get(
+          "/api/UsersDetails/JobPositions"
+        );
+        setDepartmentDetails(newDepartmentDetails.data);
+        setEmployeeTypesDetails(newEmployeeTypesDetails.data);
+        setJobPositionsDetails(newJobPositionsDetails.data);
+
+        toast.success("Item deleted successfully");
       }
     } catch (error) {
       if (axios.isAxiosError(error)) {
@@ -53,6 +68,13 @@ const ValuesConfiguration = () => {
     setShowItemAddition(dato);
   };
 
+  const configurarDivisa = (valor) => {
+    setValorMoneda(valor);
+    localStorage.setItem("valorMoneda", valor);
+  };
+
+  const valorMoedaLocalStorage = localStorage.getItem("valorMoneda") || "MXN";
+
   return (
     <div>
       <NavDesktop />
@@ -72,6 +94,15 @@ const ValuesConfiguration = () => {
           </button>
         </div>
         <div className="table-container">
+          <select
+            value={valorMoedaLocalStorage}
+            onChange={(e) => configurarDivisa(e.target.value)}
+            name="valorMoneda"
+            id=""
+          >
+            <option value="MXN">MXN</option>
+            <option value="USD">USD</option>
+          </select>
           <DepartmentsTable
             departmentDetails={departmentDetails}
             handleDelete={handleDelete}

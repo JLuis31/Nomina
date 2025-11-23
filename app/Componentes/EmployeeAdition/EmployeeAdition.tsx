@@ -4,6 +4,7 @@ import { motion } from "framer-motion";
 import { useState } from "react";
 import { toast } from "react-hot-toast";
 import axios from "axios";
+import { useUsersDetails } from "@/app/Context/UsersDetailsContext";
 
 const EmployeeAdition = ({
   cancelData,
@@ -66,7 +67,6 @@ const EmployeeAdition = ({
       );
       return;
     }
-    console.log(jobDetails);
     const combinedData = { ...personalInformation, ...jobDetails };
 
     try {
@@ -103,6 +103,9 @@ const EmployeeAdition = ({
       }
     }
   };
+
+  const { departmentDetails, employeeTypesDetails, jobPositionsDetails } =
+    useUsersDetails();
 
   return (
     <motion.div
@@ -246,9 +249,11 @@ const EmployeeAdition = ({
                     setJobDetails({ ...jobDetails, jobTitle: e.target.value })
                   }
                 >
-                  <option value="Developer">Developer</option>
-                  <option value="Designer">Designer</option>
-                  <option value="Manager">Manager</option>
+                  {jobPositionsDetails.map((dept) => (
+                    <option key={dept.Id_Job} value={dept.Id_Job}>
+                      {dept.Description}
+                    </option>
+                  ))}
                 </select>
               </div>
               <div>
@@ -262,9 +267,14 @@ const EmployeeAdition = ({
                     setJobDetails({ ...jobDetails, department: e.target.value })
                   }
                 >
-                  <option value="Human Resources">Human Resources</option>
-                  <option value="Finance">Finance</option>
-                  <option value="IT">IT</option>
+                  {departmentDetails.map((position) => (
+                    <option
+                      key={position.Id_Department}
+                      value={position.Id_Department}
+                    >
+                      {position.Description}
+                    </option>
+                  ))}
                 </select>
               </div>
               <div>
@@ -281,9 +291,14 @@ const EmployeeAdition = ({
                     })
                   }
                 >
-                  <option value="Full-Time">Full-time</option>
-                  <option value="Part-Time">Part-time</option>
-                  <option value="Contractor">Contractor</option>
+                  {employeeTypesDetails.map((type) => (
+                    <option
+                      key={type.Id_Employee_type}
+                      value={type.Id_Employee_type}
+                    >
+                      {type.Description}
+                    </option>
+                  ))}
                 </select>
               </div>
               <div>

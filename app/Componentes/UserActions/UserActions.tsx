@@ -4,6 +4,7 @@ import "../UserActions/UserActions.scss";
 import { motion } from "framer-motion";
 import axios from "axios";
 import toast from "react-hot-toast";
+import { useUsersDetails } from "@/app/Context/UsersDetailsContext";
 
 const UserActions = (props) => {
   const [userActions, setSecondUserActions] = useState({
@@ -16,6 +17,7 @@ const UserActions = (props) => {
     address: props.selectedEmployee?.Address || "",
     jobTitle: props.selectedEmployee?.Id_Job || "",
     department: props.selectedEmployee?.Id_Department || "",
+    employeeType: props.selectedEmployee?.Id_Employee_type || "",
     employeeStatus: props.selectedEmployee?.Status || "",
     salary: props.selectedEmployee?.Salary || "",
     payFrequency: "",
@@ -42,6 +44,9 @@ const UserActions = (props) => {
     },
   };
 
+  const { departmentDetails, employeeTypesDetails, jobPositionsDetails } =
+    useUsersDetails();
+
   const handlePut = async (e) => {
     e.preventDefault();
     try {
@@ -49,14 +54,17 @@ const UserActions = (props) => {
         Id_Employee: props.selectedEmployee?.Id_Employee,
         UserData: userActions,
       });
-      console.log("Employee updated successfully:", response.data);
       if (response.status === 200) {
         props.onUpdate();
         toast.success("Employee updated successfully!", { duration: 2000 });
       }
     } catch (error) {
       if (axios.isAxiosError(error)) {
-        console.log("Axios error:", error.response?.data);
+        toast.error(
+          `Error updating employee: ${
+            error.response?.data?.message || error.message
+          }`
+        );
       }
     }
   };
@@ -233,19 +241,15 @@ const UserActions = (props) => {
                       jobTitle: e.target.value,
                     })
                   }
-                  defaultValue={
-                    props.selectedEmployee.Id_Job === 1
-                      ? "Developer"
-                      : props.selectedEmployee.Id_Job === 2
-                      ? "Designer"
-                      : "Manager"
-                  }
+                  defaultValue={props.selectedEmployee.Id_Job}
                   name=""
                   id=""
                 >
-                  <option value="Developer">Developer</option>
-                  <option value="Designer">Designer</option>
-                  <option value="Manager">Manager</option>
+                  {jobPositionsDetails.map((position) => (
+                    <option key={position.Id_Job} value={position.Id_Job}>
+                      {position.Description}
+                    </option>
+                  ))}
                 </select>
               </div>
               <div>
@@ -258,19 +262,38 @@ const UserActions = (props) => {
                       department: e.target.value,
                     })
                   }
-                  defaultValue={
-                    props.selectedEmployee.Id_Department === 1
-                      ? "Human Resources"
-                      : props.selectedEmployee.Id_Department === 2
-                      ? "Finance"
-                      : "IT"
-                  }
+                  defaultValue={props.selectedEmployee.Id_Department}
                   name=""
                   id=""
                 >
-                  <option value="Human Resources">Human Resources</option>
-                  <option value="Finance">Finance</option>
-                  <option value="IT">IT</option>
+                  {departmentDetails.map((dept) => (
+                    <option key={dept.Id_Department} value={dept.Id_Department}>
+                      {dept.Description}
+                    </option>
+                  ))}
+                </select>
+              </div>
+              <div>
+                <label htmlFor="employeeType">Employee Type</label>
+                <select
+                  onChange={(e) =>
+                    setSecondUserActions({
+                      ...userActions,
+                      employeeType: e.target.value,
+                    })
+                  }
+                  defaultValue={props.selectedEmployee.Id_Employee_type}
+                  name=""
+                  id=""
+                >
+                  {employeeTypesDetails.map((type) => (
+                    <option
+                      key={type.Id_Employee_type}
+                      value={type.Id_Employee_type}
+                    >
+                      {type.Description}
+                    </option>
+                  ))}
                 </select>
               </div>
               <div>

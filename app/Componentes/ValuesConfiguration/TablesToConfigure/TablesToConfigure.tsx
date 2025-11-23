@@ -3,6 +3,9 @@
 import "../TablesToConfigure/TablesToConfigure.scss";
 import { useState } from "react";
 import { motion } from "framer-motion";
+import { useUsersDetails } from "@/app/Context/UsersDetailsContext";
+import axios from "axios";
+import toast from "react-hot-toast";
 
 const TablesToConfigure = (props) => {
   const modalVariants = {
@@ -24,6 +27,56 @@ const TablesToConfigure = (props) => {
       },
     },
   };
+
+  const {
+    setDepartmentDetails,
+    setEmployeeTypesDetails,
+    setJobPositionsDetails,
+  } = useUsersDetails();
+
+  const [selectedOption, setSelectedOption] = useState({
+    department: "1",
+    Name: "",
+  });
+
+  const handleAddItem = async () => {
+    try {
+      const response = await axios.post(
+        "/api/ValuesConfiguration",
+        selectedOption
+      );
+
+      console.log(response);
+
+      if (response.status === 200) {
+        toast.success("Item added successfully");
+        props.cancelData(false);
+        const newDepartmentDetails = await axios.get(
+          "/api/UsersDetails/Departments"
+        );
+        const newEmployeeTypesDetails = await axios.get(
+          "/api/UsersDetails/EmployeeTypes"
+        );
+        const newJobPositionsDetails = await axios.get(
+          "/api/UsersDetails/JobPositions"
+        );
+        setDepartmentDetails(newDepartmentDetails.data);
+        setEmployeeTypesDetails(newEmployeeTypesDetails.data);
+        setJobPositionsDetails(newJobPositionsDetails.data);
+      }
+
+      if (response.status === 400) {
+        toast.error("Error adding item: " + response);
+        return;
+      }
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        toast.error("Error adding item: " + error.response?.data.message);
+        return;
+      }
+    }
+  };
+
   return (
     <motion.div
       variants={modalVariants}
@@ -37,18 +90,36 @@ const TablesToConfigure = (props) => {
           <div className="options">
             <h2>Add New Item</h2>
             <p>Create a new item in the selected category.</p>
-            <select name="edit" id="">
-              <option value="Department">Department</option>
-              <option value="Employee Type">Employee Type</option>
-              <option value="Job Positions">Job Positions</option>
+            <select
+              onChange={(e) =>
+                setSelectedOption({
+                  ...selectedOption,
+                  department: e.target.value,
+                })
+              }
+              name="edit"
+              id=""
+            >
+              <option value="1">Department</option>
+              <option value="2">Employee Type</option>
+              <option value="3">Job Positions</option>
             </select>
             <div className="input-name">
               {" "}
               <label htmlFor="Name">Name</label>
-              <input type="text" id="Name" name="Name" />
+              <input
+                onChange={(e) =>
+                  setSelectedOption({ ...selectedOption, Name: e.target.value })
+                }
+                type="text"
+                id="Name"
+                name="Name"
+              />
             </div>
 
-            <button className="add-new-item">Add Item</button>
+            <button onClick={handleAddItem} className="add-new-item">
+              Add Item
+            </button>
             <button onClick={() => props.cancelData(false)} className="cancel">
               Cancel
             </button>

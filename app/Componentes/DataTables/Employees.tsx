@@ -20,16 +20,16 @@ import {
   Switch,
 } from "@mui/material";
 
-import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { useState, useMemo, useEffect } from "react";
 import axios from "axios";
-import Email from "next-auth/providers/email";
+import { useUsersDetails } from "@/app/Context/UsersDetailsContext";
 interface Employee {
   id: number;
   name: string;
   jobTitle: string;
   status: number;
+  salary: number;
 }
 
 const EmployeesTable = (props) => {
@@ -56,37 +56,34 @@ const EmployeesTable = (props) => {
     Start_Date: "",
     Status: "",
   });
+  const { jobPositionsDetails, valorMoneda, valorUSDToMXN } = useUsersDetails();
 
   useEffect(() => {
     const EmployeesData = async function () {
       try {
         const response = await axios.get("/api/Employees/EmployeesAddition");
-        console.log("Selected employee IDs:", response.data);
-
         const empleados = response.data.map((employee) => ({
           id: employee.Id_Employee,
           name: employee.Name,
           jobTitle:
-            employee.Id_Job === 1
-              ? "Developer"
-              : employee.Id_Job === 2
-              ? "Designer"
-              : "Manager",
+            jobPositionsDetails.find((j) => j.Id_Job === employee.Id_Job)
+              ?.Description || "Sin puesto",
           status: Number(employee.Status),
+          salary: Number(String(employee.Salary).replace(/,/g, "")),
         }));
         setEmployees(empleados);
         setActualizarTabla(false);
         setPage(0);
       } catch (error) {
         if (axios.isAxiosError(error)) {
-          console.log("Axios error:", error.message);
+          toast.error("Error fetching employees data", { duration: 2000 });
+          return;
         }
       }
     };
     EmployeesData();
   }, [props.refreshTable]);
 
-  // ==================== TABLA ====================
   type Order = "asc" | "desc";
 
   function descendingComparator<T>(a: T, b: T, orderBy: keyof T) {
@@ -122,7 +119,10 @@ const EmployeesTable = (props) => {
       props.selectedEmployee(response.data);
       props.onActions(true);
     } catch (error) {
-      console.log("Error handling click:", error);
+      if (axios.isAxiosError(error)) {
+        toast.error("Error fetching employee details", { duration: 2000 });
+        return;
+      }
     }
 
     setSelected([employee.id]);
@@ -162,7 +162,6 @@ const EmployeesTable = (props) => {
         return;
       }
     }
-    console.log("Deleted user with id:", id);
   }
 
   const confirmDelete = (id: number) => {
@@ -213,6 +212,8 @@ const EmployeesTable = (props) => {
     );
   };
 
+  const valorMoedaLocalStorage = localStorage.getItem("valorMoneda");
+
   return (
     <div>
       <Box sx={{ width: "100%", mt: 3 }}>
@@ -257,6 +258,15 @@ const EmployeesTable = (props) => {
                     </TableSortLabel>
                   </TableCell>
                   <TableCell>Job Title</TableCell>
+                  <TableCell>
+                    <TableSortLabel
+                      active={orderBy === "name"}
+                      direction={orderBy === "name" ? order : "asc"}
+                      onClick={() => handleRequestSort("name")}
+                    >
+                      Salary
+                    </TableSortLabel>
+                  </TableCell>
                   <TableCell>Status</TableCell>
                   <TableCell align="center">Actions</TableCell>
                 </TableRow>
@@ -286,7 +296,20 @@ const EmployeesTable = (props) => {
                         />{" "}
                       </TableCell>
                       <TableCell>{row.name}</TableCell>
+
                       <TableCell>{row.jobTitle}</TableCell>
+                      <TableCell>
+                        {valorMoedaLocalStorage === "USD"
+                          ? new Intl.NumberFormat("en-US", {
+                              style: "currency",
+                              currency: "USD",
+                            }).format(row.salary)
+                          : new Intl.NumberFormat("es-MX", {
+                              style: "currency",
+                              currency: "MXN",
+                            }).format(row.salary * valorUSDToMXN)}
+                      </TableCell>
+
                       <TableCell>
                         <span
                           style={{

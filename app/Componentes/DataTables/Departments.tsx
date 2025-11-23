@@ -17,7 +17,7 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import toast from "react-hot-toast";
 
 const DepartmentsTable = (props) => {
-  const [departments, setDepartments] = useState(props.departmentDetails);
+  const [departments, setDepartments] = useState(props.departmentDetails || []);
   const [selectedId, setSelectedId] = useState<number | null>(null);
 
   const confirmDelete = ({ id, description }) => {
@@ -91,26 +91,27 @@ const DepartmentsTable = (props) => {
               </TableRow>
             </TableHead>
             <TableBody>
-              {departments.map((dep: any) => (
-                <TableRow key={dep.Id_Department}>
-                  <TableCell>{dep.Description}</TableCell>
-                  <TableCell align="center">
-                    <Tooltip title="Delete">
-                      <IconButton
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          confirmDelete({
-                            id: dep.Id_Department,
-                            description: "Departments",
-                          });
-                        }}
-                      >
-                        <DeleteIcon color="error" />
-                      </IconButton>
-                    </Tooltip>
-                  </TableCell>
-                </TableRow>
-              ))}
+              {Array.isArray(props.departmentDetails) &&
+                props.departmentDetails.map((dep: any) => (
+                  <TableRow key={dep.Id_Department}>
+                    <TableCell>{dep.Description}</TableCell>
+                    <TableCell align="center">
+                      <Tooltip title="Delete">
+                        <IconButton
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            confirmDelete({
+                              id: dep.Id_Department,
+                              description: "Departments",
+                            });
+                          }}
+                        >
+                          <DeleteIcon color="error" />
+                        </IconButton>
+                      </Tooltip>
+                    </TableCell>
+                  </TableRow>
+                ))}
             </TableBody>
           </Table>
         </TableContainer>

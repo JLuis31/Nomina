@@ -90,26 +90,27 @@ const JobsTable = (props) => {
               </TableRow>
             </TableHead>
             <TableBody>
-              {jobs.map((job: any) => (
-                <TableRow key={job.Id_Job}>
-                  <TableCell>{job.Description}</TableCell>
-                  <TableCell align="center">
-                    <Tooltip title="Delete">
-                      <IconButton
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          confirmDelete({
-                            id: job.Id_Job,
-                            description: "Jobs",
-                          });
-                        }}
-                      >
-                        <DeleteIcon color="error" />
-                      </IconButton>
-                    </Tooltip>
-                  </TableCell>
-                </TableRow>
-              ))}
+              {Array.isArray(props.jobPositionsDetails) &&
+                props.jobPositionsDetails.map((job: any) => (
+                  <TableRow key={job.Id_Job}>
+                    <TableCell>{job.Description}</TableCell>
+                    <TableCell align="center">
+                      <Tooltip title="Delete">
+                        <IconButton
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            confirmDelete({
+                              id: job.Id_Job,
+                              description: "Jobs",
+                            });
+                          }}
+                        >
+                          <DeleteIcon color="error" />
+                        </IconButton>
+                      </Tooltip>
+                    </TableCell>
+                  </TableRow>
+                ))}
             </TableBody>
           </Table>
         </TableContainer>

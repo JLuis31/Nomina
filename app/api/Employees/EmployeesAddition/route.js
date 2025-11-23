@@ -4,20 +4,6 @@ export async function POST(req) {
   const data = await req.json();
   const formatedData = {
     ...data,
-    jobTitle:
-      data.jobTitle === "Developer" ? 1 : data.jobTitle === "Designer" ? 2 : 3,
-    department:
-      data.department === "Human Resources"
-        ? 1
-        : data.department === "Finance"
-        ? 2
-        : 3,
-    employeeType:
-      data.employeeType === "Full-Time"
-        ? 1
-        : data.employeeType === "Part-Time"
-        ? 2
-        : 3,
     salary: new Intl.NumberFormat("es-MX", {
       style: "currency",
       currency: "MXN",
@@ -60,9 +46,9 @@ export async function POST(req) {
       Email: formatedData.email,
       Phone_Number: formatedData.phone,
       Address: formatedData.address,
-      Id_Job: formatedData.jobTitle,
-      Id_Department: formatedData.department,
-      Id_Employee_type: formatedData.employeeType,
+      Id_Job: Number(formatedData.jobTitle),
+      Id_Department: Number(formatedData.department),
+      Id_Employee_type: Number(formatedData.employeeType),
       Start_Date: new Date(formatedData.startDate),
       Salary: formatedData.salary,
       Status: formatedData.status,

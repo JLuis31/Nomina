@@ -21,16 +21,13 @@ import nominaImage from "../../../public/Assets/nomina-de-sueldos.png";
 const NavDesktop = () => {
   const router = useRouter();
   const [showMenu, setShowMenu] = useState(false);
-  const [localStorageName, setLocalStorageName] = useState(
-    localStorage.getItem("userName")
-  );
-  const [localStorageDepartment, setLocalStorageDepartment] = useState(
-    localStorage.getItem("userDepartment")
-  );
+  const [localStorageName, setLocalStorageName] = useState("");
+  const [localStorageDepartment, setLocalStorageDepartment] = useState("");
+
   const session = useSession();
 
   useEffect(() => {
-    if (session.data?.user) {
+    if (typeof window !== "undefined" && session.data?.user) {
       localStorage.setItem("userName", session.data.user.name);
       localStorage.setItem("userDepartment", session.data.user.department);
       setLocalStorageName(session.data.user.name);

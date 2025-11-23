@@ -26,28 +26,9 @@ export async function PUT(req) {
       Email: UserData.email,
       Phone_Number: UserData.phone,
       Address: UserData.address,
-      Id_Job:
-        UserData.jobTitle === "Developer"
-          ? 1
-          : UserData.jobTitle === "Designer"
-          ? 2
-          : UserData.jobTitle === "Manager"
-          ? 3
-          : UserData.jobTitle,
-      Id_Department:
-        UserData.department === "Human Resources"
-          ? 1
-          : UserData.department === "Finance"
-          ? 2
-          : UserData.department === "IT"
-          ? 3
-          : UserData.department,
-      Id_Employee_type:
-        UserData.employeeType === "Full-Time"
-          ? 1
-          : UserData.employeeType === "Part-Time"
-          ? 2
-          : 3,
+      Id_Job: Number(UserData.jobTitle),
+      Id_Department: Number(UserData.department),
+      Id_Employee_type: Number(UserData.employeeType),
       Salary: UserData.salary.replace(/[^0-9.,]/g, ""),
       Status:
         UserData.employeeStatus === "Active"

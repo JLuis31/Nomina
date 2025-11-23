@@ -192,3 +192,10 @@
   transition: background-color 0.3s ease;
   transform: scale(1.05);
 }
+
+.reloj-y-titulo {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 1rem;
+}

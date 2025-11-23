@@ -90,26 +90,27 @@ const EmployeeTypeTable = (props) => {
               </TableRow>
             </TableHead>
             <TableBody>
-              {employeeType.map((dep: any) => (
-                <TableRow key={dep.Id_Employee_type}>
-                  <TableCell>{dep.Description}</TableCell>
-                  <TableCell align="center">
-                    <Tooltip title="Delete">
-                      <IconButton
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          confirmDelete({
-                            id: dep.Id_Employee_type,
-                            description: "Employee Types",
-                          });
-                        }}
-                      >
-                        <DeleteIcon color="error" />
-                      </IconButton>
-                    </Tooltip>
-                  </TableCell>
-                </TableRow>
-              ))}
+              {Array.isArray(props.employeeTypesDetails) &&
+                props.employeeTypesDetails.map((dep: any) => (
+                  <TableRow key={dep.Id_Employee_type}>
+                    <TableCell>{dep.Description}</TableCell>
+                    <TableCell align="center">
+                      <Tooltip title="Delete">
+                        <IconButton
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            confirmDelete({
+                              id: dep.Id_Employee_type,
+                              description: "Employee Types",
+                            });
+                          }}
+                        >
+                          <DeleteIcon color="error" />
+                        </IconButton>
+                      </Tooltip>
+                    </TableCell>
+                  </TableRow>
+                ))}
             </TableBody>
           </Table>
         </TableContainer>

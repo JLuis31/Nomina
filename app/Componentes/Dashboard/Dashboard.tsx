@@ -32,6 +32,7 @@ import { useSession } from "next-auth/react";
 import axios from "axios";
 import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
+import Clock from "../Clock/Clock";
 
 const Dashboard = () => {
   const session = useSession();
@@ -73,7 +74,11 @@ const Dashboard = () => {
       <NavDesktop />
 
       <div className="dashboard-container">
-        <h1>Dashboard</h1>
+        <div className="reloj-y-titulo">
+          {" "}
+          <h1>Dashboard</h1> -
+          <Clock />
+        </div>
 
         <section className="stats">
           <div className="div1">

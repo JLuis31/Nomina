@@ -20,6 +20,10 @@ export async function DELETE(request) {
     await prisma.Jobs.delete({
       where: { Id_Job: Number(idUser) },
     });
+  } else if (description === "PayFrequency") {
+    await prisma.Pay_Frequency.delete({
+      where: { Id_PayFrequency: Number(idUser) },
+    });
   } else {
     return new Response("Invalid type", { status: 400 });
   }

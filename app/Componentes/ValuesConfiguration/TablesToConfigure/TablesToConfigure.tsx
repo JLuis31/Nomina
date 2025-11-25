@@ -32,6 +32,7 @@ const TablesToConfigure = (props) => {
     setDepartmentDetails,
     setEmployeeTypesDetails,
     setJobPositionsDetails,
+    setPayFrequencyDetails,
   } = useUsersDetails();
 
   const [selectedOption, setSelectedOption] = useState({
@@ -60,9 +61,13 @@ const TablesToConfigure = (props) => {
         const newJobPositionsDetails = await axios.get(
           "/api/UsersDetails/JobPositions"
         );
+        const newPayFrequencyDetails = await axios.get(
+          "/api/UsersDetails/PayFrequency"
+        );
         setDepartmentDetails(newDepartmentDetails.data);
         setEmployeeTypesDetails(newEmployeeTypesDetails.data);
         setJobPositionsDetails(newJobPositionsDetails.data);
+        setPayFrequencyDetails(newPayFrequencyDetails.data);
       }
 
       if (response.status === 400) {
@@ -103,6 +108,7 @@ const TablesToConfigure = (props) => {
               <option value="1">Department</option>
               <option value="2">Employee Type</option>
               <option value="3">Job Positions</option>
+              <option value="4">Pay Frequency</option>
             </select>
             <div className="input-name">
               {" "}

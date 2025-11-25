@@ -52,6 +52,20 @@ export async function POST(request) {
         data: { Description: data.Name },
       });
       break;
+    case "4":
+      const existingPayFrequency = await prisma.Pay_Frequency.findFirst({
+        where: { Description: data.Name },
+      });
+      if (existingPayFrequency) {
+        return new Response(
+          JSON.stringify({ message: "Pay frequency already exists" }),
+          { status: 400 }
+        );
+      }
+      await prisma.Pay_Frequency.create({
+        data: { Description: data.Name },
+      });
+      break;
     default:
       return new Response(
         "Invalid department",

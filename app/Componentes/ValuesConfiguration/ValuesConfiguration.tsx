@@ -11,19 +11,21 @@ import { useState } from "react";
 import TablesToConfigure from "./TablesToConfigure/TablesToConfigure";
 import { AnimatePresence } from "framer-motion";
 import { useUsersDetails } from "@/app/Context/UsersDetailsContext";
+import PayFrquency from "../DataTables/PayFrquency";
 
 const ValuesConfiguration = () => {
-  const { departmentDetails, employeeTypesDetails, jobPositionsDetails } =
-    useUsersDetails();
-  const [showItemAddition, setShowItemAddition] = useState(false);
   const {
+    departmentDetails,
+    employeeTypesDetails,
+    jobPositionsDetails,
     setDepartmentDetails,
     setEmployeeTypesDetails,
     setJobPositionsDetails,
     setValorMoneda,
-    valorMoneda,
+    payFrequencyDetails,
+    setPayFrequencyDetails,
   } = useUsersDetails();
-
+  const [showItemAddition, setShowItemAddition] = useState(false);
   const handleDelete = async ({ id, description }) => {
     console.log("Delete item with id:", id, "and description:", description);
     try {
@@ -41,9 +43,13 @@ const ValuesConfiguration = () => {
         const newJobPositionsDetails = await axios.get(
           "/api/UsersDetails/JobPositions"
         );
+        const newPayFrequencyDetails = await axios.get(
+          "/api/UsersDetails/PayFrequency"
+        );
         setDepartmentDetails(newDepartmentDetails.data);
         setEmployeeTypesDetails(newEmployeeTypesDetails.data);
         setJobPositionsDetails(newJobPositionsDetails.data);
+        setPayFrequencyDetails(newPayFrequencyDetails.data);
 
         toast.success("Item deleted successfully");
       }
@@ -94,11 +100,14 @@ const ValuesConfiguration = () => {
           </button>
         </div>
         <div className="table-container">
+          <label className="currency-selector" htmlFor="SelectorDeDivisa">
+            Select Currency
+          </label>
           <select
             value={valorMoedaLocalStorage}
             onChange={(e) => configurarDivisa(e.target.value)}
             name="valorMoneda"
-            id=""
+            id="SelectorDeDivisa"
           >
             <option value="MXN">MXN</option>
             <option value="USD">USD</option>
@@ -113,6 +122,10 @@ const ValuesConfiguration = () => {
           />
           <JobsTable
             jobPositionsDetails={jobPositionsDetails}
+            handleDelete={handleDelete}
+          />
+          <PayFrquency
+            payFrequencyDetails={payFrequencyDetails}
             handleDelete={handleDelete}
           />
         </div>

@@ -9,7 +9,7 @@
   padding: 2rem;
   border-radius: 8px;
   z-index: 10;
-  background-color: rgb(243, 243, 243);
+  background-color: white;
   max-height: 90vh;
   overflow-y: auto;
   scrollbar-width: thin;
@@ -18,14 +18,12 @@
     width: 8px;
   }
   &::-webkit-scrollbar-thumb {
-    background-color: #ccc;
     border-radius: 4px;
   }
 
   h2 {
     margin-bottom: 1rem;
     color: black;
-    padding: 0.5rem;
     border-radius: 4px;
   }
   hr {
@@ -107,8 +105,11 @@
 
   .form1,
   .form2 {
-    background-color: white;
     padding: 1rem;
+  }
+
+  .form2 {
+    margin-top: 1rem;
   }
 }
 
@@ -121,4 +122,8 @@
   .additions-employee {
     width: 90%;
   }
+}
+
+input::placeholder {
+  text-transform: none;
 }

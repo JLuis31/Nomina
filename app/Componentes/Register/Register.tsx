@@ -7,6 +7,7 @@ import banco from "../../../public/Assets/edificio-del-banco.png";
 import Image from "next/image";
 import { toast } from "react-hot-toast";
 import { useRouter } from "next/navigation";
+import { useUsersDetails } from "@/app/Context/UsersDetailsContext";
 
 const RegisterForm = () => {
   const router = useRouter();
@@ -17,6 +18,8 @@ const RegisterForm = () => {
     password: "",
     confirmPassword: "",
   });
+
+  const { departmentDetails } = useUsersDetails();
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -109,9 +112,11 @@ const RegisterForm = () => {
           name=""
           id=""
         >
-          <option value="HR">Human Resources</option>
-          <option value="Finance">Finance</option>
-          <option value="IT">IT</option>
+          {departmentDetails.map((dept) => (
+            <option key={dept.Id_Department} value={dept.Id_Department}>
+              {dept.Description}
+            </option>
+          ))}
         </select>
 
         <label htmlFor="password">Password</label>

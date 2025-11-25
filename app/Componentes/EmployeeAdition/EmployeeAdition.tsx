@@ -20,11 +20,13 @@ const EmployeeAdition = ({
     email: "",
     phone: "",
     address: "",
+    curp: "",
+    rfc: "",
   });
   const [jobDetails, setJobDetails] = useState({
-    jobTitle: "Developer",
-    department: "Human Resources",
-    employeeType: "Full-time",
+    jobTitle: "1",
+    department: "1",
+    employeeType: "1",
     startDate: new Date().toISOString().slice(0, 10),
     salary: "",
     status: "Active",
@@ -68,6 +70,7 @@ const EmployeeAdition = ({
       return;
     }
     const combinedData = { ...personalInformation, ...jobDetails };
+    console.log("Combined Data to be sent:", combinedData);
 
     try {
       const response = await axios.post(
@@ -106,6 +109,7 @@ const EmployeeAdition = ({
 
   const { departmentDetails, employeeTypesDetails, jobPositionsDetails } =
     useUsersDetails();
+  console.log(employeeTypesDetails, jobPositionsDetails);
 
   return (
     <motion.div
@@ -136,7 +140,7 @@ const EmployeeAdition = ({
                   onChange={(e) =>
                     setPersonalInformation({
                       ...personalInformation,
-                      name: e.target.value,
+                      name: e.target.value.trim(),
                     })
                   }
                 />
@@ -153,7 +157,7 @@ const EmployeeAdition = ({
                   onChange={(e) =>
                     setPersonalInformation({
                       ...personalInformation,
-                      firstSurname: e.target.value,
+                      firstSurname: e.target.value.trim(),
                     })
                   }
                 />
@@ -169,7 +173,41 @@ const EmployeeAdition = ({
                   onChange={(e) =>
                     setPersonalInformation({
                       ...personalInformation,
-                      secondSurname: e.target.value,
+                      secondSurname: e.target.value.trim(),
+                    })
+                  }
+                />
+              </div>
+              <div>
+                <label htmlFor="curp">Curp</label>
+                <input
+                  type="text"
+                  placeholder="Enter curp"
+                  required
+                  minLength={18}
+                  maxLength={18}
+                  style={{ textTransform: "uppercase" }}
+                  onChange={(e) =>
+                    setPersonalInformation({
+                      ...personalInformation,
+                      curp: e.target.value.trim(),
+                    })
+                  }
+                />
+              </div>
+              <div>
+                <label htmlFor="rfc">RFC</label>
+                <input
+                  type="text"
+                  placeholder="Enter RFC"
+                  required
+                  style={{ textTransform: "uppercase" }}
+                  minLength={13}
+                  maxLength={13}
+                  onChange={(e) =>
+                    setPersonalInformation({
+                      ...personalInformation,
+                      rfc: e.target.value.trim(),
                     })
                   }
                 />
@@ -186,7 +224,7 @@ const EmployeeAdition = ({
                   onChange={(e) =>
                     setPersonalInformation({
                       ...personalInformation,
-                      email: e.target.value,
+                      email: e.target.value.trim(),
                     })
                   }
                 />
@@ -205,7 +243,7 @@ const EmployeeAdition = ({
                   onChange={(e) =>
                     setPersonalInformation({
                       ...personalInformation,
-                      phone: e.target.value,
+                      phone: e.target.value.trim(),
                     })
                   }
                 />
@@ -222,7 +260,7 @@ const EmployeeAdition = ({
                   onChange={(e) =>
                     setPersonalInformation({
                       ...personalInformation,
-                      address: e.target.value,
+                      address: e.target.value.trim(),
                     })
                   }
                 />
@@ -325,9 +363,12 @@ const EmployeeAdition = ({
                   type="money"
                   id="salary"
                   name="salary"
-                  value={jobDetails.salary}
+                  value={`${jobDetails.salary}`}
                   onChange={(e) =>
-                    setJobDetails({ ...jobDetails, salary: e.target.value })
+                    setJobDetails({
+                      ...jobDetails,
+                      salary: e.target.value.trim(),
+                    })
                   }
                   required
                 />

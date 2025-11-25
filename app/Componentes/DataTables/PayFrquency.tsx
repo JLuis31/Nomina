@@ -1,5 +1,4 @@
 "use client";
-import { useState, useEffect } from "react";
 import {
   Box,
   Table,
@@ -16,10 +15,13 @@ import {
 import DeleteIcon from "@mui/icons-material/Delete";
 import toast from "react-hot-toast";
 
-const JobsTable = (props) => {
-  const [jobs, setJobs] = useState(props.jobPositionsDetails);
-
+const PayFrquency = (props) => {
+  console.log(
+    "Pay Frequency Details in PayFrquency component:",
+    props.payFrequencyDetails
+  );
   const confirmDelete = ({ id, description }) => {
+    console.log("Confirm delete for id:", id, "and description:", description);
     toast(
       (t) => (
         <span
@@ -71,14 +73,14 @@ const JobsTable = (props) => {
     <Box sx={{ width: "100%", mt: 3 }}>
       <Paper sx={{ width: "100%", mb: 2 }}>
         <Typography sx={{ flex: "1 1 100%", p: 2 }} variant="h6">
-          Jobs
+          Pay Frequency Details
         </Typography>
         <TableContainer>
           <Table>
             <TableHead>
               <TableRow>
                 <TableCell style={{ color: "white" }} className="header">
-                  Job Description
+                  Pay Frequency
                 </TableCell>
                 <TableCell
                   style={{ color: "white" }}
@@ -90,25 +92,29 @@ const JobsTable = (props) => {
               </TableRow>
             </TableHead>
             <TableBody>
-              {Array.isArray(props.jobPositionsDetails) &&
-              props.jobPositionsDetails.length === 0 ? (
+              {Array.isArray(props.payFrequencyDetails) &&
+              props.payFrequencyDetails.length === 0 ? (
                 <TableRow>
                   <TableCell colSpan={2} align="center">
                     No hay datos por mostrar
                   </TableCell>
                 </TableRow>
               ) : (
-                props.jobPositionsDetails.map((job: any) => (
-                  <TableRow key={job.Id_Job}>
-                    <TableCell>{job.Description}</TableCell>
+                props.payFrequencyDetails.map((payFrequency: any) => (
+                  <TableRow key={payFrequency.Id_PayFrequency}>
+                    <TableCell>
+                      {!payFrequency.Description
+                        ? "No hay datos por mostrar"
+                        : payFrequency.Description}
+                    </TableCell>
                     <TableCell align="center">
                       <Tooltip title="Delete">
                         <IconButton
                           onClick={(e) => {
                             e.stopPropagation();
                             confirmDelete({
-                              id: job.Id_Job,
-                              description: "Jobs",
+                              id: payFrequency.Id_PayFrequency,
+                              description: "PayFrequency",
                             });
                           }}
                         >
@@ -127,4 +133,4 @@ const JobsTable = (props) => {
   );
 };
 
-export default JobsTable;
+export default PayFrquency;

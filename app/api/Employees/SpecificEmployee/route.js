@@ -15,7 +15,20 @@ export async function GET(req) {
 
 export async function PUT(req) {
   const { Id_Employee, UserData } = await req.json();
-  console.log("Received data for update:", Id_Employee, UserData);
+
+  const existingBancAccountNumber = await prisma.Employees.findFirst({
+    where: {
+      BankAccountNumber: UserData.bankAccountNumber,
+      NOT: { Id_Employee: Number(Id_Employee) },
+    },
+  });
+
+  if (existingBancAccountNumber) {
+    return new Response(
+      JSON.stringify({ message: "Bank account number already exists" }),
+      { status: 409 }
+    );
+  }
 
   await prisma.Employees.update({
     where: { Id_Employee: Number(Id_Employee) },
@@ -40,6 +53,8 @@ export async function PUT(req) {
           : UserData.employeeStatus === "In Process"
           ? "4"
           : UserData.employeeStatus,
+      Id_PayFrequency: Number(UserData.payFrequency),
+      BankAccountNumber: UserData.bankAccountNumber,
     },
   });
 

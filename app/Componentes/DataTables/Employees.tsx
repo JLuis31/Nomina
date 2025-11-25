@@ -55,13 +55,42 @@ const EmployeesTable = (props) => {
     Second_Surname: "",
     Start_Date: "",
     Status: "",
+    Id_PayFrequency: "",
+    BankAccountNumber: "",
   });
   const { jobPositionsDetails, valorMoneda, valorUSDToMXN } = useUsersDetails();
 
   useEffect(() => {
+    if (props.filtroActivo) {
+      const empleadosFiltrados = props.filtro.map((employee) => ({
+        id: employee.Id_Employee,
+        name: employee.Name,
+        jobTitle:
+          jobPositionsDetails.find((j) => j.Id_Job === employee.Id_Job)
+            ?.Description || "Sin puesto",
+        status: Number(employee.Status),
+        salary: Number(String(employee.Salary).replace(/[^0-9.]/g, "")),
+      }));
+      if (JSON.stringify(rows) !== JSON.stringify(empleadosFiltrados)) {
+        setEmployees(empleadosFiltrados);
+        setPage(0);
+      } else {
+        toast("Sin cambios en el filtro aplicado", {
+          duration: 2000,
+          style: { background: "#f0c544", color: "#222" },
+        });
+      }
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [props.filtroActivo, props.filtro, jobPositionsDetails]);
+
+  useEffect(() => {
+    if (jobPositionsDetails.length === 0) return;
+
     const EmployeesData = async function () {
       try {
         const response = await axios.get("/api/Employees/EmployeesAddition");
+
         const empleados = response.data.map((employee) => ({
           id: employee.Id_Employee,
           name: employee.Name,
@@ -69,7 +98,7 @@ const EmployeesTable = (props) => {
             jobPositionsDetails.find((j) => j.Id_Job === employee.Id_Job)
               ?.Description || "Sin puesto",
           status: Number(employee.Status),
-          salary: Number(String(employee.Salary).replace(/,/g, "")),
+          salary: Number(String(employee.Salary).replace(/[^0-9.]/g, "")),
         }));
         setEmployees(empleados);
         setActualizarTabla(false);
@@ -82,7 +111,7 @@ const EmployeesTable = (props) => {
       }
     };
     EmployeesData();
-  }, [props.refreshTable]);
+  }, [props.refreshTable, jobPositionsDetails]);
 
   type Order = "asc" | "desc";
 
@@ -115,6 +144,7 @@ const EmployeesTable = (props) => {
       const response = await axios.get(`/api/Employees/SpecificEmployee`, {
         params: { idEmployee: employee.id },
       });
+      console.log("Fetched employee details:", response.data);
       setFindEmployee({ ...response.data });
       props.selectedEmployee(response.data);
       props.onActions(true);
@@ -139,13 +169,12 @@ const EmployeesTable = (props) => {
     setPage(0);
   };
 
-  const visibleRows = useMemo(
-    () =>
-      [...rows]
-        .sort(getComparator(order, orderBy))
-        .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage),
-    [order, orderBy, page, rowsPerPage, rows]
-  );
+  const visibleRows = useMemo(() => {
+    console.log([...rows]);
+    return [...rows]
+      .sort(getComparator(order, orderBy))
+      .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage);
+  }, [order, orderBy, page, rowsPerPage, rows]);
 
   async function handleDelete(id: number) {
     try {
@@ -241,6 +270,9 @@ const EmployeesTable = (props) => {
                 Employees
               </Typography>
             )}
+            <button className="add-employee" onClick={props.onAddEmployee}>
+              Add Employee
+            </button>
           </Toolbar>
 
           <TableContainer>
@@ -273,12 +305,12 @@ const EmployeesTable = (props) => {
               </TableHead>
 
               <TableBody>
-                {visibleRows.map((row) => {
+                {visibleRows.map((row, idx) => {
                   const isSelected = selected.includes(row.id);
                   return (
                     <TableRow
                       hover
-                      key={row.id}
+                      key={row.id ?? idx}
                       onClick={() => {
                         handleClick(row);
                       }}

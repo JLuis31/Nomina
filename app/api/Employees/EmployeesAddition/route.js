@@ -20,6 +20,31 @@ export async function POST(req) {
     where: { Phone_Number: formatedData.phone },
   });
 
+  const existingCurp = await prisma.Employees.findFirst({
+    where: { Curp: formatedData.curp },
+  });
+
+  const existingRfc = await prisma.Employees.findFirst({
+    where: { RFC: formatedData.rfc },
+  });
+
+  if (existingRfc) {
+    return new Response(
+      JSON.stringify({
+        message: "Employee with given RFC already exists",
+      }),
+      { status: 409 }
+    );
+  }
+  if (existingCurp) {
+    return new Response(
+      JSON.stringify({
+        message: "Employee with given CURP already exists",
+      }),
+      { status: 409 }
+    );
+  }
+
   if (existingEmployeeEmail) {
     return new Response(
       JSON.stringify({
@@ -36,8 +61,7 @@ export async function POST(req) {
       { status: 409 }
     );
   }
-  console.log(data);
-  console.log(formatedData);
+
   await prisma.Employees.create({
     data: {
       Name: formatedData.name,
@@ -52,6 +76,10 @@ export async function POST(req) {
       Start_Date: new Date(formatedData.startDate),
       Salary: formatedData.salary,
       Status: formatedData.status,
+      Curp: formatedData.curp,
+      RFC: formatedData.rfc,
+      BankAccountNumber: "",
+      Id_PayFrequency: 0,
     },
   });
 
@@ -61,7 +89,7 @@ export async function POST(req) {
   );
 }
 
-export async function GET(req) {
+export async function GET() {
   const response = await prisma.Employees.findMany();
   if (response.length === 0) {
     return new Response(JSON.stringify({ message: "No employees found" }), {

@@ -38,6 +38,10 @@ model Employees {
   Start_Date   DateTime
   Salary   String
   Status   String
+  Curp      String
+  RFC       String
+  Id_PayFrequency Int
+  BankAccountNumber String
 }
 
 
@@ -53,5 +57,10 @@ model Jobs {
 
 model Employee_Type {
   Id_Employee_type   Int    @id @default(autoincrement())
+  Description      String
+}
+
+model Pay_Frequency {
+  Id_PayFrequency   Int    @id @default(autoincrement())
   Description      String
 }

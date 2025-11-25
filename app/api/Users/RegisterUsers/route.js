@@ -15,20 +15,13 @@ export async function POST(req) {
     );
   }
   const encryptedPassword = await bcrypt.hash(body.Password, 10);
-  const selectedDepartment =
-    body.Department === "Human Resources"
-      ? "1"
-      : body.Department === "Finance"
-      ? "2"
-      : body.Department === "IT"
-      ? "3"
-      : null;
+
   console.log("Selected Department ID:", body);
   const newUser = await prisma.Users.create({
     data: {
       Name: body.Name,
       Email: body.Email,
-      Id_Department: selectedDepartment,
+      Id_Department: body.Department,
       Password: encryptedPassword,
     },
   });

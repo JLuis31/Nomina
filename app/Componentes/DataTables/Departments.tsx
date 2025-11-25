@@ -92,6 +92,13 @@ const DepartmentsTable = (props) => {
             </TableHead>
             <TableBody>
               {Array.isArray(props.departmentDetails) &&
+              props.departmentDetails.length === 0 ? (
+                <TableRow>
+                  <TableCell colSpan={2} align="center">
+                    No hay datos por mostrar
+                  </TableCell>
+                </TableRow>
+              ) : (
                 props.departmentDetails.map((dep: any) => (
                   <TableRow key={dep.Id_Department}>
                     <TableCell>{dep.Description}</TableCell>
@@ -111,7 +118,8 @@ const DepartmentsTable = (props) => {
                       </Tooltip>
                     </TableCell>
                   </TableRow>
-                ))}
+                ))
+              )}
             </TableBody>
           </Table>
         </TableContainer>

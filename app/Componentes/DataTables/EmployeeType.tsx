@@ -91,6 +91,13 @@ const EmployeeTypeTable = (props) => {
             </TableHead>
             <TableBody>
               {Array.isArray(props.employeeTypesDetails) &&
+              props.employeeTypesDetails.length === 0 ? (
+                <TableRow>
+                  <TableCell colSpan={2} align="center">
+                    No hay datos por mostrar
+                  </TableCell>
+                </TableRow>
+              ) : (
                 props.employeeTypesDetails.map((dep: any) => (
                   <TableRow key={dep.Id_Employee_type}>
                     <TableCell>{dep.Description}</TableCell>
@@ -110,7 +117,8 @@ const EmployeeTypeTable = (props) => {
                       </Tooltip>
                     </TableCell>
                   </TableRow>
-                ))}
+                ))
+              )}
             </TableBody>
           </Table>
         </TableContainer>

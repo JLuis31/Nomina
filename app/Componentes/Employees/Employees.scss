@@ -8,6 +8,11 @@
     flex-direction: row;
     justify-content: space-between;
 
+    .btns {
+      display: flex;
+      gap: 1rem;
+    }
+
     button {
       padding: 0.5rem;
       border-radius: 0.25rem;
@@ -16,6 +21,24 @@
       color: white;
       cursor: pointer;
       transition: background-color 0.3s ease;
+    }
+
+    .exportarExcel {
+      background-color: #28a745;
+    }
+    .exportarExcel:hover {
+      background-color: #1e7e34;
+    }
+
+    .exportarPDF {
+      background-color: #db1436;
+    }
+    .exportarPDF:hover {
+      background-color: #a31027;
+    }
+    .btnPDF {
+      text-decoration: none;
+      color: white;
     }
 
     button:hover {
@@ -37,4 +60,61 @@
   background: rgba(0, 0, 0, 0.6);
   backdrop-filter: blur(4px);
   z-index: 999;
+}
+
+.filtros {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0.5rem;
+  margin-top: 1rem;
+  align-items: center;
+
+  div {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  label {
+    font-size: 0.8rem;
+    font-weight: 500;
+    opacity: 0.8;
+  }
+
+  select {
+    padding: 0.5rem;
+    border-radius: 0.25rem;
+    border: 1px solid #ccc;
+    background-color: white;
+    cursor: pointer;
+  }
+
+  button {
+    padding: 0.5rem;
+    border-radius: 0.25rem;
+    border: none;
+    background-color: #007bff;
+    color: white;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    font-size: 0.8rem;
+    align-items: center;
+  }
+  button:hover {
+    background-color: #0056b3;
+  }
+}
+
+.add-employee {
+  padding: 0.5rem 1rem;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.add-employee:hover {
+  background-color: #0056b3;
 }

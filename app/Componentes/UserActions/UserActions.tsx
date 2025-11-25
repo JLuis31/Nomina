@@ -7,6 +7,7 @@ import toast from "react-hot-toast";
 import { useUsersDetails } from "@/app/Context/UsersDetailsContext";
 
 const UserActions = (props) => {
+  console.log(props.selectedEmployee);
   const [userActions, setSecondUserActions] = useState({
     employeeID: props.selectedEmployee?.Id_Employee || "",
     name: props.selectedEmployee?.Name || "",
@@ -20,8 +21,11 @@ const UserActions = (props) => {
     employeeType: props.selectedEmployee?.Id_Employee_type || "",
     employeeStatus: props.selectedEmployee?.Status || "",
     salary: props.selectedEmployee?.Salary || "",
-    payFrequency: "",
-    bankAccountNumber: "",
+    payFrequency:
+      props.selectedEmployee?.Id_PayFrequency === 0
+        ? 1
+        : props.selectedEmployee?.Id_PayFrequency || "",
+    bankAccountNumber: props.selectedEmployee?.BankAccountNumber || "",
   });
 
   const modalVariants = {
@@ -44,8 +48,12 @@ const UserActions = (props) => {
     },
   };
 
-  const { departmentDetails, employeeTypesDetails, jobPositionsDetails } =
-    useUsersDetails();
+  const {
+    departmentDetails,
+    employeeTypesDetails,
+    jobPositionsDetails,
+    payFrequencyDetails,
+  } = useUsersDetails();
 
   const handlePut = async (e) => {
     e.preventDefault();
@@ -85,6 +93,7 @@ const UserActions = (props) => {
           <label htmlFor="position"> Position: Software Engineer</label>
           <label htmlFor="department">Department: IT</label>
         </div>
+        <hr style={{ opacity: 0.3 }} />
         <div className="UserActions-edit">
           <form>
             <h3>Employee Profile</h3>
@@ -123,7 +132,7 @@ const UserActions = (props) => {
                   onChange={(e) =>
                     setSecondUserActions({
                       ...userActions,
-                      name: e.target.value,
+                      name: e.target.value.trim(),
                     })
                   }
                 />
@@ -140,7 +149,7 @@ const UserActions = (props) => {
                   onChange={(e) =>
                     setSecondUserActions({
                       ...userActions,
-                      firstSurname: e.target.value,
+                      firstSurname: e.target.value.trim(),
                     })
                   }
                 />
@@ -153,11 +162,11 @@ const UserActions = (props) => {
                   id="second-surname"
                   name="second-surname"
                   placeholder="Enter your second surname"
-                  defaultValue={props.selectedEmployee.Second_SurName}
+                  defaultValue={props.selectedEmployee.Second_Surname}
                   onChange={(e) =>
                     setSecondUserActions({
                       ...userActions,
-                      secondSurname: e.target.value,
+                      secondSurname: e.target.value.trim(),
                     })
                   }
                 />
@@ -175,7 +184,7 @@ const UserActions = (props) => {
                   onChange={(e) =>
                     setSecondUserActions({
                       ...userActions,
-                      email: e.target.value,
+                      email: e.target.value.trim(),
                     })
                   }
                 />
@@ -192,7 +201,7 @@ const UserActions = (props) => {
                   onChange={(e) =>
                     setSecondUserActions({
                       ...userActions,
-                      phone: e.target.value,
+                      phone: e.target.value.trim(),
                     })
                   }
                 />
@@ -210,7 +219,7 @@ const UserActions = (props) => {
                   onChange={(e) =>
                     setSecondUserActions({
                       ...userActions,
-                      address: e.target.value,
+                      address: e.target.value.trim(),
                     })
                   }
                 />
@@ -341,7 +350,7 @@ const UserActions = (props) => {
                   type="money"
                   id="salary"
                   name="salary"
-                  defaultValue={props.selectedEmployee.Salary}
+                  defaultValue={`$${props.selectedEmployee.Salary}`}
                 />
               </div>
               <div>
@@ -356,10 +365,16 @@ const UserActions = (props) => {
                   }
                   name=""
                   id=""
+                  defaultValue={props.selectedEmployee.Id_PayFrequency}
                 >
-                  <option value="weekly">Weekly</option>
-                  <option value="bi-weekly">Bi-Weekly</option>
-                  <option value="monthly">Monthly</option>
+                  {payFrequencyDetails.map((payFreq) => (
+                    <option
+                      key={payFreq.Id_PayFrequency}
+                      value={payFreq.Id_PayFrequency}
+                    >
+                      {payFreq.Description}
+                    </option>
+                  ))}
                 </select>
               </div>
               <div>
@@ -369,7 +384,7 @@ const UserActions = (props) => {
                   onChange={(e) =>
                     setSecondUserActions({
                       ...userActions,
-                      bankAccountNumber: e.target.value,
+                      bankAccountNumber: e.target.value.trim(),
                     })
                   }
                   type="text"

@@ -11,6 +11,7 @@ export const UsersDetailsProvider = ({
   const [departmentDetails, setDepartmentDetails] = useState([]);
   const [employeeTypesDetails, setEmployeeTypesDetails] = useState([]);
   const [jobPositionsDetails, setJobPositionsDetails] = useState([]);
+  const [payFrequencyDetails, setPayFrequencyDetails] = useState([]);
   const [valorMoneda, setValorMoneda] = useState();
   const [valorUSDToMXN, setValorUSDToMXN] = useState(0);
 
@@ -21,11 +22,21 @@ export const UsersDetailsProvider = ({
       console.log("Valor actual del USD a MXN:", valorUSDToMXN);
       setValorUSDToMXN(valorUSDToMXN);
     };
+    const paymentFrquency = async () => {
+      try {
+        const response = await axios.get("/api/UsersDetails/PayFrequency");
+        const data = response.data;
+        console.log("Fetched Pay Frequency Details:", data);
+        setPayFrequencyDetails(data);
+      } catch (error) {
+        console.error("Error fetching Pay Frequency Details:", error);
+      }
+    };
 
     const departmentsDetails = async () => {
       try {
-        const response = await fetch("/api/UsersDetails/Departments");
-        const data = await response.json();
+        const response = await axios.get("/api/UsersDetails/Departments");
+        const data = response.data;
         setDepartmentDetails(data);
       } catch (error) {
         console.error("Error fetching Departments Details:", error);
@@ -34,8 +45,8 @@ export const UsersDetailsProvider = ({
 
     const employeeTypesDetails = async () => {
       try {
-        const response = await fetch("/api/UsersDetails/EmployeeTypes");
-        const data = await response.json();
+        const response = await axios.get("/api/UsersDetails/EmployeeTypes");
+        const data = response.data;
         setEmployeeTypesDetails(data);
       } catch (error) {
         console.error("Error fetching Employee Types Details:", error);
@@ -44,8 +55,8 @@ export const UsersDetailsProvider = ({
 
     const jobPositionsDetails = async () => {
       try {
-        const response = await fetch("/api/UsersDetails/JobPositions");
-        const data = await response.json();
+        const response = await axios.get("/api/UsersDetails/JobPositions");
+        const data = response.data;
         setJobPositionsDetails(data);
       } catch (error) {
         console.error("Error fetching Job Positions Details:", error);
@@ -55,6 +66,7 @@ export const UsersDetailsProvider = ({
     employeeTypesDetails();
     jobPositionsDetails();
     valorDelDolar();
+    paymentFrquency();
   }, []);
   return (
     <UsersDetailsContext.Provider
@@ -68,6 +80,8 @@ export const UsersDetailsProvider = ({
         valorMoneda,
         setValorMoneda,
         valorUSDToMXN,
+        payFrequencyDetails,
+        setPayFrequencyDetails,
       }}
     >
       {children}

@@ -7,7 +7,6 @@ import toast from "react-hot-toast";
 import { useUsersDetails } from "@/app/Context/UsersDetailsContext";
 
 const UserActions = (props) => {
-  console.log(props.selectedEmployee);
   const [userActions, setSecondUserActions] = useState({
     employeeID: props.selectedEmployee?.Id_Employee || "",
     name: props.selectedEmployee?.Name || "",
@@ -55,7 +54,17 @@ const UserActions = (props) => {
     payFrequencyDetails,
   } = useUsersDetails();
 
-  const handlePut = async (e) => {
+  const getDepartmentDescription = (id: number) => {
+    const department = departmentDetails.find((d) => d.Id_Department === id);
+    return department ? department.Description : "Unknown";
+  };
+
+  const getJobPositionDescription = (id: number) => {
+    const jobPosition = jobPositionsDetails.find((j) => j.Id_Job === id);
+    return jobPosition ? jobPosition.Description : "Unknown";
+  };
+
+  const handlePut = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
       const response = await axios.put("/api/Employees/SpecificEmployee", {
@@ -90,8 +99,14 @@ const UserActions = (props) => {
             {props.selectedEmployee?.Name} (Id:{" "}
             {props.selectedEmployee?.Id_Employee})
           </h4>
-          <label htmlFor="position"> Position: Software Engineer</label>
-          <label htmlFor="department">Department: IT</label>
+          <label htmlFor="position">
+            {" "}
+            Position: {getJobPositionDescription(props.selectedEmployee.Id_Job)}
+          </label>
+          <label htmlFor="department">
+            Department:{" "}
+            {getDepartmentDescription(props.selectedEmployee.Id_Department)}
+          </label>
         </div>
         <hr style={{ opacity: 0.3 }} />
         <div className="UserActions-edit">
@@ -315,13 +330,13 @@ const UserActions = (props) => {
                     })
                   }
                   defaultValue={
-                    props.selectedEmployee.Id_Status === "1"
+                    props.selectedEmployee.Status === "1"
                       ? "Active"
-                      : props.selectedEmployee.Id_Status === "2"
+                      : props.selectedEmployee.Status === "2"
                       ? "Inactive"
-                      : props.selectedEmployee.Id_Status === "3"
-                      ? "On-leave"
-                      : "In-Process"
+                      : props.selectedEmployee.Status === "3"
+                      ? "On Leave"
+                      : "In Process"
                   }
                   name=""
                   id=""
@@ -350,7 +365,7 @@ const UserActions = (props) => {
                   type="money"
                   id="salary"
                   name="salary"
-                  defaultValue={`$${props.selectedEmployee.Salary}`}
+                  defaultValue={`${props.selectedEmployee.Salary}`}
                 />
               </div>
               <div>

@@ -105,7 +105,15 @@ const EmployeesTable = (props) => {
         setPage(0);
       } catch (error) {
         if (axios.isAxiosError(error)) {
-          toast.error("Error fetching employees data", { duration: 2000 });
+          if (error.response?.status === 404) {
+            setEmployees([]);
+            setPage(0);
+            if (!props.justAddedEmployee) {
+              toast("No employees found", { duration: 2000 });
+            }
+          } else {
+            toast.error("Error fetching employees data", { duration: 2000 });
+          }
           return;
         }
       }
@@ -144,7 +152,6 @@ const EmployeesTable = (props) => {
       const response = await axios.get(`/api/Employees/SpecificEmployee`, {
         params: { idEmployee: employee.id },
       });
-      console.log("Fetched employee details:", response.data);
       setFindEmployee({ ...response.data });
       props.selectedEmployee(response.data);
       props.onActions(true);
@@ -170,7 +177,6 @@ const EmployeesTable = (props) => {
   };
 
   const visibleRows = useMemo(() => {
-    console.log([...rows]);
     return [...rows]
       .sort(getComparator(order, orderBy))
       .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage);

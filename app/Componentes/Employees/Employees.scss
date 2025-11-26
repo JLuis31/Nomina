@@ -23,15 +23,9 @@
       transition: background-color 0.3s ease;
     }
 
-    .exportarExcel {
-      background-color: #28a745;
-    }
-    .exportarExcel:hover {
-      background-color: #1e7e34;
-    }
-
     .exportarPDF {
       background-color: #db1436;
+      white-space: nowrap;
     }
     .exportarPDF:hover {
       background-color: #a31027;

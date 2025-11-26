@@ -19,14 +19,12 @@ export const UsersDetailsProvider = ({
     const valorDelDolar = async () => {
       const response = await axios.get("https://open.er-api.com/v6/latest/USD");
       const valorUSDToMXN = response.data.rates.MXN;
-      console.log("Valor actual del USD a MXN:", valorUSDToMXN);
       setValorUSDToMXN(valorUSDToMXN);
     };
     const paymentFrquency = async () => {
       try {
         const response = await axios.get("/api/UsersDetails/PayFrequency");
         const data = response.data;
-        console.log("Fetched Pay Frequency Details:", data);
         setPayFrequencyDetails(data);
       } catch (error) {
         console.error("Error fetching Pay Frequency Details:", error);

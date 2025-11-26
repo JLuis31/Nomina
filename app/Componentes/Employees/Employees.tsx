@@ -24,8 +24,13 @@ const Employees = () => {
   });
   const [filtroActivo, setFiltroActivo] = useState(false);
   const [informacionFiltrada, setInformacionFiltrada] = useState([]);
-  const { departmentDetails, employeeTypesDetails, jobPositionsDetails } =
-    useUsersDetails();
+  const {
+    departmentDetails,
+    employeeTypesDetails,
+    jobPositionsDetails,
+    valorUSDToMXN,
+  } = useUsersDetails();
+  const valorMonedaLocalStorage = localStorage.getItem("valorMoneda");
 
   const handleNewEmployee = () => {
     setShowEmployeeAddition(true);
@@ -45,7 +50,6 @@ const Employees = () => {
 
   const handleSelectedEmployee = (dato: any) => {
     setSelectedEmployee(dato);
-    console.log(selectedEmployee);
   };
 
   const handleUpdateEmployee = () => {
@@ -111,7 +115,23 @@ const Employees = () => {
       empleados.forEach((emp) => {
         doc.text(emp.Name || emp.name || "", 10, y);
         doc.text(emp.Email || "", 50, y);
-        doc.text(String(emp.Salary || emp.salary || ""), 155, y);
+        doc.text(
+          String(
+            valorMonedaLocalStorage === "USD"
+              ? new Intl.NumberFormat("en-US", {
+                  style: "currency",
+                  currency: "USD",
+                }).format(emp.Salary)
+              : valorMonedaLocalStorage === "MXN"
+              ? new Intl.NumberFormat("es-MX", {
+                  style: "currency",
+                  currency: "MXN",
+                }).format(emp.Salary * valorUSDToMXN)
+              : null
+          ),
+          155,
+          y
+        );
         let statusText = "";
         if (emp.Status === "1" || emp.status === "1") statusText = "Active";
         else if (emp.Status === "2" || emp.status === "2")
@@ -142,7 +162,6 @@ const Employees = () => {
             <button className="exportarPDF" onClick={handleExportarPDF}>
               Export PDF
             </button>
-            <button className="exportarExcel">Export Excel</button>
           </div>
         </div>
 

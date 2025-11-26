@@ -27,7 +27,6 @@ const ValuesConfiguration = () => {
   } = useUsersDetails();
   const [showItemAddition, setShowItemAddition] = useState(false);
   const handleDelete = async ({ id, description }) => {
-    console.log("Delete item with id:", id, "and description:", description);
     try {
       const response = await axios.delete("/api/UsersDetails", {
         params: { idUser: id, description: description },

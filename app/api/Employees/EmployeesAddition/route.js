@@ -4,10 +4,7 @@ export async function POST(req) {
   const data = await req.json();
   const formatedData = {
     ...data,
-    salary: new Intl.NumberFormat("es-MX", {
-      style: "currency",
-      currency: "MXN",
-    }).format(Number(data.salary)),
+    salary: data.salary,
     status:
       data.status === "Active" ? "1" : data.status === "InProcess" ? "4" : null,
   };

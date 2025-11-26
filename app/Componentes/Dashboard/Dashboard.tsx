@@ -33,10 +33,18 @@ import axios from "axios";
 import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import Clock from "../Clock/Clock";
+import { useUsersDetails } from "@/app/Context/UsersDetailsContext";
 
 const Dashboard = () => {
+  const [dashboardData, setDashboardData] = useState({
+    totalPaid: 0,
+    totalEmployees: 0,
+  });
+  const [totalNeto, setTotalNeto] = useState(0);
+  const [residuoNeto, setResiduoNeto] = useState(0);
   const session = useSession();
   const router = useRouter();
+  const { valorUSDToMXN } = useUsersDetails();
 
   const data = {
     labels: ["January", "February", "March", "April", "May"],
@@ -64,10 +72,49 @@ const Dashboard = () => {
 
   useEffect(() => {
     if (session.status === "unauthenticated") {
-      toast.error("You must be logged in to access the dashboard.");
+      toast.dismiss();
+      toast.error("No active session found. Please log in.", {
+        duration: 1000,
+      });
+
       router.push("/Login");
     }
   }, [session.status, router]);
+
+  useEffect(() => {
+    const dashboardInfo = async () => {
+      try {
+        const response = await axios.get("/api/DashBoardInformation");
+        const totalCost = response.data.totalCost;
+        const totalEmployees = response.data.totalEmployees;
+
+        const suma = totalCost
+          .map((item) => Number(String(item.Salary).replace(/,/g, "")))
+          .filter((n) => !isNaN(n))
+          .reduce((acc, n) => acc + n, 0);
+        let resultanteNeto: number;
+        let residuoNeto: number;
+
+        resultanteNeto = suma - suma * 0.16;
+        residuoNeto = suma * 0.16;
+
+        setDashboardData({ totalPaid: suma, totalEmployees: totalEmployees });
+        setTotalNeto(resultanteNeto);
+        setResiduoNeto(residuoNeto);
+      } catch (error) {
+        if (axios.isAxiosError(error)) {
+          toast.error(
+            `Error fetching dashboard data: ${
+              error.response?.data.message || error.message
+            }`
+          );
+        }
+      }
+    };
+    dashboardInfo();
+  }, []);
+
+  const valorMoedaLocalStorage = localStorage.getItem("valorMoneda");
 
   return (
     <div className="global-dash-container">
@@ -83,19 +130,55 @@ const Dashboard = () => {
         <section className="stats">
           <div className="div1">
             Total Payroll Cost
-            <p>$120,000</p>
+            <p>
+              {valorMoedaLocalStorage === "USD"
+                ? new Intl.NumberFormat("en-US", {
+                    style: "currency",
+                    currency: "USD",
+                  }).format(dashboardData.totalPaid)
+                : valorMoedaLocalStorage === "MXN"
+                ? new Intl.NumberFormat("es-MX", {
+                    style: "currency",
+                    currency: "MXN",
+                  }).format(dashboardData.totalPaid * valorUSDToMXN)
+                : null}
+            </p>
           </div>
           <div className="div2">
             Net Payroll Cost
-            <p>$100,000</p>
+            <p>
+              {valorMoedaLocalStorage === "USD"
+                ? new Intl.NumberFormat("en-US", {
+                    style: "currency",
+                    currency: "USD",
+                  }).format(totalNeto)
+                : valorMoedaLocalStorage === "MXN"
+                ? new Intl.NumberFormat("es-MX", {
+                    style: "currency",
+                    currency: "MXN",
+                  }).format(totalNeto * valorUSDToMXN)
+                : null}
+            </p>
           </div>
           <div className="div3">
             Taxes
-            <p>$20,000</p>
+            <p>
+              {valorMoedaLocalStorage === "USD"
+                ? new Intl.NumberFormat("en-US", {
+                    style: "currency",
+                    currency: "USD",
+                  }).format(residuoNeto)
+                : valorMoedaLocalStorage === "MXN"
+                ? new Intl.NumberFormat("es-MX", {
+                    style: "currency",
+                    currency: "MXN",
+                  }).format(residuoNeto * valorUSDToMXN)
+                : null}
+            </p>
           </div>
           <div className="div4">
-            Employees Paid
-            <p>50</p>
+            Total Employees
+            <p>{dashboardData.totalEmployees}</p>
           </div>
         </section>
 

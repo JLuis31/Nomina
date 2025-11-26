@@ -47,8 +47,6 @@ const TablesToConfigure = (props) => {
         selectedOption
       );
 
-      console.log(response);
-
       if (response.status === 200) {
         toast.success("Item added successfully");
         props.cancelData(false);

@@ -15,14 +15,14 @@ import { useState, useEffect } from "react";
 import { signOut } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
-import Image from "next/image";
-import nominaImage from "../../../public/Assets/nomina-de-sueldos.png";
+import { useUsersDetails } from "@/app/Context/UsersDetailsContext";
 
 const NavDesktop = () => {
   const router = useRouter();
   const [showMenu, setShowMenu] = useState(false);
   const [localStorageName, setLocalStorageName] = useState("");
   const [localStorageDepartment, setLocalStorageDepartment] = useState("");
+  const { departmentDetails } = useUsersDetails();
 
   const session = useSession();
 
@@ -74,13 +74,11 @@ const NavDesktop = () => {
           {" "}
           <label htmlFor="nombreUsuario">
             {localStorageName} -{" "}
-            {String(localStorageDepartment) === "1"
-              ? "Human Resources"
-              : String(localStorageDepartment) === "2"
-              ? "Finance"
-              : String(localStorageDepartment) === "3"
-              ? "IT"
-              : "Otro"}
+            {departmentDetails.map((dep) => {
+              if (String(dep.Id_Department) === localStorageDepartment) {
+                return dep.Description;
+              }
+            })}
           </label>{" "}
           <button onClick={handleLogOut} className="logout">
             Logout

@@ -70,7 +70,6 @@ const EmployeeAdition = ({
       return;
     }
     const combinedData = { ...personalInformation, ...jobDetails };
-    console.log("Combined Data to be sent:", combinedData);
 
     try {
       const response = await axios.post(
@@ -109,7 +108,6 @@ const EmployeeAdition = ({
 
   const { departmentDetails, employeeTypesDetails, jobPositionsDetails } =
     useUsersDetails();
-  console.log(employeeTypesDetails, jobPositionsDetails);
 
   return (
     <motion.div

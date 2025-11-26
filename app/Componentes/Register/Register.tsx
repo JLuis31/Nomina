@@ -23,7 +23,6 @@ const RegisterForm = () => {
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    console.log(data);
     if (data.password !== data.confirmPassword) {
       toast.error("Passwords do not match", { duration: 2000 });
       return;

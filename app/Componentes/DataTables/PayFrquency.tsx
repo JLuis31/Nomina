@@ -16,12 +16,7 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import toast from "react-hot-toast";
 
 const PayFrquency = (props) => {
-  console.log(
-    "Pay Frequency Details in PayFrquency component:",
-    props.payFrequencyDetails
-  );
   const confirmDelete = ({ id, description }) => {
-    console.log("Confirm delete for id:", id, "and description:", description);
     toast(
       (t) => (
         <span

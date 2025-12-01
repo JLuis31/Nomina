@@ -29,7 +29,7 @@ const EmployeeTypeTable = (props) => {
             alignItems: "center",
           }}
         >
-          ¿Seguro que quieres borrar el usuario?
+          ¿Seguro que quieres borrar el tipo de empleado?
           <button
             style={{
               marginLeft: 8,

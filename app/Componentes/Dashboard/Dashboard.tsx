@@ -123,7 +123,7 @@ const Dashboard = () => {
       <div className="dashboard-container">
         <div className="reloj-y-titulo">
           {" "}
-          <h1>Dashboard</h1> -
+          <h2>Dashboard</h2> -
           <Clock />
         </div>
 

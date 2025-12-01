@@ -67,6 +67,8 @@ export async function POST(req) {
       Email: formatedData.email,
       Phone_Number: formatedData.phone,
       Address: formatedData.address,
+      Id_State: Number(formatedData.State),
+      Id_City: Number(formatedData.City),
       Id_Job: Number(formatedData.jobTitle),
       Id_Department: Number(formatedData.department),
       Id_Employee_type: Number(formatedData.employeeType),

@@ -9,6 +9,8 @@ import {
   faFileLines,
   faGear,
   faSliders,
+  faMoneyBill,
+  faEye,
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useState, useEffect } from "react";
@@ -16,6 +18,7 @@ import { signOut } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
 import { useUsersDetails } from "@/app/Context/UsersDetailsContext";
+import { icon } from "@fortawesome/fontawesome-svg-core";
 
 const NavDesktop = () => {
   const router = useRouter();
@@ -23,6 +26,7 @@ const NavDesktop = () => {
   const [localStorageName, setLocalStorageName] = useState("");
   const [localStorageDepartment, setLocalStorageDepartment] = useState("");
   const { departmentDetails } = useUsersDetails();
+  const [showDeduccionesSubmenu, setShowDeduccionesSubmenu] = useState(false);
 
   const session = useSession();
 
@@ -38,7 +42,18 @@ const NavDesktop = () => {
   const menuOptions = [
     { label: "Home", href: "/Dashboard", icon: faHouse },
     { label: "Employees", href: "/Employees", icon: faUserGroup },
-    { label: "Reports", href: "/Reports", icon: faFileLines },
+    {
+      label: "Deducciones",
+      icon: faFileLines,
+      subOptions: [
+        {
+          label: "Movements Entry",
+          href: "/MovementsEntry",
+          icon: faMoneyBill,
+        },
+        { label: "View Deductions", href: "/ViewDeductions", icon: faEye },
+      ],
+    },
     { label: "Settings", href: "/Settings", icon: faGear },
     {
       label: "Values Configuration",
@@ -88,7 +103,6 @@ const NavDesktop = () => {
 
       <ul className={`menu-horizontal${showMenu ? "" : " menu-hidden"}`}>
         <div className="menu-separacion">
-          {" "}
           <FontAwesomeIcon
             icon={faBars}
             className="menu-icon"
@@ -96,17 +110,47 @@ const NavDesktop = () => {
           />
           <b>Nomina - DOCHUB</b>
         </div>
-        {menuOptions.map((option) => (
-          <li key={option.label}>
-            <Link href={option.href} onClick={() => setShowMenu(false)}>
-              <FontAwesomeIcon
-                icon={option.icon}
-                style={{ marginRight: "10px", width: "15px" }}
-              />
-              {option.label}
-            </Link>
-          </li>
-        ))}
+        {menuOptions.map((option) =>
+          option.label === "Deducciones" ? (
+            <li key={option.label}>
+              <span
+                style={{ cursor: "pointer" }}
+                onClick={() => setShowDeduccionesSubmenu((prev) => !prev)}
+              >
+                <FontAwesomeIcon
+                  icon={option.icon}
+                  style={{ marginRight: "10px", width: "15px" }}
+                />
+                {option.label}
+              </span>
+              {showDeduccionesSubmenu && (
+                <ul className="submenu">
+                  {option.subOptions.map((sub) => (
+                    <li className="subOptions" key={sub.label}>
+                      <Link href={sub.href} onClick={() => setShowMenu(false)}>
+                        <FontAwesomeIcon
+                          icon={sub.icon}
+                          style={{ marginRight: "10px", width: "15px" }}
+                        />{" "}
+                        {sub.label}
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </li>
+          ) : (
+            <li key={option.label}>
+              <Link href={option.href} onClick={() => setShowMenu(false)}>
+                <FontAwesomeIcon
+                  icon={option.icon}
+                  style={{ marginRight: "10px", width: "15px" }}
+                />
+                {option.label}
+              </Link>
+            </li>
+          )
+        )}
       </ul>
     </div>
   );

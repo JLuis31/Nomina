@@ -24,6 +24,18 @@ export async function DELETE(request) {
     await prisma.Pay_Frequency.delete({
       where: { Id_PayFrequency: Number(idUser) },
     });
+  } else if (description === "Deductions") {
+    await prisma.Deducciones.delete({
+      where: { Id_Concept: Number(idUser) },
+    });
+  } else if (description === "Cities") {
+    await prisma.City.delete({
+      where: { Id_City: Number(idUser) },
+    });
+  } else if (description === "States") {
+    await prisma.State.delete({
+      where: { Id_State: Number(idUser) },
+    });
   } else {
     return new Response("Invalid type", { status: 400 });
   }

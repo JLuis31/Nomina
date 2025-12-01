@@ -1,10 +1,11 @@
 "use client";
 import "../EmployeeAdition/EmployeeAdition.scss";
 import { motion } from "framer-motion";
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { toast } from "react-hot-toast";
 import axios from "axios";
 import { useUsersDetails } from "@/app/Context/UsersDetailsContext";
+import { Autocomplete, LoadScript } from "@react-google-maps/api";
 
 const EmployeeAdition = ({
   cancelData,
@@ -13,6 +14,8 @@ const EmployeeAdition = ({
   cancelData: (dato: boolean) => void;
   actualizarTabla: (dato: boolean) => void;
 }) => {
+  const autocompleteRef = useRef<any>(null);
+
   const [personalInformation, setPersonalInformation] = useState({
     name: "",
     firstSurname: "",
@@ -22,6 +25,8 @@ const EmployeeAdition = ({
     address: "",
     curp: "",
     rfc: "",
+    State: "1",
+    City: "1",
   });
   const [jobDetails, setJobDetails] = useState({
     jobTitle: "1",
@@ -106,8 +111,13 @@ const EmployeeAdition = ({
     }
   };
 
-  const { departmentDetails, employeeTypesDetails, jobPositionsDetails } =
-    useUsersDetails();
+  const {
+    departmentDetails,
+    employeeTypesDetails,
+    jobPositionsDetails,
+    statesDetails,
+    cityDetails,
+  } = useUsersDetails();
 
   return (
     <motion.div
@@ -247,21 +257,72 @@ const EmployeeAdition = ({
                 />
               </div>
               <div>
-                <label htmlFor="address">Address</label>
-                <input
-                  required
-                  placeholder="Enter address"
-                  type="text"
-                  id="address"
-                  name="address"
-                  value={personalInformation.address}
+                <label htmlFor="state">State</label>
+                <select
+                  value={personalInformation.State}
                   onChange={(e) =>
                     setPersonalInformation({
                       ...personalInformation,
-                      address: e.target.value.trim(),
+                      State: e.target.value,
                     })
                   }
-                />
+                  name=""
+                  id=""
+                >
+                  {statesDetails.map((state) => (
+                    <option key={state.Id_State} value={state.Id_State}>
+                      {state.State}
+                    </option>
+                  ))}
+                </select>
+              </div>
+              <div>
+                <label htmlFor="city">City</label>
+                <select
+                  value={personalInformation.City}
+                  onChange={(e) =>
+                    setPersonalInformation({
+                      ...personalInformation,
+                      City: e.target.value,
+                    })
+                  }
+                  name=""
+                  id=""
+                >
+                  {cityDetails.map((city) => (
+                    <option key={city.Id_City} value={city.Id_City}>
+                      {city.City}
+                    </option>
+                  ))}
+                </select>
+              </div>
+              <div>
+                <label htmlFor="address">Address</label>
+                <Autocomplete
+                  onLoad={(ref) => (autocompleteRef.current = ref)}
+                  onPlaceChanged={() => {
+                    const place = autocompleteRef.current.getPlace();
+                    setPersonalInformation({
+                      ...personalInformation,
+                      address: place.formatted_address,
+                    });
+                  }}
+                >
+                  <input
+                    required
+                    placeholder="Enter address"
+                    type="text"
+                    id="address"
+                    name="address"
+                    value={personalInformation.address}
+                    onChange={(e) =>
+                      setPersonalInformation({
+                        ...personalInformation,
+                        address: e.target.value,
+                      })
+                    }
+                  />
+                </Autocomplete>
               </div>
             </div>
           </form>
@@ -355,7 +416,7 @@ const EmployeeAdition = ({
               </div>
               <div>
                 {" "}
-                <label htmlFor="salary">Salary</label>
+                <label htmlFor="salary">Salary per hour</label>
                 <input
                   placeholder="$0.00"
                   type="money"

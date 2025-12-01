@@ -17,9 +17,6 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import toast from "react-hot-toast";
 
 const DepartmentsTable = (props) => {
-  const [departments, setDepartments] = useState(props.departmentDetails || []);
-  const [selectedId, setSelectedId] = useState<number | null>(null);
-
   const confirmDelete = ({ id, description }) => {
     toast(
       (t) => (
@@ -30,7 +27,7 @@ const DepartmentsTable = (props) => {
             alignItems: "center",
           }}
         >
-          ¿Seguro que quieres borrar el usuario?
+          ¿Seguro que quieres borrar el departamento?
           <button
             style={{
               marginLeft: 8,

@@ -12,9 +12,13 @@ const UserActions = (props) => {
     name: props.selectedEmployee?.Name || "",
     firstSurname: props.selectedEmployee?.First_SurName || "",
     secondSurname: props.selectedEmployee?.Second_SurName || "",
+    curp: props.selectedEmployee?.Curp || "",
+    rfc: props.selectedEmployee?.RFC || "",
     email: props.selectedEmployee?.Email || "",
     phone: props.selectedEmployee?.Phone_Number || "",
     address: props.selectedEmployee?.Address || "",
+    State: props.selectedEmployee?.Id_State || "",
+    City: props.selectedEmployee?.Id_City || "",
     jobTitle: props.selectedEmployee?.Id_Job || "",
     department: props.selectedEmployee?.Id_Department || "",
     employeeType: props.selectedEmployee?.Id_Employee_type || "",
@@ -52,6 +56,9 @@ const UserActions = (props) => {
     employeeTypesDetails,
     jobPositionsDetails,
     payFrequencyDetails,
+    reloadEmpleadosDetails,
+    statesDetails,
+    cityDetails,
   } = useUsersDetails();
 
   const getDepartmentDescription = (id: number) => {
@@ -74,6 +81,7 @@ const UserActions = (props) => {
       if (response.status === 200) {
         props.onUpdate();
         toast.success("Employee updated successfully!", { duration: 2000 });
+        reloadEmpleadosDetails();
       }
     } catch (error) {
       if (axios.isAxiosError(error)) {
@@ -187,6 +195,46 @@ const UserActions = (props) => {
                 />
               </div>
               <div>
+                <label htmlFor="curp">Curp</label>
+                <input
+                  type="text"
+                  id="curp"
+                  name="curp"
+                  placeholder="Enter curp"
+                  required
+                  minLength={18}
+                  maxLength={18}
+                  style={{ textTransform: "uppercase" }}
+                  defaultValue={props.selectedEmployee.Curp}
+                  onChange={(e) =>
+                    setSecondUserActions({
+                      ...userActions,
+                      curp: e.target.value.trim(),
+                    })
+                  }
+                />
+              </div>
+              <div>
+                <label htmlFor="rfc">RFC</label>
+                <input
+                  type="text"
+                  id="rfc"
+                  name="rfc"
+                  placeholder="Enter your RFC"
+                  required
+                  style={{ textTransform: "uppercase" }}
+                  minLength={13}
+                  maxLength={13}
+                  defaultValue={props.selectedEmployee.RFC}
+                  onChange={(e) =>
+                    setSecondUserActions({
+                      ...userActions,
+                      rfc: e.target.value.trim(),
+                    })
+                  }
+                />
+              </div>
+              <div>
                 {" "}
                 <label htmlFor="email">Email</label>
                 <input
@@ -238,6 +286,46 @@ const UserActions = (props) => {
                     })
                   }
                 />
+              </div>
+              <div>
+                <label htmlFor="State">State</label>
+                <select
+                  onChange={(e) =>
+                    setSecondUserActions({
+                      ...userActions,
+                      State: e.target.value,
+                    })
+                  }
+                  defaultValue={props.selectedEmployee.Id_State}
+                  name=""
+                  id=""
+                >
+                  {statesDetails.map((state) => (
+                    <option key={state.Id_State} value={state.Id_State}>
+                      {state.State}
+                    </option>
+                  ))}
+                </select>
+              </div>
+              <div>
+                <label htmlFor="City">City</label>
+                <select
+                  onChange={(e) =>
+                    setSecondUserActions({
+                      ...userActions,
+                      City: e.target.value,
+                    })
+                  }
+                  defaultValue={props.selectedEmployee.Id_City}
+                  name=""
+                  id=""
+                >
+                  {cityDetails.map((city) => (
+                    <option key={city.Id_City} value={city.Id_City}>
+                      {city.City}
+                    </option>
+                  ))}
+                </select>
               </div>
             </div>
             <hr className="hr-job-information" />
@@ -354,7 +442,7 @@ const UserActions = (props) => {
             <div className="UserActions-personalInformation">
               {" "}
               <div>
-                <label htmlFor="salary">Salary</label>
+                <label htmlFor="salary">Salary per hour</label>
                 <input
                   onChange={(e) =>
                     setSecondUserActions({

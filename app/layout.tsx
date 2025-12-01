@@ -4,6 +4,7 @@ import "./globals.scss";
 import { Toaster } from "react-hot-toast";
 import SessionWraper from "../../nomina/app/SessionWrapper";
 import { UsersDetailsProvider } from "./Context/UsersDetailsContext";
+import GoogleMapsProvider from "./GoogleMapsProvider";
 const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],
@@ -30,9 +31,11 @@ export default function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
         <Toaster position="top-right" reverseOrder={false} />
-        <SessionWraper>
-          <UsersDetailsProvider>{children}</UsersDetailsProvider>
-        </SessionWraper>{" "}
+        <GoogleMapsProvider>
+          <SessionWraper>
+            <UsersDetailsProvider>{children}</UsersDetailsProvider>
+          </SessionWraper>{" "}
+        </GoogleMapsProvider>
       </body>
     </html>
   );

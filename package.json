@@ -17,6 +17,7 @@
     "@mui/icons-material": "^7.3.5",
     "@mui/material": "^7.3.5",
     "@prisma/client": "^6.19.0",
+    "@react-google-maps/api": "^2.20.7",
     "axios": "^1.13.2",
     "bcrypt": "^6.0.0",
     "fa-icon": "^0.0.0",

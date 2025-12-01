@@ -12,6 +12,9 @@ import TablesToConfigure from "./TablesToConfigure/TablesToConfigure";
 import { AnimatePresence } from "framer-motion";
 import { useUsersDetails } from "@/app/Context/UsersDetailsContext";
 import PayFrquency from "../DataTables/PayFrquency";
+import DeduccionesTable from "../DataTables/Deducciones";
+import StatesTable from "../DataTables/State";
+import CityTable from "../DataTables/City";
 
 const ValuesConfiguration = () => {
   const {
@@ -24,6 +27,12 @@ const ValuesConfiguration = () => {
     setValorMoneda,
     payFrequencyDetails,
     setPayFrequencyDetails,
+    deduccionesDetails,
+    setDeduccionesDetails,
+    statesDetails,
+    setStatesDetails,
+    cityDetails,
+    setCityDetails,
   } = useUsersDetails();
   const [showItemAddition, setShowItemAddition] = useState(false);
   const handleDelete = async ({ id, description }) => {
@@ -45,11 +54,18 @@ const ValuesConfiguration = () => {
         const newPayFrequencyDetails = await axios.get(
           "/api/UsersDetails/PayFrequency"
         );
+        const newDeduccionesDetails = await axios.get(
+          "/api/UsersDetails/Deducciones"
+        );
+        const newStatesDetails = await axios.get("/api/UsersDetails/States");
+        const newCityDetails = await axios.get("/api/UsersDetails/Cities");
         setDepartmentDetails(newDepartmentDetails.data);
         setEmployeeTypesDetails(newEmployeeTypesDetails.data);
         setJobPositionsDetails(newJobPositionsDetails.data);
         setPayFrequencyDetails(newPayFrequencyDetails.data);
-
+        setDeduccionesDetails(newDeduccionesDetails.data);
+        setStatesDetails(newStatesDetails.data);
+        setCityDetails(newCityDetails.data);
         toast.success("Item deleted successfully");
       }
     } catch (error) {
@@ -127,6 +143,15 @@ const ValuesConfiguration = () => {
             payFrequencyDetails={payFrequencyDetails}
             handleDelete={handleDelete}
           />
+          <DeduccionesTable
+            deduccionesDetails={deduccionesDetails}
+            handleDelete={handleDelete}
+          />
+          <StatesTable
+            statesDetails={statesDetails}
+            handleDelete={handleDelete}
+          />
+          <CityTable cityDetails={cityDetails} handleDelete={handleDelete} />
         </div>
       </div>
     </div>

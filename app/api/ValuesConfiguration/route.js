@@ -66,6 +66,49 @@ export async function POST(request) {
         data: { Description: data.Name },
       });
       break;
+    case "5":
+      const existingDeducciones = await prisma.Deducciones.findFirst({
+        where: { Description: data.Name },
+      });
+      if (existingDeducciones) {
+        return new Response(
+          JSON.stringify({ message: "Deductions already exists" }),
+          { status: 400 }
+        );
+      }
+      await prisma.Deducciones.create({
+        data: { Description: data.Name, Value: data.Value },
+      });
+      break;
+    case "6":
+      const existingStates = await prisma.State.findFirst({
+        where: { State: data.Name },
+      });
+      if (existingStates) {
+        return new Response(
+          JSON.stringify({ message: "State already exists" }),
+          { status: 400 }
+        );
+      }
+      await prisma.State.create({
+        data: { State: data.Name },
+      });
+      break;
+    case "7":
+      const existingCities = await prisma.City.findFirst({
+        where: { City: data.Name },
+      });
+      if (existingCities) {
+        return new Response(
+          JSON.stringify({ message: "City already exists" }),
+          { status: 400 }
+        );
+      }
+
+      await prisma.City.create({
+        data: { City: data.Name },
+      });
+      break;
     default:
       return new Response(
         "Invalid department",

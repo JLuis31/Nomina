@@ -29,7 +29,7 @@ const JobsTable = (props) => {
             alignItems: "center",
           }}
         >
-          ¿Seguro que quieres borrar el usuario?
+          ¿Seguro que quieres borrar el puesto?
           <button
             style={{
               marginLeft: 8,

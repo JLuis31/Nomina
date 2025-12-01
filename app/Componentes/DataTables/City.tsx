@@ -15,7 +15,7 @@ import {
 import DeleteIcon from "@mui/icons-material/Delete";
 import toast from "react-hot-toast";
 
-const PayFrquency = (props) => {
+const CitiesTable = (props) => {
   const confirmDelete = ({ id, description }) => {
     toast(
       (t) => (
@@ -26,7 +26,7 @@ const PayFrquency = (props) => {
             alignItems: "center",
           }}
         >
-          ¿Seguro que quieres borrar la frecuencia de pago?
+          ¿Seguro que quieres borrar la ciudad?
           <button
             style={{
               marginLeft: 8,
@@ -68,15 +68,16 @@ const PayFrquency = (props) => {
     <Box sx={{ width: "100%", mt: 3 }}>
       <Paper sx={{ width: "100%", mb: 2 }}>
         <Typography sx={{ flex: "1 1 100%", p: 2 }} variant="h6">
-          Pay Frequency Details
+          Cities
         </Typography>
         <TableContainer>
-          <Table>
+          <Table className="table">
             <TableHead>
               <TableRow>
                 <TableCell style={{ color: "white" }} className="header">
-                  Pay Frequency
+                  Cities Description
                 </TableCell>
+
                 <TableCell
                   style={{ color: "white" }}
                   className="header"
@@ -87,29 +88,26 @@ const PayFrquency = (props) => {
               </TableRow>
             </TableHead>
             <TableBody>
-              {Array.isArray(props.payFrequencyDetails) &&
-              props.payFrequencyDetails.length === 0 ? (
+              {Array.isArray(props.cityDetails) &&
+              props.cityDetails.length === 0 ? (
                 <TableRow>
                   <TableCell colSpan={2} align="center">
                     No hay datos por mostrar
                   </TableCell>
                 </TableRow>
               ) : (
-                props.payFrequencyDetails.map((payFrequency: any) => (
-                  <TableRow key={payFrequency.Id_PayFrequency}>
-                    <TableCell>
-                      {!payFrequency.Description
-                        ? "No hay datos por mostrar"
-                        : payFrequency.Description}
-                    </TableCell>
+                props.cityDetails.map((dep: any) => (
+                  <TableRow key={dep.Id_City}>
+                    <TableCell>{dep.City}</TableCell>
+
                     <TableCell align="center">
                       <Tooltip title="Delete">
                         <IconButton
                           onClick={(e) => {
                             e.stopPropagation();
                             confirmDelete({
-                              id: payFrequency.Id_PayFrequency,
-                              description: "PayFrequency",
+                              id: dep.Id_City,
+                              description: "Cities",
                             });
                           }}
                         >
@@ -128,4 +126,4 @@ const PayFrquency = (props) => {
   );
 };
 
-export default PayFrquency;
+export default CitiesTable;

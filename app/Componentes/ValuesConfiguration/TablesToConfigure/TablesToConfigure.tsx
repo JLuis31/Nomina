@@ -33,11 +33,15 @@ const TablesToConfigure = (props) => {
     setEmployeeTypesDetails,
     setJobPositionsDetails,
     setPayFrequencyDetails,
+    setDeduccionesDetails,
+    setStatesDetails,
+    setCityDetails,
   } = useUsersDetails();
 
   const [selectedOption, setSelectedOption] = useState({
     department: "1",
     Name: "",
+    Value: "",
   });
 
   const handleAddItem = async () => {
@@ -62,10 +66,19 @@ const TablesToConfigure = (props) => {
         const newPayFrequencyDetails = await axios.get(
           "/api/UsersDetails/PayFrequency"
         );
+        const newDeduccionesDetails = await axios.get(
+          "/api/UsersDetails/Deducciones"
+        );
+        const newStatesDetails = await axios.get("/api/UsersDetails/States");
+        const newCityDetails = await axios.get("/api/UsersDetails/Cities");
         setDepartmentDetails(newDepartmentDetails.data);
         setEmployeeTypesDetails(newEmployeeTypesDetails.data);
         setJobPositionsDetails(newJobPositionsDetails.data);
         setPayFrequencyDetails(newPayFrequencyDetails.data);
+        setDeduccionesDetails(newDeduccionesDetails.data);
+        setStatesDetails(newStatesDetails.data);
+        setCityDetails(newCityDetails.data);
+        return;
       }
 
       if (response.status === 400) {
@@ -107,13 +120,19 @@ const TablesToConfigure = (props) => {
               <option value="2">Employee Type</option>
               <option value="3">Job Positions</option>
               <option value="4">Pay Frequency</option>
+              <option value="5">Deductions</option>
+              <option value="6">States</option>
+              <option value="7">Cities</option>
             </select>
             <div className="input-name">
               {" "}
               <label htmlFor="Name">Name</label>
               <input
                 onChange={(e) =>
-                  setSelectedOption({ ...selectedOption, Name: e.target.value })
+                  setSelectedOption({
+                    ...selectedOption,
+                    Name: e.target.value.trim(),
+                  })
                 }
                 type="text"
                 id="Name"

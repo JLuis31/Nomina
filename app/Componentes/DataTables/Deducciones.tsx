@@ -1,4 +1,5 @@
 "use client";
+import { useState, useEffect } from "react";
 import {
   Box,
   Table,
@@ -14,8 +15,9 @@ import {
 } from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
 import toast from "react-hot-toast";
+import { useUsersDetails } from "@/app/Context/UsersDetailsContext";
 
-const PayFrquency = (props) => {
+const DeduccionesTable = (props) => {
   const confirmDelete = ({ id, description }) => {
     toast(
       (t) => (
@@ -26,7 +28,7 @@ const PayFrquency = (props) => {
             alignItems: "center",
           }}
         >
-          ¿Seguro que quieres borrar la frecuencia de pago?
+          ¿Seguro que quieres borrar el concepto?
           <button
             style={{
               marginLeft: 8,
@@ -68,15 +70,16 @@ const PayFrquency = (props) => {
     <Box sx={{ width: "100%", mt: 3 }}>
       <Paper sx={{ width: "100%", mb: 2 }}>
         <Typography sx={{ flex: "1 1 100%", p: 2 }} variant="h6">
-          Pay Frequency Details
+          Deductions
         </Typography>
         <TableContainer>
-          <Table>
+          <Table className="table">
             <TableHead>
               <TableRow>
                 <TableCell style={{ color: "white" }} className="header">
-                  Pay Frequency
+                  Deductions Description
                 </TableCell>
+
                 <TableCell
                   style={{ color: "white" }}
                   className="header"
@@ -87,29 +90,26 @@ const PayFrquency = (props) => {
               </TableRow>
             </TableHead>
             <TableBody>
-              {Array.isArray(props.payFrequencyDetails) &&
-              props.payFrequencyDetails.length === 0 ? (
+              {Array.isArray(props.deduccionesDetails) &&
+              props.deduccionesDetails.length === 0 ? (
                 <TableRow>
                   <TableCell colSpan={2} align="center">
                     No hay datos por mostrar
                   </TableCell>
                 </TableRow>
               ) : (
-                props.payFrequencyDetails.map((payFrequency: any) => (
-                  <TableRow key={payFrequency.Id_PayFrequency}>
-                    <TableCell>
-                      {!payFrequency.Description
-                        ? "No hay datos por mostrar"
-                        : payFrequency.Description}
-                    </TableCell>
+                props.deduccionesDetails.map((dep: any) => (
+                  <TableRow key={dep.Id_Concept}>
+                    <TableCell>{dep.Description}</TableCell>
+
                     <TableCell align="center">
                       <Tooltip title="Delete">
                         <IconButton
                           onClick={(e) => {
                             e.stopPropagation();
                             confirmDelete({
-                              id: payFrequency.Id_PayFrequency,
-                              description: "PayFrequency",
+                              id: dep.Id_Concept,
+                              description: "Deductions",
                             });
                           }}
                         >
@@ -128,4 +128,4 @@ const PayFrquency = (props) => {
   );
 };
 
-export default PayFrquency;
+export default DeduccionesTable;

@@ -14,11 +14,10 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useState, useEffect } from "react";
-import { signOut } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
 import { useUsersDetails } from "@/app/Context/UsersDetailsContext";
-import { icon } from "@fortawesome/fontawesome-svg-core";
+import { faUser } from "@fortawesome/free-solid-svg-icons";
 
 const NavDesktop = () => {
   const router = useRouter();
@@ -62,13 +61,6 @@ const NavDesktop = () => {
     },
   ];
 
-  const handleLogOut = async () => {
-    await signOut({ redirect: false });
-    router.push("/Login");
-    localStorage.removeItem("userName");
-    localStorage.removeItem("userDepartment");
-  };
-
   return (
     <div className="contenedor">
       <nav className="nav-bar">
@@ -95,9 +87,7 @@ const NavDesktop = () => {
               }
             })}
           </label>{" "}
-          <button onClick={handleLogOut} className="logout">
-            Logout
-          </button>
+          <FontAwesomeIcon icon={faUser} style={{ marginLeft: "10px" }} />
         </div>
       </nav>
 
@@ -108,18 +98,18 @@ const NavDesktop = () => {
             className="menu-icon"
             onClick={() => setShowMenu(!showMenu)}
           />
-          <b>Nomina - DOCHUB</b>
+          Nomina - DOCHUB
         </div>
         {menuOptions.map((option) =>
           option.label === "Deducciones" ? (
-            <li key={option.label}>
+            <li className="menuOptions" key={option.label}>
               <span
-                style={{ cursor: "pointer" }}
+                style={{ cursor: "pointer", color: "white" }}
                 onClick={() => setShowDeduccionesSubmenu((prev) => !prev)}
               >
                 <FontAwesomeIcon
                   icon={option.icon}
-                  style={{ marginRight: "10px", width: "15px" }}
+                  style={{ marginRight: "10px", width: "15px", color: "white" }}
                 />
                 {option.label}
               </span>

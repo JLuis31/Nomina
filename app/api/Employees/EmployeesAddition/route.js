@@ -6,7 +6,11 @@ export async function POST(req) {
     ...data,
     salary: data.salary,
     status:
-      data.status === "Active" ? "1" : data.status === "InProcess" ? "4" : null,
+      data.status === "Active"
+        ? "1"
+        : data.status === "In Process"
+        ? "4"
+        : null,
   };
 
   const existingEmployeeEmail = await prisma.Employees.findFirst({

@@ -68,11 +68,28 @@
 }
 
 .personal-information-container {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
   gap: 1rem;
   margin-top: 1rem;
   margin-bottom: 2rem;
+
+  .fullname-container {
+    display: flex;
+    flex-direction: row;
+    gap: 1rem;
+  }
+  .fullname-container > div {
+    flex: 1;
+  }
+
+  .extraInformation {
+    display: flex;
+    flex-direction: row;
+    gap: 1rem;
+    margin-top: 1rem;
+  }
+  .extraInformation > div {
+    flex: 1;
+  }
 
   div {
     display: flex;
@@ -96,34 +113,34 @@
       opacity: 0.7;
     }
   }
-}
 
-.form-container {
-  display: flex;
-  flex-direction: column;
-  padding: 1rem;
-
-  .form1,
-  .form2 {
+  .form-container {
+    display: flex;
+    flex-direction: column;
     padding: 1rem;
+
+    .form1,
+    .form2 {
+      padding: 1rem;
+    }
+
+    .form2 {
+      margin-top: 1rem;
+    }
   }
 
-  .form2 {
-    margin-top: 1rem;
-  }
-}
+  @media (max-width: 600.99px) {
+    .personal-information-container {
+      display: grid;
+      grid-template-columns: repeat(1, 1fr);
+    }
 
-@media (max-width: 600.99px) {
-  .personal-information-container {
-    display: grid;
-    grid-template-columns: repeat(1, 1fr);
+    .additions-employee {
+      width: 90%;
+    }
   }
 
-  .additions-employee {
-    width: 90%;
+  input::placeholder {
+    text-transform: none;
   }
-}
-
-input::placeholder {
-  text-transform: none;
 }

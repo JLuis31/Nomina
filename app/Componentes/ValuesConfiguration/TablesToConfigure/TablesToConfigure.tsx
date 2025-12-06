@@ -131,7 +131,7 @@ const TablesToConfigure = (props) => {
                 onChange={(e) =>
                   setSelectedOption({
                     ...selectedOption,
-                    Name: e.target.value.trim(),
+                    Name: e.target.value.trim().toUpperCase(),
                   })
                 }
                 type="text"

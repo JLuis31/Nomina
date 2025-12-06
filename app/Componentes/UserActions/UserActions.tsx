@@ -143,189 +143,177 @@ const UserActions = (props) => {
             <h4 className="texto-informacionPersonal">Personal Information</h4>
             <div className="UserActions-personalInformation">
               {" "}
-              <div>
-                <label htmlFor="name">Name</label>
-                <input
-                  type="text"
-                  id="name"
-                  name="name"
-                  placeholder="Enter your name"
-                  required
-                  defaultValue={props.selectedEmployee.Name}
-                  onChange={(e) =>
-                    setSecondUserActions({
-                      ...userActions,
-                      name: e.target.value.trim(),
-                    })
-                  }
-                />
+              <div className="extraInformation">
+                <div>
+                  <label htmlFor="name">Name</label>
+                  <input
+                    type="text"
+                    id="name"
+                    name="name"
+                    placeholder="Enter your name"
+                    required
+                    defaultValue={props.selectedEmployee.Name}
+                    onChange={(e) =>
+                      setSecondUserActions({
+                        ...userActions,
+                        name: e.target.value.trim(),
+                      })
+                    }
+                  />
+                </div>
+                <div>
+                  <label htmlFor="first-surname">First Surname</label>
+                  <input
+                    type="text"
+                    id="first-surname"
+                    name="first-surname"
+                    placeholder="Enter your first surname "
+                    required
+                    defaultValue={props.selectedEmployee.First_SurName}
+                    onChange={(e) =>
+                      setSecondUserActions({
+                        ...userActions,
+                        firstSurname: e.target.value.trim(),
+                      })
+                    }
+                  />
+                </div>
+                <div>
+                  {" "}
+                  <label htmlFor="second-surname">Second Surname</label>
+                  <input
+                    type="text"
+                    id="second-surname"
+                    name="second-surname"
+                    placeholder="Enter your second surname"
+                    defaultValue={props.selectedEmployee.Second_Surname}
+                    onChange={(e) =>
+                      setSecondUserActions({
+                        ...userActions,
+                        secondSurname: e.target.value.trim(),
+                      })
+                    }
+                  />
+                </div>
               </div>
-              <div>
-                <label htmlFor="first-surname">First Surname</label>
-                <input
-                  type="text"
-                  id="first-surname"
-                  name="first-surname"
-                  placeholder="Enter your first surname "
-                  required
-                  defaultValue={props.selectedEmployee.First_SurName}
-                  onChange={(e) =>
-                    setSecondUserActions({
-                      ...userActions,
-                      firstSurname: e.target.value.trim(),
-                    })
-                  }
-                />
+              <div className="extraInformation">
+                <div>
+                  {" "}
+                  <label htmlFor="email">Email</label>
+                  <input
+                    type="email"
+                    id="email"
+                    name="email"
+                    placeholder="Enter your email"
+                    required
+                    defaultValue={props.selectedEmployee.Email}
+                    onChange={(e) =>
+                      setSecondUserActions({
+                        ...userActions,
+                        email: e.target.value.trim(),
+                      })
+                    }
+                  />
+                </div>
+                <div>
+                  <label htmlFor="phone">Phone Number</label>
+                  <input
+                    type="tel"
+                    id="phone"
+                    name="phone"
+                    placeholder="Enter your phone number"
+                    required
+                    defaultValue={props.selectedEmployee.Phone_Number}
+                    onChange={(e) =>
+                      setSecondUserActions({
+                        ...userActions,
+                        phone: e.target.value.trim(),
+                      })
+                    }
+                  />
+                </div>
+                <div>
+                  <label htmlFor="curp">Curp</label>
+                  <input
+                    type="text"
+                    id="curp"
+                    name="curp"
+                    placeholder="Enter curp"
+                    required
+                    minLength={18}
+                    maxLength={18}
+                    style={{ textTransform: "uppercase" }}
+                    defaultValue={props.selectedEmployee.Curp}
+                    onChange={(e) =>
+                      setSecondUserActions({
+                        ...userActions,
+                        curp: e.target.value.trim(),
+                      })
+                    }
+                  />
+                </div>
+                <div>
+                  <label htmlFor="rfc">RFC</label>
+                  <input
+                    type="text"
+                    id="rfc"
+                    name="rfc"
+                    placeholder="Enter your RFC"
+                    required
+                    style={{ textTransform: "uppercase" }}
+                    minLength={13}
+                    maxLength={13}
+                    defaultValue={props.selectedEmployee.RFC}
+                    onChange={(e) =>
+                      setSecondUserActions({
+                        ...userActions,
+                        rfc: e.target.value.trim(),
+                      })
+                    }
+                  />
+                </div>
               </div>
-              <div>
-                {" "}
-                <label htmlFor="second-surname">Second Surname</label>
-                <input
-                  type="text"
-                  id="second-surname"
-                  name="second-surname"
-                  placeholder="Enter your second surname"
-                  defaultValue={props.selectedEmployee.Second_Surname}
-                  onChange={(e) =>
-                    setSecondUserActions({
-                      ...userActions,
-                      secondSurname: e.target.value.trim(),
-                    })
-                  }
-                />
-              </div>
-              <div>
-                <label htmlFor="curp">Curp</label>
-                <input
-                  type="text"
-                  id="curp"
-                  name="curp"
-                  placeholder="Enter curp"
-                  required
-                  minLength={18}
-                  maxLength={18}
-                  style={{ textTransform: "uppercase" }}
-                  defaultValue={props.selectedEmployee.Curp}
-                  onChange={(e) =>
-                    setSecondUserActions({
-                      ...userActions,
-                      curp: e.target.value.trim(),
-                    })
-                  }
-                />
-              </div>
-              <div>
-                <label htmlFor="rfc">RFC</label>
-                <input
-                  type="text"
-                  id="rfc"
-                  name="rfc"
-                  placeholder="Enter your RFC"
-                  required
-                  style={{ textTransform: "uppercase" }}
-                  minLength={13}
-                  maxLength={13}
-                  defaultValue={props.selectedEmployee.RFC}
-                  onChange={(e) =>
-                    setSecondUserActions({
-                      ...userActions,
-                      rfc: e.target.value.trim(),
-                    })
-                  }
-                />
-              </div>
-              <div>
-                {" "}
-                <label htmlFor="email">Email</label>
-                <input
-                  type="email"
-                  id="email"
-                  name="email"
-                  placeholder="Enter your email"
-                  required
-                  defaultValue={props.selectedEmployee.Email}
-                  onChange={(e) =>
-                    setSecondUserActions({
-                      ...userActions,
-                      email: e.target.value.trim(),
-                    })
-                  }
-                />
-              </div>
-              <div>
-                <label htmlFor="phone">Phone Number</label>
-                <input
-                  type="tel"
-                  id="phone"
-                  name="phone"
-                  placeholder="Enter your phone number"
-                  required
-                  defaultValue={props.selectedEmployee.Phone_Number}
-                  onChange={(e) =>
-                    setSecondUserActions({
-                      ...userActions,
-                      phone: e.target.value.trim(),
-                    })
-                  }
-                />
-              </div>
-              <div>
-                {" "}
-                <label htmlFor="address">Address</label>
-                <input
-                  type="text"
-                  id="address"
-                  name="address"
-                  placeholder="Enter your address"
-                  required
-                  defaultValue={props.selectedEmployee.Address}
-                  onChange={(e) =>
-                    setSecondUserActions({
-                      ...userActions,
-                      address: e.target.value.trim(),
-                    })
-                  }
-                />
-              </div>
-              <div>
-                <label htmlFor="State">State</label>
-                <select
-                  onChange={(e) =>
-                    setSecondUserActions({
-                      ...userActions,
-                      State: e.target.value,
-                    })
-                  }
-                  defaultValue={props.selectedEmployee.Id_State}
-                  name=""
-                  id=""
-                >
-                  {statesDetails.map((state) => (
-                    <option key={state.Id_State} value={state.Id_State}>
-                      {state.State}
-                    </option>
-                  ))}
-                </select>
-              </div>
-              <div>
-                <label htmlFor="City">City</label>
-                <select
-                  onChange={(e) =>
-                    setSecondUserActions({
-                      ...userActions,
-                      City: e.target.value,
-                    })
-                  }
-                  defaultValue={props.selectedEmployee.Id_City}
-                  name=""
-                  id=""
-                >
-                  {cityDetails.map((city) => (
-                    <option key={city.Id_City} value={city.Id_City}>
-                      {city.City}
-                    </option>
-                  ))}
-                </select>
+              <div className="extraInformation">
+                <div>
+                  <label htmlFor="State">State</label>
+                  <select
+                    onChange={(e) =>
+                      setSecondUserActions({
+                        ...userActions,
+                        State: e.target.value,
+                      })
+                    }
+                    defaultValue={props.selectedEmployee.Id_State}
+                    name=""
+                    id=""
+                  >
+                    {statesDetails.map((state) => (
+                      <option key={state.Id_State} value={state.Id_State}>
+                        {state.State}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+                <div>
+                  <label htmlFor="City">City</label>
+                  <select
+                    onChange={(e) =>
+                      setSecondUserActions({
+                        ...userActions,
+                        City: e.target.value,
+                      })
+                    }
+                    defaultValue={props.selectedEmployee.Id_City}
+                    name=""
+                    id=""
+                  >
+                    {cityDetails.map((city) => (
+                      <option key={city.Id_City} value={city.Id_City}>
+                        {city.City}
+                      </option>
+                    ))}
+                  </select>
+                </div>
               </div>
             </div>
             <hr className="hr-job-information" />
@@ -343,72 +331,78 @@ const UserActions = (props) => {
                   disabled
                 />
               </div>
-              <div>
+              <div className="extraInformation">
                 {" "}
-                <label htmlFor="job-title">Job Title</label>
-                <select
-                  onChange={(e) =>
-                    setSecondUserActions({
-                      ...userActions,
-                      jobTitle: e.target.value,
-                    })
-                  }
-                  defaultValue={props.selectedEmployee.Id_Job}
-                  name=""
-                  id=""
-                >
-                  {jobPositionsDetails.map((position) => (
-                    <option key={position.Id_Job} value={position.Id_Job}>
-                      {position.Description}
-                    </option>
-                  ))}
-                </select>
+                <div>
+                  {" "}
+                  <label htmlFor="job-title">Job Title</label>
+                  <select
+                    onChange={(e) =>
+                      setSecondUserActions({
+                        ...userActions,
+                        jobTitle: e.target.value,
+                      })
+                    }
+                    defaultValue={props.selectedEmployee.Id_Job}
+                    name=""
+                    id=""
+                  >
+                    {jobPositionsDetails.map((position) => (
+                      <option key={position.Id_Job} value={position.Id_Job}>
+                        {position.Description}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+                <div>
+                  {" "}
+                  <label htmlFor="department">Department</label>
+                  <select
+                    onChange={(e) =>
+                      setSecondUserActions({
+                        ...userActions,
+                        department: e.target.value,
+                      })
+                    }
+                    defaultValue={props.selectedEmployee.Id_Department}
+                    name=""
+                    id=""
+                  >
+                    {departmentDetails.map((dept) => (
+                      <option
+                        key={dept.Id_Department}
+                        value={dept.Id_Department}
+                      >
+                        {dept.Description}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+                <div>
+                  <label htmlFor="employeeType">Employee Type</label>
+                  <select
+                    onChange={(e) =>
+                      setSecondUserActions({
+                        ...userActions,
+                        employeeType: e.target.value,
+                      })
+                    }
+                    defaultValue={props.selectedEmployee.Id_Employee_type}
+                    name=""
+                    id=""
+                  >
+                    {employeeTypesDetails.map((type) => (
+                      <option
+                        key={type.Id_Employee_type}
+                        value={type.Id_Employee_type}
+                      >
+                        {type.Description}
+                      </option>
+                    ))}
+                  </select>
+                </div>
               </div>
-              <div>
-                {" "}
-                <label htmlFor="department">Department</label>
-                <select
-                  onChange={(e) =>
-                    setSecondUserActions({
-                      ...userActions,
-                      department: e.target.value,
-                    })
-                  }
-                  defaultValue={props.selectedEmployee.Id_Department}
-                  name=""
-                  id=""
-                >
-                  {departmentDetails.map((dept) => (
-                    <option key={dept.Id_Department} value={dept.Id_Department}>
-                      {dept.Description}
-                    </option>
-                  ))}
-                </select>
-              </div>
-              <div>
-                <label htmlFor="employeeType">Employee Type</label>
-                <select
-                  onChange={(e) =>
-                    setSecondUserActions({
-                      ...userActions,
-                      employeeType: e.target.value,
-                    })
-                  }
-                  defaultValue={props.selectedEmployee.Id_Employee_type}
-                  name=""
-                  id=""
-                >
-                  {employeeTypesDetails.map((type) => (
-                    <option
-                      key={type.Id_Employee_type}
-                      value={type.Id_Employee_type}
-                    >
-                      {type.Description}
-                    </option>
-                  ))}
-                </select>
-              </div>
-              <div>
+              <div style={{ marginTop: "1rem" }}>
                 <label htmlFor="employee-status">Employee Status</label>
                 <select
                   onChange={(e) =>
@@ -441,44 +435,47 @@ const UserActions = (props) => {
             <h4 className="texto-informacionPersonal">Payroll Information</h4>
             <div className="UserActions-personalInformation">
               {" "}
-              <div>
-                <label htmlFor="salary">Salary per hour</label>
-                <input
-                  onChange={(e) =>
-                    setSecondUserActions({
-                      ...userActions,
-                      salary: e.target.value,
-                    })
-                  }
-                  type="money"
-                  id="salary"
-                  name="salary"
-                  defaultValue={`${props.selectedEmployee.Salary}`}
-                />
-              </div>
-              <div>
+              <div className="extraInformation">
                 {" "}
-                <label htmlFor="pay-frequency">Pay Frequency</label>
-                <select
-                  onChange={(e) =>
-                    setSecondUserActions({
-                      ...userActions,
-                      payFrequency: e.target.value,
-                    })
-                  }
-                  name=""
-                  id=""
-                  defaultValue={props.selectedEmployee.Id_PayFrequency}
-                >
-                  {payFrequencyDetails.map((payFreq) => (
-                    <option
-                      key={payFreq.Id_PayFrequency}
-                      value={payFreq.Id_PayFrequency}
-                    >
-                      {payFreq.Description}
-                    </option>
-                  ))}
-                </select>
+                <div>
+                  <label htmlFor="salary">Salary per hour</label>
+                  <input
+                    onChange={(e) =>
+                      setSecondUserActions({
+                        ...userActions,
+                        salary: e.target.value,
+                      })
+                    }
+                    type="money"
+                    id="salary"
+                    name="salary"
+                    defaultValue={`${props.selectedEmployee.Salary}`}
+                  />
+                </div>
+                <div>
+                  {" "}
+                  <label htmlFor="pay-frequency">Pay Frequency</label>
+                  <select
+                    onChange={(e) =>
+                      setSecondUserActions({
+                        ...userActions,
+                        payFrequency: e.target.value,
+                      })
+                    }
+                    name=""
+                    id=""
+                    defaultValue={props.selectedEmployee.Id_PayFrequency}
+                  >
+                    {payFrequencyDetails.map((payFreq) => (
+                      <option
+                        key={payFreq.Id_PayFrequency}
+                        value={payFreq.Id_PayFrequency}
+                      >
+                        {payFreq.Description}
+                      </option>
+                    ))}
+                  </select>
+                </div>
               </div>
               <div>
                 {" "}

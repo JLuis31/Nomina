@@ -82,3 +82,17 @@ model City{
   Id_City   Int    @id @default(autoincrement())
   City      String
 }
+
+
+model Employees_Movements{
+  Id_Movement   Int    @id @default(autoincrement())
+    Id_Employee  Int  
+    Id_Concept Int     
+    Movement_Type String    
+    Total_Amount String
+    Deduction String
+    Initial_Period DateTime
+	  Last_Time_Update DateTime
+	  Increase_or_Rest String
+    Is_Processed Boolean @default(false)
+}

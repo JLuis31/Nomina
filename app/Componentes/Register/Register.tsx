@@ -19,8 +19,6 @@ const RegisterForm = () => {
     confirmPassword: "",
   });
 
-  const { departmentDetails } = useUsersDetails();
-
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (data.password !== data.confirmPassword) {
@@ -105,18 +103,6 @@ const RegisterForm = () => {
           required
           placeholder="example@.com"
         />
-        <label htmlFor="department">Department</label>
-        <select
-          onChange={(e) => setData({ ...data, department: e.target.value })}
-          name=""
-          id=""
-        >
-          {departmentDetails.map((dept) => (
-            <option key={dept.Id_Department} value={dept.Id_Department}>
-              {dept.Description}
-            </option>
-          ))}
-        </select>
 
         <label htmlFor="password">Password</label>
         <input

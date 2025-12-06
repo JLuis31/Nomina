@@ -2,6 +2,10 @@
   width: 80%;
   margin: auto;
 
+  label {
+    opacity: 0.8;
+  }
+
   h2 {
     font-weight: normal;
     margin-top: 2rem;
@@ -21,16 +25,26 @@
 }
 .deducciones-form {
   box-shadow: none;
-  display: grid;
-  grid-template-columns: 1fr 1fr;
+  display: flex;
+  flex-direction: column;
   gap: 2rem;
   margin-top: 2rem;
+
+  .concept-Details {
+    display: flex;
+    flex-direction: row;
+    gap: 0.5rem;
+  }
+
+  .concept-Details > div {
+    flex: 1;
+  }
+
   div {
     display: grid;
     grid-template-columns: 1fr;
 
     gap: 0.5rem;
-    margin-bottom: 0.5rem;
 
     select {
       padding: 0.5rem;
@@ -54,7 +68,7 @@
   border-radius: 5px;
   cursor: pointer;
   width: 100%;
-  margin-top: 1rem;
+  margin-top: 2rem;
 }
 
 .add-deduccionBTN:hover {
@@ -97,7 +111,8 @@
     padding: 1rem;
   }
 
-  .deducciones-form {
-    grid-template-columns: 1fr;
+  .deducciones-form .concept-Details {
+    display: flex;
+    flex-direction: column;
   }
 }

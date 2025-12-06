@@ -10,8 +10,14 @@ import { useUsersDetails } from "@/app/Context/UsersDetailsContext";
 import axios from "axios";
 import toast from "react-hot-toast";
 import { jsPDF } from "jspdf";
+import { useSession } from "next-auth/react";
+import { ClipLoader } from "react-spinners";
+import { useRouter } from "next/navigation";
 
 const Employees = () => {
+  const session = useSession();
+  const Router = useRouter();
+
   const [showEmployeeAddition, setShowEmployeeAddition] = useState(false);
   const [showUserActions, setShowUserActions] = useState(false);
   const [refreshTable, setRefreshTable] = useState(false);
@@ -31,6 +37,18 @@ const Employees = () => {
     valorUSDToMXN,
   } = useUsersDetails();
   const valorMonedaLocalStorage = localStorage.getItem("valorMoneda");
+
+  if (session.status === "loading") {
+    return (
+      <div className="loading-container">
+        <ClipLoader size={100} color={"#123abc"} loading={true} />
+      </div>
+    );
+  }
+  if (session.status === "unauthenticated") {
+    Router.push("/Login");
+    return null;
+  }
 
   const handleNewEmployee = () => {
     setShowEmployeeAddition(true);

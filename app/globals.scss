@@ -4,3 +4,10 @@
   box-sizing: border-box;
   font-family: sans-serif;
 }
+
+.loading-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+}

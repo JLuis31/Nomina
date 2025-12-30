@@ -18,6 +18,7 @@ import { useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
 import { useUsersDetails } from "@/app/Context/UsersDetailsContext";
 import { faUser } from "@fortawesome/free-solid-svg-icons";
+import Clock from "../Clock/Clock";
 
 const NavDesktop = () => {
   const router = useRouter();
@@ -42,7 +43,7 @@ const NavDesktop = () => {
     { label: "Home", href: "/Dashboard", icon: faHouse },
     { label: "Employees", href: "/Employees", icon: faUserGroup },
     {
-      label: "Deducciones",
+      label: "Deductions",
       icon: faFileLines,
       subOptions: [
         {
@@ -53,7 +54,7 @@ const NavDesktop = () => {
         { label: "View Deductions", href: "/ViewDeductions", icon: faEye },
       ],
     },
-    { label: "Settings", href: "/Settings", icon: faGear },
+    { label: "Calendar Settings", href: "/Settings", icon: faGear },
     {
       label: "Values Configuration",
       href: "/ValuesConfiguration",
@@ -73,21 +74,18 @@ const NavDesktop = () => {
           />
           <span className="titulo">
             <Link className="titulo-interior" href="/Dashboard">
-              Nomina
+              Nomina -
             </Link>
+            <Clock></Clock>
           </span>
         </div>
+
         <div>
           {" "}
-          <label htmlFor="nombreUsuario">
-            {localStorageName} -{" "}
-            {departmentDetails.map((dep) => {
-              if (String(dep.Id_Department) === localStorageDepartment) {
-                return dep.Description;
-              }
-            })}
+          <label style={{ fontSize: "1rem" }} htmlFor="nombreUsuario">
+            {localStorageName}
           </label>{" "}
-          <FontAwesomeIcon icon={faUser} style={{ marginLeft: "10px" }} />
+          <FontAwesomeIcon icon={faUser} style={{ marginLeft: "5px" }} />
         </div>
       </nav>
 
@@ -101,7 +99,7 @@ const NavDesktop = () => {
           Nomina - DOCHUB
         </div>
         {menuOptions.map((option) =>
-          option.label === "Deducciones" ? (
+          option.label === "Deductions" ? (
             <li className="menuOptions" key={option.label}>
               <span
                 style={{ cursor: "pointer", color: "white" }}

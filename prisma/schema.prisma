@@ -20,7 +20,6 @@ model Users {
   Id_User   Int    @id @default(autoincrement())
   Name      String
   Email     String
-  Id_Department String
   Password  String
 }
 
@@ -67,10 +66,12 @@ model Pay_Frequency {
   Description      String
 }
 
-model Deducciones {
-  Id_Concept   Int    @id @default(autoincrement())
-  Value String
-  Description      String
+model Concepts{
+  Id_Concept_Type String
+  Id_Concept String @id
+  Description String
+  Income_Tax Boolean @default(false)
+  Social_Sec Boolean @default(false)
 }
 
 model State{
@@ -83,16 +84,32 @@ model City{
   City      String
 }
 
-
 model Employees_Movements{
   Id_Movement   Int    @id @default(autoincrement())
     Id_Employee  Int  
-    Id_Concept Int     
+    Id_Concept Int   
+    Id_PayFrequency Int 
+	  Id_Period Int  
     Movement_Type String    
     Total_Amount String
     Deduction String
-    Initial_Period DateTime
 	  Last_Time_Update DateTime
 	  Increase_or_Rest String
     Is_Processed Boolean @default(false)
+    Is_Deleted Boolean @default(false)
+
+}
+
+model  Payroll {
+  Year            Int
+  Id_PayFrequency Int
+  Id_Period      Int
+  Period_Start    DateTime
+  Period_End      DateTime
+  Month           Int
+  Status          String   @default("Open")
+  Process_Date    DateTime @default(now())
+
+    @@id([Year, Id_PayFrequency, Id_Period])
+
 }

@@ -3,9 +3,9 @@ import { useState } from "react";
 import NavDesktop from "../NavDesktop/NavDesktop";
 import "../../Componentes/Employees/Employees.scss";
 import EmployeesTable from "../DataTables/Employees";
-import EmployeeAdition from "../EmployeeAdition/EmployeeAdition";
+import EmployeeAdition from "./EmployeeAdition/EmployeeAdition";
 import { AnimatePresence } from "framer-motion";
-import UserActions from "../UserActions/UserActions";
+import UserActions from "./EmployeeUpdate/EmployeeUpdate";
 import { useUsersDetails } from "@/app/Context/UsersDetailsContext";
 import axios from "axios";
 import toast from "react-hot-toast";
@@ -154,10 +154,6 @@ const Employees = () => {
         if (emp.Status === "1" || emp.status === "1") statusText = "Active";
         else if (emp.Status === "2" || emp.status === "2")
           statusText = "Inactive";
-        else if (emp.Status === "3" || emp.status === "3")
-          statusText = "On Leave";
-        else if (emp.Status === "4" || emp.status === "4")
-          statusText = "In Process";
         doc.text(statusText, 180, y);
         y += 10;
       });
@@ -174,14 +170,18 @@ const Employees = () => {
 
       <div className="employees-container">
         <div className="employee-button">
-          <h2>Employee Management</h2>
-          <div className="btns">
+          <div>
             {" "}
-            <button className="exportarPDF" onClick={handleExportarPDF}>
-              Export PDF
-            </button>
+            <h2>Employee Management</h2>
+            <label className="employeeManagmentLabel" htmlFor="">
+              Manage employees effectively
+            </label>
           </div>
         </div>
+        <div className="exportarPDF">
+          <button onClick={handleExportarPDF}>Export to PDF</button>
+        </div>
+        <hr />
 
         <div className="filtros">
           <div>
@@ -191,13 +191,9 @@ const Employees = () => {
               name="filtroDeStatus"
               id=""
             >
-              <option value="" disabled>
-                Filter by Status
-              </option>
+              <option value="">All Statuses</option>
               <option value="1">Active</option>
               <option value="2">Inactive</option>
-              <option value="3">On Leave</option>
-              <option value="4">In Process</option>
             </select>
           </div>
           <div>
@@ -210,9 +206,7 @@ const Employees = () => {
               value={filtro.Department}
             >
               {" "}
-              <option value="" disabled>
-                Filter by Department
-              </option>
+              <option value="">All Departments</option>
               {departmentDetails.map((department: any) => (
                 <option
                   key={department.Id_Department}
@@ -233,9 +227,7 @@ const Employees = () => {
               value={filtro.EmployeeType}
             >
               {" "}
-              <option value="" disabled>
-                Filter by Employee Type
-              </option>
+              <option value="">All Employee Types</option>
               {employeeTypesDetails.map((employeeType: any) => (
                 <option
                   key={employeeType.Id_Employee_type}
@@ -255,9 +247,7 @@ const Employees = () => {
               id=""
               value={filtro.JobPosition}
             >
-              <option value="" disabled>
-                Filter by Job
-              </option>
+              <option value="">All Jobs</option>
               {jobPositionsDetails.map((jobPosition: any) => (
                 <option key={jobPosition.Id_Job} value={jobPosition.Id_Job}>
                   {jobPosition.Description}

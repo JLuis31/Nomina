@@ -34,14 +34,6 @@
     border-radius: 4px;
     margin-top: 1rem;
 
-    hr {
-      opacity: 0.3;
-    }
-
-    .hr-job-information {
-      margin-top: 2rem;
-    }
-
     .texto-informacionPersonal {
       margin-bottom: 1rem;
       margin-top: 1rem;
@@ -109,28 +101,6 @@
     div {
       display: flex;
       flex-direction: column;
-
-      label {
-        margin-bottom: 0.5rem;
-        font-size: 0.8rem;
-        opacity: 0.8;
-      }
-
-      input {
-        padding: 0.5rem;
-        border: 1px solid #ccc;
-        border-radius: 4px;
-      }
-      select {
-        padding: 0.5rem;
-        border: 1px solid #ccc;
-        border-radius: 4px;
-      }
-
-      input:focus {
-        border-color: #007bff;
-        outline: none;
-      }
     }
   }
 }

@@ -1,23 +1,7 @@
 .deducciones-container {
   width: 80%;
   margin: auto;
-
-  label {
-    opacity: 0.8;
-  }
-
-  h2 {
-    font-weight: normal;
-    margin-top: 2rem;
-    opacity: 0.7;
-  }
-
-  hr {
-    margin-top: 1rem;
-    margin-bottom: 1rem;
-    border: none;
-    border-top: 1px solid #ccc;
-  }
+  margin-top: 2rem;
 }
 .descr {
   font-size: 0.9rem;
@@ -45,20 +29,6 @@
     grid-template-columns: 1fr;
 
     gap: 0.5rem;
-
-    select {
-      padding: 0.5rem;
-      border: 1px solid #ccc;
-      border-radius: 5px;
-      font-size: 1rem;
-    }
-
-    input {
-      padding: 0.5rem;
-      border: 1px solid #ccc;
-      border-radius: 5px;
-      font-size: 1rem;
-    }
   }
 }
 .add-deduccionBTN {
@@ -67,8 +37,9 @@
   border: none;
   border-radius: 5px;
   cursor: pointer;
-  width: 100%;
   margin-top: 2rem;
+  padding: 0.7rem 1.5rem;
+  margin-left: auto;
 }
 
 .add-deduccionBTN:hover {

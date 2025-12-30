@@ -52,10 +52,6 @@ export async function PUT(req) {
           ? "1"
           : UserData.employeeStatus === "Inactive"
           ? "2"
-          : UserData.employeeStatus === "On Leave"
-          ? "3"
-          : UserData.employeeStatus === "In Process"
-          ? "4"
           : UserData.employeeStatus,
       Id_PayFrequency: Number(UserData.payFrequency),
       BankAccountNumber: UserData.bankAccountNumber,

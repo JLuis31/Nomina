@@ -1,4 +1,5 @@
 "use client";
+import { useState, useEffect } from "react";
 import {
   Box,
   Table,
@@ -14,8 +15,13 @@ import {
 } from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
 import toast from "react-hot-toast";
+import "../DataTables/TablesScss.scss";
+import UpdateTable from "./UpdateTable";
 
-const PayFrquency = (props) => {
+const DeduccionesTable = (props) => {
+  const [selectedDeduction, setSelectedDeduction] = useState();
+  const [showEditForm, setShowEditForm] = useState(false);
+
   const confirmDelete = ({ id, description }) => {
     toast(
       (t) => (
@@ -26,7 +32,7 @@ const PayFrquency = (props) => {
             alignItems: "center",
           }}
         >
-          ¿Seguro que quieres borrar la frecuencia de pago?
+          ¿Seguro que quieres borrar el concepto?
           <button
             style={{
               marginLeft: 8,
@@ -64,18 +70,45 @@ const PayFrquency = (props) => {
     );
   };
 
+  const handleShowEditForm = () => {
+    setShowEditForm(!showEditForm);
+  };
   return (
     <Box sx={{ width: "100%", mt: 3 }}>
       <Paper sx={{ width: "100%", mb: 2 }}>
         <Typography sx={{ flex: "1 1 100%", p: 2 }} variant="h6">
-          Pay Frequency Details
+          Concepts
         </Typography>
         <TableContainer>
-          <Table>
+          <Table className="table">
             <TableHead>
               <TableRow>
                 <TableCell style={{ color: "white" }} className="header">
-                  Pay Frequency
+                  Id Concept
+                </TableCell>
+                <TableCell style={{ color: "white" }} className="header">
+                  Concepts Description
+                </TableCell>
+                <TableCell
+                  style={{ color: "white" }}
+                  className="header"
+                  align="center"
+                >
+                  Concept Type
+                </TableCell>
+                <TableCell
+                  style={{ color: "white" }}
+                  className="header"
+                  align="center"
+                >
+                  Income Tax
+                </TableCell>
+                <TableCell
+                  style={{ color: "white" }}
+                  className="header"
+                  align="center"
+                >
+                  Social Security
                 </TableCell>
                 <TableCell
                   style={{ color: "white" }}
@@ -87,29 +120,47 @@ const PayFrquency = (props) => {
               </TableRow>
             </TableHead>
             <TableBody>
-              {Array.isArray(props.payFrequencyDetails) &&
-              props.payFrequencyDetails.length === 0 ? (
+              {Array.isArray(props.deduccionesDetails) &&
+              props.deduccionesDetails.length === 0 ? (
                 <TableRow>
                   <TableCell colSpan={2} align="center">
                     No hay datos por mostrar
                   </TableCell>
                 </TableRow>
               ) : (
-                props.payFrequencyDetails.map((payFrequency: any) => (
-                  <TableRow key={payFrequency.Id_PayFrequency}>
-                    <TableCell>
-                      {!payFrequency.Description
-                        ? "No hay datos por mostrar"
-                        : payFrequency.Description}
+                props.deduccionesDetails.map((dep: any) => (
+                  <TableRow
+                    key={dep.Id_Concept}
+                    onClick={() => {
+                      setSelectedDeduction({
+                        Id_Concept: dep.Id_Concept,
+                        Department: "Deductions",
+                        ...dep,
+                      });
+                      setShowEditForm(true);
+                    }}
+                    style={{ cursor: "pointer" }}
+                  >
+                    <TableCell>{dep.Id_Concept}</TableCell>
+                    <TableCell>{dep.Description}</TableCell>
+                    <TableCell align="center">
+                      {dep.Id_Concept_Type === "I" ? "Income" : "Deduction"}
                     </TableCell>
+                    <TableCell align="center">
+                      {dep.Income_Tax === false ? "No" : "Yes"}
+                    </TableCell>
+                    <TableCell align="center">
+                      {dep.Social_Sec === false ? "No" : "Yes"}
+                    </TableCell>
+
                     <TableCell align="center">
                       <Tooltip title="Delete">
                         <IconButton
                           onClick={(e) => {
                             e.stopPropagation();
                             confirmDelete({
-                              id: payFrequency.Id_PayFrequency,
-                              description: "PayFrequency",
+                              id: dep.Id_Concept,
+                              description: "Deductions",
                             });
                           }}
                         >
@@ -124,8 +175,16 @@ const PayFrquency = (props) => {
           </Table>
         </TableContainer>
       </Paper>
+      {showEditForm && selectedDeduction && (
+        <div className="overlay">
+          <UpdateTable
+            isOpen={handleShowEditForm}
+            selectedDeduction={selectedDeduction}
+          />
+        </div>
+      )}
     </Box>
   );
 };
 
-export default PayFrquency;
+export default DeduccionesTable;

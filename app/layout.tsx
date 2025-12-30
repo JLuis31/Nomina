@@ -4,7 +4,7 @@ import "./globals.scss";
 import { Toaster } from "react-hot-toast";
 import SessionWraper from "../../nomina/app/SessionWrapper";
 import { UsersDetailsProvider } from "./Context/UsersDetailsContext";
-import GoogleMapsProvider from "./GoogleMapsProvider";
+
 const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],

@@ -2,10 +2,6 @@
   width: 80%;
   margin: auto;
   margin-top: 2rem;
-  h2 {
-    font-weight: normal;
-    opacity: 0.7;
-  }
 
   .employee-button {
     display: flex;
@@ -28,6 +24,7 @@
     }
 
     .exportarPDF {
+      border-radius: 0.5rem;
       background-color: #db1436;
       white-space: nowrap;
     }
@@ -49,17 +46,6 @@
   }
 }
 
-.overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100vw;
-  height: 100vh;
-  background: rgba(0, 0, 0, 0.6);
-  backdrop-filter: blur(4px);
-  z-index: 999;
-}
-
 .filtros {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
@@ -73,23 +59,17 @@
     gap: 0.5rem;
   }
 
-  label {
-    font-size: 0.8rem;
-    font-weight: 500;
-    opacity: 0.8;
-  }
-
   select {
     padding: 0.5rem;
-    border-radius: 0.25rem;
-    border: 1px solid #ccc;
-    background-color: white;
-    cursor: pointer;
+    border: 2px solid #e0e0e0;
+    border-radius: 0.5rem;
+    background-color: #f5f5f5;
+    transition: border-color 0.2s;
   }
 
   button {
     padding: 0.5rem;
-    border-radius: 0.25rem;
+    border-radius: 0.5rem;
     border: none;
     background-color: #007bff;
     color: white;
@@ -104,7 +84,7 @@
 }
 
 .add-employee {
-  padding: 0.5rem 1rem;
+  padding: 0.5rem;
   background-color: #007bff;
   color: white;
   border: none;

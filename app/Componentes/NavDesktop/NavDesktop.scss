@@ -23,9 +23,12 @@
 }
 
 .titulo {
+  display: flex;
+  flex-direction: row;
   font-weight: normal;
   position: absolute;
   left: 2rem;
+  top: 1.5rem;
   font-weight: bold;
   font-size: 1.2rem;
 

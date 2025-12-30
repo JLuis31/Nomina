@@ -1,0 +1,24 @@
+.datesPeriods {
+  display: flex;
+  flex-direction: row;
+  gap: 1rem;
+
+  div {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+  }
+}
+
+@media (max-width: 600.99px) {
+  .datesPeriods {
+    flex-direction: column;
+  }
+}
+
+.form-group-payroll-additions {
+  display: flex;
+  flex-direction: column;
+  margin: 0 auto;
+  margin-bottom: 2rem;
+}

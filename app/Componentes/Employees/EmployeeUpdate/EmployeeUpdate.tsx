@@ -1,6 +1,6 @@
 "use client";
 import { useState } from "react";
-import "../UserActions/UserActions.scss";
+import "./EmployeeUpdate.scss";
 import { motion } from "framer-motion";
 import axios from "axios";
 import toast from "react-hot-toast";
@@ -116,7 +116,7 @@ const UserActions = (props) => {
             {getDepartmentDescription(props.selectedEmployee.Id_Department)}
           </label>
         </div>
-        <hr style={{ opacity: 0.3 }} />
+        <hr style={{ opacity: 0.3, marginTop: "0", marginBottom: "0" }} />
         <div className="UserActions-edit">
           <form>
             <h3>Employee Profile</h3>
@@ -414,19 +414,13 @@ const UserActions = (props) => {
                   defaultValue={
                     props.selectedEmployee.Status === "1"
                       ? "Active"
-                      : props.selectedEmployee.Status === "2"
-                      ? "Inactive"
-                      : props.selectedEmployee.Status === "3"
-                      ? "On Leave"
-                      : "In Process"
+                      : "Inactive"
                   }
                   name=""
                   id=""
                 >
                   <option value="Active">Active</option>
                   <option value="Inactive">Inactive</option>
-                  <option value="On Leave">On Leave</option>
-                  <option value="In Process">In Process</option>
                 </select>
               </div>
             </div>
@@ -454,7 +448,7 @@ const UserActions = (props) => {
                 </div>
                 <div>
                   {" "}
-                  <label htmlFor="pay-frequency">Pay Frequency</label>
+                  <label htmlFor="pay-frequency">Payment Frequency</label>
                   <select
                     onChange={(e) =>
                       setSecondUserActions({

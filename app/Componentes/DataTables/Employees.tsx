@@ -254,6 +254,7 @@ const EmployeesTable = (props) => {
       <Box sx={{ width: "100%", mt: 3 }}>
         <Paper sx={{ width: "100%", mb: 2 }}>
           <Toolbar
+            style={{ backgroundColor: "#345d8a", color: "white" }}
             sx={{
               pl: { sm: 2 },
               pr: { xs: 1, sm: 1 },
@@ -372,13 +373,7 @@ const EmployeesTable = (props) => {
                             borderRadius: "10px",
                           }}
                         >
-                          {row.status === 1
-                            ? "Active"
-                            : row.status === 2
-                            ? "Inactive"
-                            : row.status === 3
-                            ? "On Leave"
-                            : "In Process"}
+                          {row.status === 1 ? "Active" : "Inactive"}
                         </span>
                       </TableCell>
                       <TableCell align="center">

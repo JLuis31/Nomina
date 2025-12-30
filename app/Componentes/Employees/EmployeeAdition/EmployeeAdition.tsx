@@ -1,5 +1,5 @@
 "use client";
-import "../EmployeeAdition/EmployeeAdition.scss";
+import "./EmployeeAdition.scss";
 import { motion } from "framer-motion";
 import { useState, useRef } from "react";
 import { toast } from "react-hot-toast";
@@ -132,11 +132,17 @@ const EmployeeAdition = ({
       <div className="additions-employee">
         <div className="form-container">
           <form className="personal-information form1">
-            <h2>Add New Employee</h2>
-
-            <label className="label1" htmlFor="personal-information">
-              <b> Personal Information</b>
-            </label>
+            <div className="back-button-header">
+              {" "}
+              <h2>Add New Employee</h2>
+              <label
+                style={{ opacity: ".6" }}
+                className="label1"
+                htmlFor="personal-information"
+              >
+                <b> Personal Information</b>
+              </label>
+            </div>
             <hr />
             <div className="personal-information-container">
               <div className="fullname-container">

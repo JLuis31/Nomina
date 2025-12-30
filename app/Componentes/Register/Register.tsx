@@ -7,7 +7,6 @@ import banco from "../../../public/Assets/edificio-del-banco.png";
 import Image from "next/image";
 import { toast } from "react-hot-toast";
 import { useRouter } from "next/navigation";
-import { useUsersDetails } from "@/app/Context/UsersDetailsContext";
 
 const RegisterForm = () => {
   const router = useRouter();
@@ -82,7 +81,7 @@ const RegisterForm = () => {
         />
       </div>
 
-      <form onSubmit={handleSubmit}>
+      <form className="register-form" onSubmit={handleSubmit}>
         <h1>Register for Free</h1>
         <h4>Welcome! Please enter your details</h4>
         <label htmlFor="name">Name</label>

@@ -1,19 +1,19 @@
-import React, { useState, useEffect } from "react";
-import "../Clock/Clock.scss";
+import { useEffect, useState } from "react";
 
 const DigitalClock = () => {
-  const [time, setTime] = useState(new Date());
+  const [formatted, setFormatted] = useState("");
+  const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
-    const timer = setInterval(() => setTime(new Date()), 1000);
-    return () => clearInterval(timer);
+    setMounted(true);
+    const interval = setInterval(() => {
+      const now = new Date();
+      setFormatted(now.toLocaleTimeString([], { hour12: false }));
+    }, 1000);
+    return () => clearInterval(interval);
   }, []);
 
-  const formatted = time.toLocaleTimeString("es-ES", {
-    hour: "2-digit",
-    minute: "2-digit",
-    second: "2-digit",
-  });
+  if (!mounted) return null;
 
   return <div className="digital-clock">{formatted}</div>;
 };

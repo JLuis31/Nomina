@@ -79,7 +79,6 @@ export const UsersDetailsProvider = ({
       try {
         const response = await axios.get("/api/UsersDetails/EmployeesDetails");
         const data = response.data;
-        console.log("Fetched Empleados Details:", data);
         setEmpleadosDetails(data);
       } catch (error) {
         console.error("Error fetching Empleados Details:", error);
@@ -89,7 +88,6 @@ export const UsersDetailsProvider = ({
     const statesDetails = async () => {
       try {
         const response = await axios.get("/api/UsersDetails/States");
-        console.log("Fetched States Details:", response.data);
         const data = response.data;
         setStatesDetails(data);
       } catch (error) {
@@ -99,13 +97,13 @@ export const UsersDetailsProvider = ({
     const cityDetails = async () => {
       try {
         const response = await axios.get("/api/UsersDetails/Cities");
-        console.log("Fetched City Details:", response.data);
         const data = response.data;
         setCityDetails(data);
       } catch (error) {
         console.error("Error fetching City Details:", error);
       }
     };
+
     departmentsDetails();
     employeeTypesDetails();
     jobPositionsDetails();

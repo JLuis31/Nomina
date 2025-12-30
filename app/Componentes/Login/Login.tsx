@@ -8,11 +8,8 @@ import { useRouter } from "next/navigation";
 import toast from "react-hot-toast";
 import { signIn } from "next-auth/react";
 import { useSession } from "next-auth/react";
-import axios from "axios";
 
 const LoginForm = () => {
-  const session = useSession();
-
   const router = useRouter();
   const [data, setData] = useState({
     email: "",

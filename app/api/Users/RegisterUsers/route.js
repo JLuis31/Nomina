@@ -16,12 +16,10 @@ export async function POST(req) {
   }
   const encryptedPassword = await bcrypt.hash(body.Password, 10);
 
-  console.log("Selected Department ID:", body);
   const newUser = await prisma.Users.create({
     data: {
       Name: body.Name,
       Email: body.Email,
-      Id_Department: body.Department,
       Password: encryptedPassword,
     },
   });

@@ -3,11 +3,6 @@
   margin: auto;
   padding-top: 2rem;
 
-  h2 {
-    opacity: 0.7;
-    font-weight: normal;
-  }
-
   .edicion-valores {
     display: flex;
     flex-direction: row;
@@ -24,16 +19,20 @@
   }
 
   .edit {
-    padding: 0.5rem 0.5rem;
+    padding: 0.7rem 1rem;
     background-color: #007bff;
     color: white;
     border: none;
     border-radius: 0.5rem;
     cursor: pointer;
-    width: 100%;
+    margin-left: auto;
 
     &:hover {
       background-color: #0056b3;
+    }
+
+    &:active {
+      background-color: #004080;
     }
   }
 }
@@ -48,8 +47,21 @@
 }
 
 .currency-selector {
-  margin-top: 2rem;
   font-weight: normal;
   opacity: 0.7;
   display: block;
+}
+
+.selects {
+  display: flex;
+  gap: 2rem;
+
+  div {
+    flex: 1;
+  }
+}
+
+.buttons-container {
+  display: flex;
+  justify-content: flex-end;
 }

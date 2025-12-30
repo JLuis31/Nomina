@@ -32,7 +32,6 @@ import { useSession } from "next-auth/react";
 import axios from "axios";
 import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
-import Clock from "../Clock/Clock";
 import { useUsersDetails } from "@/app/Context/UsersDetailsContext";
 
 const Dashboard = () => {
@@ -123,9 +122,10 @@ const Dashboard = () => {
       <div className="dashboard-container">
         <div className="reloj-y-titulo">
           {" "}
-          <h2>Dashboard</h2> -
-          <Clock />
+          <h2>Dashboard</h2>
+          <label htmlFor="reloj">Manage payroll effectively</label>
         </div>
+        <hr />
 
         <section className="stats">
           <div className="div1">

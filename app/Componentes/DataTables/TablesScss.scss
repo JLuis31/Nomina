@@ -1,13 +1,12 @@
-.options {
-  border-radius: 1rem;
+.idConcept {
   display: flex;
-  gap: 1rem;
   flex-direction: column;
   margin-bottom: 2rem;
-  margin: auto;
 }
 
-.input-name {
+.form-group {
   display: flex;
   flex-direction: column;
+  margin: 0 auto;
+  margin-bottom: 2rem;
 }

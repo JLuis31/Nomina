@@ -1,6 +1,6 @@
 "use client";
 import NavDesktop from "../NavDesktop/NavDesktop";
-import "../../Componentes/CapturaDeducciones/CapturaDeducciones.scss";
+import "./CapturaDeducciones.scss";
 import { useUsersDetails } from "@/app/Context/UsersDetailsContext";
 import { useState, useEffect } from "react";
 import axios from "axios";
@@ -12,7 +12,6 @@ import { ClipLoader } from "react-spinners";
 const CapturaDeducciones = () => {
   const session = useSession();
   const Router = useRouter();
-  console.log("session data:", session);
 
   const {
     deduccionesDetails,
@@ -20,20 +19,23 @@ const CapturaDeducciones = () => {
     valorUSDToMXN,
     departmentDetails,
     jobPositionsDetails,
+    payFrequencyDetails,
   } = useUsersDetails();
 
   const [dataDeducion, setDataDeduccion] = useState({
-    Movement_Type: "D",
-    Id_Concept: "1",
+    Movement_Type: "",
+    Id_Concept: "",
     Id_Employee: "",
     Name: "",
     Id_Department: "",
     Id_JobPosition: "",
+    Id_PayFrequency: "",
     Total_Amount: 0,
     Balance: 0,
-    Acumulated_Deducted: "I",
-    Initial_Period: "",
+    Acumulated_Deducted: "",
+    Id_Period: "",
   });
+
   const [nombreInput, setNombreInput] = useState("");
   const [suggestions, setSuggestions] = useState<any[]>([]);
 
@@ -41,18 +43,26 @@ const CapturaDeducciones = () => {
   const [idSuggestions, setIdSuggestions] = useState<any[]>([]);
 
   const [pagoPorPeriodo, setPagoPorPeriodo] = useState(false);
+  const [paymentFrquencyByEmployee, setPaymentFrquencyByEmployee] = useState(
+    []
+  );
 
   const handleNombreChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
     setNombreInput(value);
     setIdInput("");
-    setDataDeduccion({
-      ...dataDeducion,
-      Id_Employee: "",
-      Id_JobPosition: "",
-      Id_Department: "",
-    });
-    setDataDeduccion({ ...dataDeducion, Nombre: value });
+    if (value === "") {
+      setDataDeduccion({
+        ...dataDeducion,
+        Name: "",
+        Id_Employee: "",
+        Id_JobPosition: "",
+        Id_Department: "",
+        Id_PayFrequency: "",
+      });
+    } else {
+      setDataDeduccion({ ...dataDeducion, Nombre: value });
+    }
     if (value.length > 0) {
       const filtered = empleadosDetails.filter((empleado: any) => {
         const fullName =
@@ -69,12 +79,21 @@ const CapturaDeducciones = () => {
     const value = e.target.value;
     setIdInput(value);
     setNombreInput("");
-    setDataDeduccion({
-      ...dataDeducion,
-      Id_JobPosition: "",
-      Id_Department: "",
-    });
-    setDataDeduccion({ ...dataDeducion, Id_Employee: value });
+    if (value === "") {
+      setDataDeduccion({
+        ...dataDeducion,
+        Name: "",
+        Id_Employee: "",
+        Id_JobPosition: "",
+        Id_Department: "",
+        Id_PayFrequency: "",
+      });
+    } else {
+      setDataDeduccion({
+        ...dataDeducion,
+        Id_Employee: value,
+      });
+    }
     if (value.length > 0) {
       const filtered = empleadosDetails.filter((empleado: any) =>
         String(empleado.Id_Employee).includes(value)
@@ -96,8 +115,10 @@ const CapturaDeducciones = () => {
       Name: fullName,
       Id_Department: empleado.Id_Department,
       Id_JobPosition: empleado.Id_Job,
+      Id_PayFrequency: empleado.Id_PayFrequency,
     });
     setSuggestions([]);
+    idPaymentFrequencyChange(String(empleado.Id_PayFrequency));
   };
 
   const handleIdSuggestionClick = (empleado: any) => {
@@ -110,28 +131,29 @@ const CapturaDeducciones = () => {
       Name: fullName,
       Id_Department: empleado.Id_Department,
       Id_JobPosition: empleado.Id_Job,
+      Id_PayFrequency: empleado.Id_PayFrequency,
     });
     setIdSuggestions([]);
+    idPaymentFrequencyChange(String(empleado.Id_PayFrequency));
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
     if (
-      dataDeducion.Balance > dataDeducion.Total_Amount ||
+      dataDeducion.Balance < dataDeducion.Total_Amount ||
       dataDeducion.Balance === undefined ||
       dataDeducion.Total_Amount === undefined ||
       dataDeducion.Total_Amount === 0
     ) {
-      toast.error("Amount is required, and Balance cannot exceed Amount.");
+      toast.error(
+        "Amount is required, and Balance cannot be less than Amount."
+      );
       return;
     }
 
-    if (
-      dataDeducion.Initial_Period === "" ||
-      dataDeducion.Initial_Period === undefined
-    ) {
-      toast.error("Initial Period is required.");
+    if (dataDeducion.Id_Period === "" || dataDeducion.Id_Period === undefined) {
+      toast.error("Period is required.");
       return;
     }
     if (
@@ -144,21 +166,28 @@ const CapturaDeducciones = () => {
       return;
     }
 
+    if (
+      dataDeducion.Acumulated_Deducted === "" ||
+      dataDeducion.Acumulated_Deducted === undefined
+    ) {
+      toast.error("Please select Accumulated or Deducted option.");
+      return;
+    }
+
     try {
       const response = await axios.post(
         "/api/EmployeesMovements",
         dataDeducion
       );
-      console.log("Response from server:", response);
 
       if (response.status === 201) {
         if (dataDeducion.Movement_Type === "D") {
           toast.success(
-            `Deduction added successfully to employee: ${dataDeducion.Nombre}`
+            `Deduction added successfully to employee: ${dataDeducion.Name}`
           );
         } else {
           toast.success(
-            `Income added successfully to employee: ${dataDeducion.Nombre}`
+            `Income added successfully to employee: ${dataDeducion.Name}`
           );
         }
       }
@@ -170,15 +199,6 @@ const CapturaDeducciones = () => {
   };
 
   useEffect(() => {
-    if (deduccionesDetails.length > 0 && !dataDeducion.Id_Concept) {
-      setDataDeduccion((prev) => ({
-        ...prev,
-        Id_Concept: deduccionesDetails[0].Id_Concept,
-      }));
-    }
-  }, [deduccionesDetails]);
-
-  useEffect(() => {
     if (!pagoPorPeriodo) {
       setDataDeduccion((prev) => ({
         ...prev,
@@ -187,6 +207,21 @@ const CapturaDeducciones = () => {
       }));
     }
   }, [pagoPorPeriodo]);
+
+  const idPaymentFrequencyChange = async (idInput: string) => {
+    try {
+      const response = await axios.get("/api/EmployeesMovements", {
+        params: { idPaymentFrequency: idInput },
+      });
+      console.log("Payment Frequency Response:", response.data);
+
+      setPaymentFrquencyByEmployee(response.data);
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        toast.error(`Error: ${error.response?.data?.message || error.message}`);
+      }
+    }
+  };
 
   if (session.status === "loading") {
     return (
@@ -208,25 +243,6 @@ const CapturaDeducciones = () => {
         <h2>Add New Deduction or Income</h2>
         <p className="descr">Create and configure a new deduction or income</p>
         <hr />
-        <div className="checkboxs">
-          {" "}
-          <div className="checkboxs2">
-            <label htmlFor=""> Movement Type:</label>
-            <select
-              onChange={(e) =>
-                setDataDeduccion({
-                  ...dataDeducion,
-                  Movement_Type: e.target.value,
-                })
-              }
-              name=""
-              id=""
-            >
-              <option value="D">Deduction</option>
-              <option value="I">Income</option>
-            </select>
-          </div>
-        </div>
 
         <form onSubmit={handleSubmit} className="deducciones-form">
           <div className="concept-Details">
@@ -236,7 +252,10 @@ const CapturaDeducciones = () => {
                 id="idInput"
                 type="number"
                 value={idInput}
-                onChange={idhandleIdChange}
+                min={1}
+                onChange={(e) => {
+                  idhandleIdChange(e);
+                }}
                 autoComplete="off"
                 required
               />
@@ -277,7 +296,9 @@ const CapturaDeducciones = () => {
                 id="nombreInput"
                 type="text"
                 value={nombreInput}
-                onChange={handleNombreChange}
+                onChange={(e) => {
+                  handleNombreChange(e);
+                }}
                 autoComplete="off"
               />
               {suggestions.length > 0 && (
@@ -347,26 +368,34 @@ const CapturaDeducciones = () => {
           </div>
           <div className="concept-Details">
             {" "}
-            <div className="form-group">
+            <div>
               <label htmlFor="deductionType">Concept:</label>
               <select
                 value={dataDeducion.Id_Concept}
-                onChange={(e) =>
+                onChange={(e) => {
+                  const selectedConcept = deduccionesDetails.find(
+                    (deduccion: any) =>
+                      String(deduccion.Id_Concept).trim() ===
+                      e.target.value.trim()
+                  );
                   setDataDeduccion({
                     ...dataDeducion,
                     Id_Concept: e.target.value,
-                  })
-                }
+                    Movement_Type: selectedConcept?.Id_Concept_Type || "",
+                    Acumulated_Deducted: "",
+                  });
+                }}
               >
-                <option disabled value="">
-                  Selecciona un concepto
-                </option>
+                <option value="">Select a concept</option>
                 {deduccionesDetails.map((deduccion: any) => (
                   <option
                     key={deduccion.Id_Concept}
                     value={deduccion.Id_Concept}
                   >
-                    {deduccion.Id_Concept} - {deduccion.Description}
+                    {deduccion.Id_Concept} {}- {deduccion.Description}{" "}
+                    {deduccion.Id_Concept_Type === "I"
+                      ? "(Income)"
+                      : "(Deduction)"}
                   </option>
                 ))}
               </select>
@@ -376,7 +405,8 @@ const CapturaDeducciones = () => {
               <input
                 required
                 type="number"
-                min={0}
+                min={1}
+                max={dataDeducion.Balance}
                 onChange={(e) => {
                   setDataDeduccion({
                     ...dataDeducion,
@@ -387,21 +417,6 @@ const CapturaDeducciones = () => {
               />
             </div>
             <div>
-              <label htmlFor="">Balance:</label>
-              <input
-                required
-                min={0}
-                max={dataDeducion.Total_Amount}
-                type="number"
-                onChange={(e) =>
-                  setDataDeduccion({
-                    ...dataDeducion,
-                    Balance: Number(e.target.value),
-                  })
-                }
-              />
-            </div>
-            <div>
               <label htmlFor="AcumuladoOResta">Accumulated or Deducted:</label>
               <select
                 value={dataDeducion.Acumulated_Deducted}
@@ -409,41 +424,105 @@ const CapturaDeducciones = () => {
                   setDataDeduccion({
                     ...dataDeducion,
                     Acumulated_Deducted: e.target.value,
+                    Balance: e.target.value === "N" ? 0 : dataDeducion.Balance,
                   })
                 }
                 name=""
                 id="AcumuladoOResta"
               >
-                <option value="I">Accumulated</option>
-                <option value="R">Deducted</option>
+                <option value="">Select an option</option>
+                <option
+                  disabled={
+                    deduccionesDetails.find(
+                      (deduccion: any) =>
+                        String(deduccion.Id_Concept) ===
+                        String(dataDeducion.Id_Concept)
+                    )?.Id_Concept_Type === "D"
+                  }
+                  value="I"
+                >
+                  Accumulate
+                </option>
+                <option
+                  disabled={
+                    deduccionesDetails.find(
+                      (deduccion: any) =>
+                        String(deduccion.Id_Concept) ===
+                        String(dataDeducion.Id_Concept)
+                    )?.Id_Concept_Type === "I"
+                  }
+                  value="R"
+                >
+                  Deduct
+                </option>
+                <option value="N">Nothing</option>
               </select>
+            </div>
+            <div>
+              <div>
+                <label htmlFor="">Balance:</label>
+                <input
+                  disabled={dataDeducion.Acumulated_Deducted === "N"}
+                  value={
+                    dataDeducion.Acumulated_Deducted === "N"
+                      ? 0
+                      : dataDeducion.Balance
+                  }
+                  required
+                  min={0}
+                  type="number"
+                  onChange={(e) =>
+                    setDataDeduccion({
+                      ...dataDeducion,
+                      Balance: Number(e.target.value),
+                    })
+                  }
+                />
+              </div>
             </div>
           </div>
           <div className="concept-Details">
             <div>
-              <label htmlFor="">Initial Period</label>
-              <input
-                required
-                onChange={(e) =>
+              <label htmlFor="periods">Periods</label>
+              <select
+                onChange={(e) => {
                   setDataDeduccion({
                     ...dataDeducion,
-                    Initial_Period: e.target.value,
-                  })
-                }
-                type="date"
-                min={new Date().toISOString().split("T")[0]}
-              />
+                    Id_Period: e.target.value,
+                  });
+                }}
+                name="periods"
+                id="periods"
+              >
+                <option value="">Select a period</option>
+                {(paymentFrquencyByEmployee || []).map((period: any) => {
+                  const start = period.Period_Start.split("T")[0];
+                  const end = period.Period_End.split("T")[0];
+                  return (
+                    <option
+                      key={period.Id_Period}
+                      value={`${period.Id_PayFrequency}|${period.Id_Period}`}
+                    >
+                      {`🗓️ ${start} → ${end} (Period ${period.Id_Period})`}
+                    </option>
+                  );
+                })}
+              </select>
             </div>
           </div>
         </form>
-        <button
-          onClick={handleSubmit}
-          style={{ height: "40px" }}
-          className="add-deduccionBTN"
-          type="submit"
-        >
-          {dataDeducion.MovementType === "D" ? "Add Deduction" : "Add Income"}
-        </button>
+        <div className="form-group2">
+          <button
+            onClick={handleSubmit}
+            style={{ height: "40px" }}
+            className="add-deduccionBTN"
+            type="submit"
+          >
+            {dataDeducion.Movement_Type === "D"
+              ? "Add Deduction"
+              : "Add Income"}
+          </button>
+        </div>
       </div>
     </div>
   );

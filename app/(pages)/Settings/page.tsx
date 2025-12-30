@@ -1,4 +1,4 @@
-import Settings from "@/app/Componentes/Settings/Settings";
+import Settings from "@/app/Componentes/CalendarSettings/CalendarSettings";
 
 export default function SettingsPage() {
   return <Settings />;

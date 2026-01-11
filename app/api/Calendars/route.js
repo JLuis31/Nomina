@@ -33,7 +33,7 @@ export async function PUT(request) {
       JSON.stringify({
         message: "The specified period overlaps with an existing period.",
       }),
-      { status: 208 }
+      { status: 400 }
     );
   }
 

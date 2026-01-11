@@ -65,9 +65,9 @@ export async function POST(req) {
 
   await prisma.Employees.create({
     data: {
-      Name: formatedData.name,
-      First_SurName: formatedData.firstSurname,
-      Second_Surname: formatedData.secondSurname,
+      Name: formatedData.name.trim(),
+      First_SurName: formatedData.firstSurname.trim(),
+      Second_Surname: formatedData.secondSurname.trim(),
       Email: formatedData.email,
       Phone_Number: formatedData.phone,
       Address: formatedData.address,

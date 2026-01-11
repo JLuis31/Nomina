@@ -72,6 +72,7 @@ model Concepts{
   Description String
   Income_Tax Boolean @default(false)
   Social_Sec Boolean @default(false)
+  Is_Default_Concept Boolean @default(false)
 }
 
 model State{
@@ -87,7 +88,7 @@ model City{
 model Employees_Movements{
   Id_Movement   Int    @id @default(autoincrement())
     Id_Employee  Int  
-    Id_Concept Int   
+    Id_Concept String   
     Id_PayFrequency Int 
 	  Id_Period Int  
     Movement_Type String    
@@ -95,6 +96,7 @@ model Employees_Movements{
     Deduction String
 	  Last_Time_Update DateTime
 	  Increase_or_Rest String
+    Created_By String
     Is_Processed Boolean @default(false)
     Is_Deleted Boolean @default(false)
 
@@ -111,5 +113,17 @@ model  Payroll {
   Process_Date    DateTime @default(now())
 
     @@id([Year, Id_PayFrequency, Id_Period])
+
+}
+
+model Default_Concepts{
+  Id_Default_Concept  Int    @id @default(autoincrement())
+  Id_PayFrequency Int
+	Id_Concept String
+	Id_Concept_Type String
+  Per_Hour String
+  Per_Amount String
+  Description String
+
 
 }

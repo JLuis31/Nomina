@@ -1,0 +1,151 @@
+.deducciones-container {
+  width: 90%;
+  max-width: 1200px;
+  margin: 2rem auto;
+}
+
+.descr {
+  font-size: 0.95rem;
+  color: #6c757d;
+  margin-bottom: 1rem;
+}
+.deducciones-form {
+  background: white;
+  border-radius: 8px;
+  padding: 2rem;
+  border: 1px solid #e0e0e0;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  margin-top: 2rem;
+
+  .concept-Details {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 1.5rem;
+  }
+
+  .concept-Details > div {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+
+    label {
+      font-size: 0.875rem;
+      font-weight: 500;
+      color: #333;
+      margin-bottom: 0.25rem;
+    }
+
+    input,
+    select {
+      padding: 0.65rem 0.85rem;
+      border: 1px solid #ddd;
+      border-radius: 6px;
+      background-color: white;
+      font-size: 0.9rem;
+      color: #333;
+      transition: all 0.2s ease;
+
+      &:hover:not(:disabled) {
+        border-color: #007bff;
+      }
+
+      &:focus {
+        outline: none;
+        border-color: #007bff;
+        box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.1);
+      }
+
+      &:disabled {
+        background-color: #f5f5f5;
+        cursor: not-allowed;
+        opacity: 0.6;
+      }
+    }
+
+    select {
+      cursor: pointer;
+    }
+  }
+
+  div {
+    position: relative;
+  }
+}
+.add-deduccionBTN {
+  background: #007bff;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  margin-top: 1.5rem;
+  padding: 0.75rem 2rem;
+  font-size: 0.95rem;
+  font-weight: 500;
+  transition: all 0.2s ease;
+  margin-left: auto;
+  display: block;
+
+  &:hover {
+    background: #0056b3;
+    transform: translateY(-1px);
+    box-shadow: 0 3px 8px rgba(0, 123, 255, 0.3);
+  }
+
+  &:active {
+    transform: translateY(0);
+  }
+}
+
+.checkbox {
+  width: 15px;
+  height: 20px;
+  cursor: pointer;
+  margin-left: -0.3rem;
+}
+
+.checkboxs {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+
+  .checkboxs2 {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+
+    select {
+      padding: 0.3rem;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      font-size: 0.8rem;
+    }
+  }
+}
+
+@media (max-width: 768px) {
+  .deducciones-container {
+    width: 95%;
+    margin: 1rem auto;
+
+    h2 {
+      font-size: 1.5rem;
+    }
+  }
+
+  .deducciones-form {
+    padding: 1.5rem;
+
+    .concept-Details {
+      grid-template-columns: 1fr;
+      gap: 1rem;
+    }
+  }
+
+  .add-deduccionBTN {
+    width: 100%;
+    margin-left: 0;
+  }
+}

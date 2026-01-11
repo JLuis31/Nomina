@@ -85,7 +85,9 @@ const LoginForm = () => {
           placeholder="example@.com"
         />
 
-        <label htmlFor="password">Password</label>
+        <label style={{ marginTop: "1rem" }} htmlFor="password">
+          Password
+        </label>
         <input
           onChange={(e) => setData({ ...data, password: e.target.value })}
           type="password"

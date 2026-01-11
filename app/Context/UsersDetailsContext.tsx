@@ -16,6 +16,7 @@ export const UsersDetailsProvider = ({
   const [empleadosDetails, setEmpleadosDetails] = useState([]);
   const [statesDetails, setStatesDetails] = useState([]);
   const [cityDetails, setCityDetails] = useState([]);
+  const [defaultConceptsDetails, setDefaultConceptsDetails] = useState([]);
   const [valorMoneda, setValorMoneda] = useState();
   const [valorUSDToMXN, setValorUSDToMXN] = useState(0);
 
@@ -27,7 +28,7 @@ export const UsersDetailsProvider = ({
     };
     const paymentFrquency = async () => {
       try {
-        const response = await axios.get("/api/UsersDetails/PayFrequency");
+        const response = await axios.get("/api/CatalogsDetails/PayFrequency");
         const data = response.data;
         setPayFrequencyDetails(data);
       } catch (error) {
@@ -37,7 +38,7 @@ export const UsersDetailsProvider = ({
 
     const departmentsDetails = async () => {
       try {
-        const response = await axios.get("/api/UsersDetails/Departments");
+        const response = await axios.get("/api/CatalogsDetails/Departments");
         const data = response.data;
         setDepartmentDetails(data);
       } catch (error) {
@@ -47,7 +48,7 @@ export const UsersDetailsProvider = ({
 
     const employeeTypesDetails = async () => {
       try {
-        const response = await axios.get("/api/UsersDetails/EmployeeTypes");
+        const response = await axios.get("/api/CatalogsDetails/EmployeeTypes");
         const data = response.data;
         setEmployeeTypesDetails(data);
       } catch (error) {
@@ -57,7 +58,7 @@ export const UsersDetailsProvider = ({
 
     const jobPositionsDetails = async () => {
       try {
-        const response = await axios.get("/api/UsersDetails/JobPositions");
+        const response = await axios.get("/api/CatalogsDetails/JobPositions");
         const data = response.data;
         setJobPositionsDetails(data);
       } catch (error) {
@@ -67,7 +68,7 @@ export const UsersDetailsProvider = ({
 
     const deduccionesDetails = async () => {
       try {
-        const response = await axios.get("/api/UsersDetails/Deducciones");
+        const response = await axios.get("/api/CatalogsDetails/Deducciones");
         const data = response.data;
         setDeduccionesDetails(data);
       } catch (error) {
@@ -77,7 +78,9 @@ export const UsersDetailsProvider = ({
 
     const empleadosDetails = async () => {
       try {
-        const response = await axios.get("/api/UsersDetails/EmployeesDetails");
+        const response = await axios.get(
+          "/api/CatalogsDetails/EmployeesDetails"
+        );
         const data = response.data;
         setEmpleadosDetails(data);
       } catch (error) {
@@ -87,7 +90,7 @@ export const UsersDetailsProvider = ({
 
     const statesDetails = async () => {
       try {
-        const response = await axios.get("/api/UsersDetails/States");
+        const response = await axios.get("/api/CatalogsDetails/States");
         const data = response.data;
         setStatesDetails(data);
       } catch (error) {
@@ -96,11 +99,23 @@ export const UsersDetailsProvider = ({
     };
     const cityDetails = async () => {
       try {
-        const response = await axios.get("/api/UsersDetails/Cities");
+        const response = await axios.get("/api/CatalogsDetails/Cities");
         const data = response.data;
         setCityDetails(data);
       } catch (error) {
         console.error("Error fetching City Details:", error);
+      }
+    };
+
+    const DefaultConceptsDetails = async () => {
+      try {
+        const response = await axios.get(
+          "/api/CatalogsDetails/DefaultConcepts"
+        );
+        const data = response.data;
+        setDefaultConceptsDetails(data);
+      } catch (error) {
+        console.error("Error fetching Default Concepts Details:", error);
       }
     };
 
@@ -113,11 +128,12 @@ export const UsersDetailsProvider = ({
     empleadosDetails();
     statesDetails();
     cityDetails();
+    DefaultConceptsDetails();
   }, []);
 
   const reloadEmpleadosDetails = async () => {
     try {
-      const response = await axios.get("/api/UsersDetails/EmployeesDetails");
+      const response = await axios.get("/api/CatalogsDetails/EmployeesDetails");
       setEmpleadosDetails(response.data);
     } catch (error) {
       console.error("Error fetching Empleados Details:", error);
@@ -146,6 +162,8 @@ export const UsersDetailsProvider = ({
         cityDetails,
         setStatesDetails,
         setCityDetails,
+        defaultConceptsDetails,
+        setDefaultConceptsDetails,
       }}
     >
       {children}

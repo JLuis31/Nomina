@@ -39,6 +39,7 @@ const Dashboard = () => {
     totalPaid: 0,
     totalEmployees: 0,
   });
+
   const [totalNeto, setTotalNeto] = useState(0);
   const [residuoNeto, setResiduoNeto] = useState(0);
   const session = useSession();

@@ -6,22 +6,22 @@ import {
   faBars,
   faHouse,
   faUserGroup,
-  faFileLines,
   faGear,
-  faSliders,
   faMoneyBill,
   faEye,
+  faCalculator,
+  faCalendar,
+  faMoneyBillTransfer,
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useState, useEffect } from "react";
-import { useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
 import { useUsersDetails } from "@/app/Context/UsersDetailsContext";
-import { faUser } from "@fortawesome/free-solid-svg-icons";
-import Clock from "../Clock/Clock";
+import Clock from "../../Shared/Clock/Clock";
+import Avatar from "@mui/material/Avatar";
+import Tooltip from "@mui/material/Tooltip";
 
 const NavDesktop = () => {
-  const router = useRouter();
   const [showMenu, setShowMenu] = useState(false);
   const [localStorageName, setLocalStorageName] = useState("");
   const [localStorageDepartment, setLocalStorageDepartment] = useState("");
@@ -43,24 +43,32 @@ const NavDesktop = () => {
     { label: "Home", href: "/Dashboard", icon: faHouse },
     { label: "Employees", href: "/Employees", icon: faUserGroup },
     {
-      label: "Deductions",
-      icon: faFileLines,
-      subOptions: [
-        {
-          label: "Movements Entry",
-          href: "/MovementsEntry",
-          icon: faMoneyBill,
-        },
-        { label: "View Deductions", href: "/ViewDeductions", icon: faEye },
-      ],
+      label: "Deductions - Incomes",
+      href: "/ViewMovements",
+      icon: faMoneyBillTransfer,
     },
-    { label: "Calendar Settings", href: "/Settings", icon: faGear },
+    { label: "Calendar Settings", href: "/Settings", icon: faCalendar },
+    {
+      label: "Payroll Calculation",
+      href: "/PayrollCalculation",
+      icon: faCalculator,
+    },
+    { label: "User Settings", href: "/UserSettings", icon: faUserGroup },
     {
       label: "Values Configuration",
       href: "/ValuesConfiguration",
-      icon: faSliders,
+      icon: faGear,
     },
   ];
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      if (e.key === "Escape") {
+        setShowMenu(false);
+      }
+    };
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, []);
 
   return (
     <div className="contenedor">
@@ -80,12 +88,26 @@ const NavDesktop = () => {
           </span>
         </div>
 
-        <div>
+        <div className="avatar-name">
           {" "}
-          <label style={{ fontSize: "1rem" }} htmlFor="nombreUsuario">
-            {localStorageName}
-          </label>{" "}
-          <FontAwesomeIcon icon={faUser} style={{ marginLeft: "5px" }} />
+          <Link href="/UserSettings" style={{ textDecoration: "none" }}>
+            <Tooltip title={`${localStorageName}`}>
+              <Avatar
+                style={{ cursor: "pointer" }}
+                className="avatar"
+                sx={{
+                  listStyle: "none",
+                  width: 40,
+                  height: 40,
+                  bgcolor: "#1976d2",
+                  fontSize: 14,
+                  mb: 2,
+                }}
+              >
+                {localStorageName?.charAt(0)?.toUpperCase() || "U"}
+              </Avatar>
+            </Tooltip>
+          </Link>
         </div>
       </nav>
 
@@ -96,36 +118,23 @@ const NavDesktop = () => {
             className="menu-icon"
             onClick={() => setShowMenu(!showMenu)}
           />
-          Nomina - DOCHUB
+          <p>Nomina - DOCHUB</p>
         </div>
         {menuOptions.map((option) =>
-          option.label === "Deductions" ? (
+          option.label === "Deductions - Incomes" ? (
             <li className="menuOptions" key={option.label}>
               <span
                 style={{ cursor: "pointer", color: "white" }}
                 onClick={() => setShowDeduccionesSubmenu((prev) => !prev)}
               >
-                <FontAwesomeIcon
-                  icon={option.icon}
-                  style={{ marginRight: "10px", width: "15px", color: "white" }}
-                />
-                {option.label}
+                <Link href={option.href}>
+                  <FontAwesomeIcon
+                    icon={option.icon}
+                    style={{ marginRight: "10px", color: "white" }}
+                  />
+                  {option.label}
+                </Link>
               </span>
-              {showDeduccionesSubmenu && (
-                <ul className="submenu">
-                  {option.subOptions.map((sub) => (
-                    <li className="subOptions" key={sub.label}>
-                      <Link href={sub.href} onClick={() => setShowMenu(false)}>
-                        <FontAwesomeIcon
-                          icon={sub.icon}
-                          style={{ marginRight: "10px", width: "15px" }}
-                        />{" "}
-                        {sub.label}
-                      </Link>
-                    </li>
-                  ))}
-                </ul>
-              )}
             </li>
           ) : (
             <li key={option.label}>

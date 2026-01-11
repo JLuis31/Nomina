@@ -1,12 +1,16 @@
 .idConcept {
   display: flex;
   flex-direction: column;
-  margin-bottom: 2rem;
+  margin-bottom: 1rem;
 }
 
 .form-group {
   display: flex;
   flex-direction: column;
   margin: 0 auto;
+  margin-bottom: 1rem;
+}
+
+.buscador {
   margin-bottom: 2rem;
 }

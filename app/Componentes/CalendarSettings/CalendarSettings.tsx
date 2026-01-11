@@ -1,6 +1,5 @@
 "use client";
 
-import { signOut } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import NavDesktop from "../NavDesktop/NavDesktop";
 import {
@@ -73,12 +72,17 @@ const Settings = () => {
   const [filterText, setFilterText] = useState("");
 
   const router = useRouter();
-  const handleLogOut = async () => {
-    await signOut({ redirect: false });
-    router.push("/Login");
-    localStorage.removeItem("userName");
-    localStorage.removeItem("userDepartment");
-  };
+
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      if (e.key === "Escape") {
+        setShowUpdateModal(false);
+        setShowAddPayrollModal(false);
+      }
+    };
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, []);
 
   useEffect(() => {
     const fetchCalendars = async () => {
@@ -136,7 +140,7 @@ const Settings = () => {
             alignItems: "center",
           }}
         >
-          ¿Seguro que quieres borrar el usuario?
+          ¿You sure you want to delete this Calendar?
           <button
             style={{
               marginLeft: 8,
@@ -235,9 +239,6 @@ const Settings = () => {
           Manage years, payroll periods and schedule statuses
         </label>
         <div>
-          <button onClick={handleLogOut} className="logout">
-            Logout
-          </button>{" "}
           <hr />
           <div className="buscador">
             <div className="filtro">
@@ -255,6 +256,29 @@ const Settings = () => {
               <button
                 onClick={() => OpenModalAddition(true)}
                 className="addPayrollPeriods"
+                style={{
+                  backgroundColor: "#345d8a",
+                  color: "white",
+                  border: "none",
+                  padding: "10px 20px",
+                  borderRadius: "6px",
+                  cursor: "pointer",
+                  fontWeight: "500",
+                  fontSize: "14px",
+                  transition: "all 0.3s ease",
+                  boxShadow: "0 2px 4px rgba(0,0,0,0.1)",
+                }}
+                onMouseOver={(e) => {
+                  e.currentTarget.style.backgroundColor = "#2a4a6e";
+                  e.currentTarget.style.boxShadow =
+                    "0 4px 8px rgba(0,0,0,0.15)";
+                  e.currentTarget.style.transform = "translateY(-1px)";
+                }}
+                onMouseOut={(e) => {
+                  e.currentTarget.style.backgroundColor = "#345d8a";
+                  e.currentTarget.style.boxShadow = "0 2px 4px rgba(0,0,0,0.1)";
+                  e.currentTarget.style.transform = "translateY(0)";
+                }}
               >
                 {" "}
                 Add Payroll Periods

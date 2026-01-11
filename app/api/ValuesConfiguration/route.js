@@ -2,7 +2,6 @@ import { prisma } from "@/lib/prisma";
 
 export async function POST(request) {
   const data = await request.json();
-  console.log("Received data:", data);
 
   let addedData = null;
   switch (data.department) {
@@ -17,7 +16,7 @@ export async function POST(request) {
         );
       }
       addedData = await prisma.Departments.create({
-        data: { Description: data.Name },
+        data: { Description: data.Name.trim() },
       });
       break;
     }
@@ -32,7 +31,7 @@ export async function POST(request) {
         );
       }
       addedData = await prisma.Employee_Type.create({
-        data: { Description: data.Name },
+        data: { Description: data.Name.trim() },
       });
       break;
     }
@@ -46,7 +45,7 @@ export async function POST(request) {
         });
       }
       addedData = await prisma.Jobs.create({
-        data: { Description: data.Name },
+        data: { Description: data.Name.trim() },
       });
       break;
     }
@@ -61,26 +60,25 @@ export async function POST(request) {
         );
       }
       addedData = await prisma.Pay_Frequency.create({
-        data: { Description: data.Name },
+        data: { Description: data.Name.trim() },
       });
       break;
     }
     case "5": {
-      const existingDeducciones = await prisma.Concepts.findFirst({
-        where: { Description: data.Name },
-      });
       const existingDeduccionesId = await prisma.Concepts.findFirst({
         where: { Id_Concept: data.Id_Concept },
       });
-      if (existingDeducciones || existingDeduccionesId) {
+
+      if (existingDeduccionesId) {
         return new Response(
           JSON.stringify({ message: "Deductions already exists" }),
           { status: 400 }
         );
       }
+
       addedData = await prisma.Concepts.create({
         data: {
-          Description: data.Name,
+          Description: data.Name.trim(),
           Id_Concept_Type: data.ConceptType,
           Id_Concept: data.Id_Concept,
           Income_Tax: data.IncomeTax === "1",
@@ -100,7 +98,7 @@ export async function POST(request) {
         );
       }
       addedData = await prisma.State.create({
-        data: { State: data.Name },
+        data: { State: data.Name.trim() },
       });
       break;
     }
@@ -115,7 +113,7 @@ export async function POST(request) {
         );
       }
       addedData = await prisma.City.create({
-        data: { City: data.Name },
+        data: { City: data.Name.trim() },
       });
       break;
     }
@@ -155,7 +153,7 @@ export async function PUT(request) {
       }
       updatedData = await prisma.Departments.update({
         where: { Id_Department: data.data.concept_Selected.Id_Department },
-        data: { Description: data.data.description },
+        data: { Description: data.data.description.trim() },
       });
       break;
     }
@@ -175,7 +173,7 @@ export async function PUT(request) {
         where: {
           Id_Employee_type: data.data.concept_Selected.Id_Employee_type,
         },
-        data: { Description: data.data.description },
+        data: { Description: data.data.description.trim() },
       });
       break;
     }
@@ -191,7 +189,7 @@ export async function PUT(request) {
       }
       updatedData = await prisma.Jobs.update({
         where: { Id_Job: data.data.concept_Selected.Id_Job },
-        data: { Description: data.data.description },
+        data: { Description: data.data.description.trim() },
       });
       break;
     }
@@ -207,7 +205,7 @@ export async function PUT(request) {
       }
       updatedData = await prisma.Pay_Frequency.update({
         where: { Id_PayFrequency: data.data.concept_Selected.Id_PayFrequency },
-        data: { Description: data.data.description },
+        data: { Description: data.data.description.trim() },
       });
       break;
     }
@@ -223,7 +221,7 @@ export async function PUT(request) {
       }
       updatedData = await prisma.State.update({
         where: { Id_State: data.data.concept_Selected.Id_State },
-        data: { State: data.data.description },
+        data: { State: data.data.description.trim() },
       });
       break;
     }
@@ -239,58 +237,110 @@ export async function PUT(request) {
       }
       updatedData = await prisma.City.update({
         where: { Id_City: data.data.concept_Selected.Id_City },
-        data: { City: data.data.description },
+        data: { City: data.data.description.trim() },
       });
       break;
     }
     case "Deductions": {
-      const current = await prisma.Concepts.findUnique({
-        where: { Id_Concept: data.data.concept_Selected.Id_Concept },
+      const ExistingConcept = await prisma.Concepts.findFirst({
+        where: {
+          Id_Concept: data.data.Id_Concept,
+          NOT: { Id_Concept: data.data.concept_Selected.Id_Concept },
+        },
       });
-      const noChange =
-        current?.Id_Concept === data.data.id &&
-        current?.Description === data.data.description &&
-        current?.Id_Concept_Type === data.data.concept_Type &&
-        current?.Income_Tax === (data.data.income_Tax === 1) &&
-        current?.Social_Sec === (data.data.social_Security === 1);
 
-      if (noChange) {
+      if (ExistingConcept) {
         return new Response(
-          JSON.stringify({ message: "No changes detected." }),
-          { status: 200 }
+          JSON.stringify({ message: "Concept id already exists." }),
+          { status: 400 }
         );
       }
 
-      const ExistingConcept = await prisma.Concepts.findFirst({
-        where: {
-          Description: data.data.description,
-          Id_Concept: { not: data.data.concept_Selected.Id_Concept },
-        },
-      });
-      if (ExistingConcept) {
-        return new Response(
-          JSON.stringify({ message: "Concept description already exists." }),
-          { status: 208 }
-        );
+      if (data.data.is_Default_Concept === 1) {
+        const existingConcept = await prisma.Concepts.findFirst({
+          where: {
+            Id_Concept: data.data.Id_Concept,
+            NOT: { Id_Concept: data.data.concept_Selected.Id_Concept },
+          },
+        });
+
+        const existingDefaultConcept = await prisma.Default_Concepts.findFirst({
+          where: {
+            Id_Concept: data.data.Id_Concept,
+            Id_PayFrequency: Number(data.data.payment_Frequency),
+          },
+        });
+
+        if (existingDefaultConcept) {
+          return new Response(
+            JSON.stringify({
+              message: "Default Concept combination already exists.",
+            }),
+            { status: 400 }
+          );
+        }
+
+        if (existingConcept) {
+          return new Response(
+            JSON.stringify({ message: "Concept id already exists." }),
+            { status: 400 }
+          );
+        }
+
+        await prisma.Default_Concepts.create({
+          data: {
+            Id_Concept: data.data.Id_Concept,
+            Description: data.data.description.trim(),
+            Id_PayFrequency: Number(data.data.payment_Frequency),
+            Id_Concept_Type: data.data.concept_Type,
+            Per_Hour: "0",
+            Per_Amount: "0",
+          },
+        });
+      }
+
+      if (data.data.is_Default_Concept === 2) {
+        await prisma.Default_Concepts.deleteMany({
+          where: {
+            Id_Concept: String(data.data.concept_Selected.Id_Concept),
+            Id_PayFrequency: Number(data.data.payment_Frequency),
+          },
+        });
       }
 
       await prisma.Employees_Movements.updateMany({
         where: {
-          Id_Concept: Number(data.data.concept_Selected.Id_Concept),
+          Id_Concept: String(data.data.concept_Selected.Id_Concept),
         },
-        data: { Id_Concept: Number(data.data.id) },
+        data: { Id_Concept: String(data.data.Id_Concept) },
       });
 
       updatedData = await prisma.Concepts.update({
         where: { Id_Concept: data.data.concept_Selected.Id_Concept },
         data: {
-          Id_Concept: data.data.id,
-          Description: data.data.description,
+          Id_Concept: String(data.data.Id_Concept),
+          Description: data.data.description.trim(),
           Id_Concept_Type: data.data.concept_Type,
           Income_Tax: data.data.income_Tax === 1 ? true : false,
           Social_Sec: data.data.social_Security === 1 ? true : false,
+          Is_Default_Concept:
+            data.data.is_Default_Concept === 2
+              ? false
+              : Boolean(data.data.is_Default_Concept),
         },
       });
+
+      await prisma.Default_Concepts.updateMany({
+        where: {
+          Id_Concept: String(data.data.concept_Selected.Id_Concept),
+        },
+        data: {
+          Id_Concept: String(data.data.Id_Concept),
+          Description: data.data.description.trim(),
+          Id_Concept_Type: data.data.concept_Type,
+        },
+      });
+
       break;
     }
     default:

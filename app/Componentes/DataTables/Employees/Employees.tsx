@@ -75,13 +75,12 @@ const EmployeesTable = (props) => {
         setEmployees(empleadosFiltrados);
         setPage(0);
       } else {
-        toast("Sin cambios en el filtro aplicado", {
+        toast("No changes in the search results", {
           duration: 2000,
           style: { background: "#f0c544", color: "#222" },
         });
       }
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [props.filtroActivo, props.filtro, jobPositionsDetails]);
 
   useEffect(() => {
@@ -176,11 +175,22 @@ const EmployeesTable = (props) => {
     setPage(0);
   };
 
+  const filteredRows = rows.filter(
+    (row) =>
+      row.name.toLowerCase().includes(props.filterText?.toLowerCase() || "") ||
+      row.jobTitle
+        .toLowerCase()
+        .includes(props.filterText?.toLowerCase() || "") ||
+      (row.status === 1 ? "active" : "inactive").includes(
+        props.filterText?.toLowerCase() || ""
+      )
+  );
+
   const visibleRows = useMemo(() => {
-    return [...rows]
+    return [...filteredRows]
       .sort(getComparator(order, orderBy))
       .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage);
-  }, [order, orderBy, page, rowsPerPage, rows]);
+  }, [order, orderBy, page, rowsPerPage, filteredRows]);
 
   async function handleDelete(id: number) {
     try {
@@ -209,7 +219,7 @@ const EmployeesTable = (props) => {
             alignItems: "center",
           }}
         >
-          ¿Seguro que quieres borrar el usuario?
+          ¿You sure you want to delete this employee?
           <button
             style={{
               marginLeft: 8,
@@ -277,9 +287,6 @@ const EmployeesTable = (props) => {
                 Employees
               </Typography>
             )}
-            <button className="add-employee" onClick={props.onAddEmployee}>
-              Add Employee
-            </button>
           </Toolbar>
 
           <TableContainer>
@@ -398,7 +405,7 @@ const EmployeesTable = (props) => {
           <TablePagination
             rowsPerPageOptions={[5, 10, 25]}
             component="div"
-            count={rows.length}
+            count={filteredRows.length}
             rowsPerPage={rowsPerPage}
             page={page}
             onPageChange={handleChangePage}

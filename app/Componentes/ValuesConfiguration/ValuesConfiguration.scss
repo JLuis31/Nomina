@@ -1,5 +1,5 @@
 .configuration-Container {
-  width: 80%;
+  width: 90%;
   margin: auto;
   padding-top: 2rem;
 
@@ -10,7 +10,7 @@
     gap: 2rem;
   }
 
-  select {
+  .selects-valuesConfiguration {
     width: 100%;
     padding: 0.7rem 1.5rem;
     margin-top: 1rem;
@@ -19,13 +19,12 @@
   }
 
   .edit {
-    padding: 0.7rem 1rem;
+    padding: 0.5rem 1rem;
     background-color: #007bff;
     color: white;
     border: none;
     border-radius: 0.5rem;
     cursor: pointer;
-    margin-left: auto;
 
     &:hover {
       background-color: #0056b3;
@@ -61,7 +60,13 @@
   }
 }
 
-.buttons-container {
+.valuesConfigurationHeader {
   display: flex;
-  justify-content: flex-end;
+  justify-content: flex-start;
+}
+
+.btn-header-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }

@@ -1,6 +1,6 @@
 "use client";
 
-import NavDesktop from "../../NavDesktop/NavDesktop";
+import NavDesktop from "../NavDesktop/NavDesktop";
 import {
   alpha,
   Box,
@@ -27,6 +27,7 @@ import { toast } from "react-hot-toast";
 import axios from "axios";
 import "./View-Deductions-Incomes.scss";
 import UpdateDeductionIncome from "./Update-Deduction-Income/Upadate-Deduction-Income";
+import CapturaDeducciones from "./Add-Deduction-Income/CapturaDeducciones";
 
 const ViewDeductions = () => {
   type AllMovements = {
@@ -39,7 +40,6 @@ const ViewDeductions = () => {
     Deduction: string;
   };
   const [selected, setSelected] = useState<number[]>([]);
-  console.log("Selected Rows:", selected);
   const [rows, setAllMovements] = useState<AllMovements[]>([]);
   const [rowsPerPage, setRowsPerPage] = useState(5);
   const [page, setPage] = useState(0);
@@ -50,6 +50,21 @@ const ViewDeductions = () => {
   const [showUpdateModal, setShowUpdateModal] = useState(false);
   const [refreshTable, setRefreshTable] = useState(false);
   const [filterText, setFilterText] = useState("");
+  const [showAdditionModal, setShowAdditionModal] = useState(false);
+
+  const OpenModalAddition = (isOpen: boolean) => {
+    setShowAdditionModal(isOpen);
+  };
+
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      if (e.key === "Escape") {
+        setShowUpdateModal(false);
+      }
+    };
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, []);
 
   useEffect(() => {
     const fetchCalendars = async () => {
@@ -105,7 +120,7 @@ const ViewDeductions = () => {
             alignItems: "center",
           }}
         >
-          ¿Seguro que quieres borrar el usuario?
+          ¿You sure you want to delete this movement?
           <button
             style={{
               marginLeft: 8,
@@ -226,6 +241,38 @@ const ViewDeductions = () => {
                 onChange={(e) => setFilterText(e.target.value)}
               />
             </div>
+            <div className="botonesfiltro">
+              <button
+                onClick={() => OpenModalAddition(true)}
+                className="addPayrollPeriods"
+                style={{
+                  backgroundColor: "#345d8a",
+                  color: "white",
+                  border: "none",
+                  padding: "10px 20px",
+                  borderRadius: "6px",
+                  cursor: "pointer",
+                  fontWeight: "500",
+                  fontSize: "14px",
+                  transition: "all 0.3s ease",
+                  boxShadow: "0 2px 4px rgba(0,0,0,0.1)",
+                }}
+                onMouseOver={(e) => {
+                  e.currentTarget.style.backgroundColor = "#2a4a6e";
+                  e.currentTarget.style.boxShadow =
+                    "0 4px 8px rgba(0,0,0,0.15)";
+                  e.currentTarget.style.transform = "translateY(-1px)";
+                }}
+                onMouseOut={(e) => {
+                  e.currentTarget.style.backgroundColor = "#345d8a";
+                  e.currentTarget.style.boxShadow = "0 2px 4px rgba(0,0,0,0.1)";
+                  e.currentTarget.style.transform = "translateY(0)";
+                }}
+              >
+                {" "}
+                Add Deduction or Income
+              </button>
+            </div>
           </div>
           <Box sx={{ width: "100%", mt: 3 }}>
             <Paper sx={{ width: "100%", mb: 2 }}>
@@ -339,7 +386,7 @@ const ViewDeductions = () => {
                       return (
                         <TableRow
                           hover
-                          key={Number(row.Id_Movement) ?? idx}
+                          key={row.Id_Movement ?? idx}
                           onClick={() => {
                             handleClick(row);
                             OpenModal(true);
@@ -431,6 +478,14 @@ const ViewDeductions = () => {
               </div>
             )}
           </Box>
+          {showAdditionModal && (
+            <div className="overlay">
+              <CapturaDeducciones
+                modalOpen={OpenModalAddition}
+                setRefreshTable={() => setRefreshTable((prev) => !prev)}
+              />
+            </div>
+          )}
         </div>
       </div>
     </div>

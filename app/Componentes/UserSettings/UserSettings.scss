@@ -1,0 +1,36 @@
+.User-Settings-Container {
+  width: 90%;
+  margin: auto;
+}
+
+.logout {
+  background-color: #0070f3;
+  border: none;
+  color: white;
+  padding: 8px 16px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 14px;
+  margin-left: 10px;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.logout:hover {
+  background-color: #005bb5;
+}
+
+.logout:active {
+  background-color: #003f7f;
+}
+.logout:disabled {
+  background-color: #cccccc;
+  cursor: not-allowed;
+}
+.logout:disabled:hover {
+  background-color: #cccccc;
+}
+.logout:disabled:active {
+  background-color: #cccccc;
+}

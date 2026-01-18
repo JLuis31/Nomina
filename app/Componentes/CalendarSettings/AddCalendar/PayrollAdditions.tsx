@@ -71,7 +71,6 @@ const PayrollAdditions = (props) => {
   };
 
   const handleSubmit = async () => {
-    console.log("Submitting Data:", data);
 
     if (data.Year === 0 || data.Period_Start === "" || data.Period_End === "") {
       toast.error("Please fill in all required fields.", { duration: 2000 });

@@ -257,44 +257,14 @@ export async function PUT(request) {
       }
 
       if (data.data.is_Default_Concept === 1) {
-        const existingConcept = await prisma.Concepts.findFirst({
-          where: {
-            Id_Concept: data.data.Id_Concept,
-            NOT: { Id_Concept: data.data.concept_Selected.Id_Concept },
-          },
-        });
-
-        const existingDefaultConcept = await prisma.Default_Concepts.findFirst({
-          where: {
-            Id_Concept: data.data.Id_Concept,
-            Id_PayFrequency: Number(data.data.payment_Frequency),
-          },
-        });
-
-        if (existingDefaultConcept) {
-          return new Response(
-            JSON.stringify({
-              message: "Default Concept combination already exists.",
-            }),
-            { status: 400 }
-          );
-        }
-
-        if (existingConcept) {
-          return new Response(
-            JSON.stringify({ message: "Concept id already exists." }),
-            { status: 400 }
-          );
-        }
-
         await prisma.Default_Concepts.create({
           data: {
             Id_Concept: data.data.Id_Concept,
             Description: data.data.description.trim(),
-            Id_PayFrequency: Number(data.data.payment_Frequency),
+            Id_PayFrequency: Number(data.data.payment_Frequency) || 0,
             Id_Concept_Type: data.data.concept_Type,
-            Per_Hour: "0",
-            Per_Amount: "0",
+            Per_Hour: 0,
+            Per_Amount: 0,
           },
         });
       }
@@ -303,7 +273,7 @@ export async function PUT(request) {
         await prisma.Default_Concepts.deleteMany({
           where: {
             Id_Concept: String(data.data.concept_Selected.Id_Concept),
-            Id_PayFrequency: Number(data.data.payment_Frequency),
+            Id_PayFrequency: Number(data.data.payment_Frequency) || 0,
           },
         });
       }

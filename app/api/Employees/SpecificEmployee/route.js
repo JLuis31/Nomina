@@ -48,7 +48,7 @@ export async function PUT(req) {
       Id_Job: Number(UserData.jobTitle),
       Id_Department: Number(UserData.department),
       Id_Employee_type: Number(UserData.employeeType),
-      Salary: UserData.salary.replace(/[^0-9.,]/g, ""),
+      Salary: parseFloat(UserData.salary.replace(/[^0-9.,]/g, "")),
       Status:
         UserData.employeeStatus === "Active"
           ? "1"

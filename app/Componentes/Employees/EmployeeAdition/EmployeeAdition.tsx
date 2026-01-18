@@ -62,7 +62,7 @@ const EmployeeAdition = ({
     employeeType: "1",
     startDate: new Date().toISOString().slice(0, 10),
     salary: "",
-    status: "In Process",
+    status: "Inactive",
   });
   const modalVariants = {
     hidden: { opacity: 0, scale: 1 },
@@ -86,10 +86,7 @@ const EmployeeAdition = ({
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log("Submitting employee data:", {
-      personalInformation,
-      jobDetails,
-    });
+
     if (
       personalInformation.name === "" ||
       personalInformation.firstSurname === "" ||
@@ -115,7 +112,10 @@ const EmployeeAdition = ({
         combinedData
       );
       if (response.status === 201) {
-        toast.success("Employee added successfully!");
+        toast.success("Employee added successfully!", { duration: 2000 });
+        setTimeout(() => {
+          window.location.reload();
+        }, 2000);
         reloadEmpleadosDetails();
 
         setJobDetails({
@@ -553,7 +553,7 @@ const EmployeeAdition = ({
                     </MenuItem>
                     <MenuItem value="In Process">
                       <Chip
-                        label="In Process"
+                        label="Inactive"
                         size="small"
                         sx={{
                           backgroundColor: "#fff3e0",

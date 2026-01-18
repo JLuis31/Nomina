@@ -8,7 +8,6 @@ export async function GET() {
 
 export async function PUT(request) {
   const data = await request.json();
-  console.log("Data received for update:", data);
 
   const overlapping = await prisma.Payroll.findFirst({
     where: {

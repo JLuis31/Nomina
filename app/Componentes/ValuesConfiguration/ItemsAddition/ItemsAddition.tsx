@@ -1,8 +1,7 @@
 "use client";
 
-import "../TablesToConfigure/TablesToConfigure.scss";
+import "../ItemsAddition/ItemsAddition.scss";
 import { useState } from "react";
-import { motion } from "framer-motion";
 import { useUsersDetails } from "@/app/Context/UsersDetailsContext";
 import axios from "axios";
 import toast from "react-hot-toast";
@@ -35,7 +34,7 @@ import LocationOnIcon from "@mui/icons-material/LocationOn";
 import LocationCityIcon from "@mui/icons-material/LocationCity";
 import DescriptionIcon from "@mui/icons-material/Description";
 
-const TablesToConfigure = (props) => {
+const ItemsAddition = (props) => {
   const modalVariants = {
     hidden: { opacity: 0, scale: 1 },
     visible: {
@@ -55,8 +54,6 @@ const TablesToConfigure = (props) => {
       },
     },
   };
-
-  console.log("Catalog prop:", props.catalog);
 
   const {
     setDepartmentDetails,
@@ -193,7 +190,6 @@ const TablesToConfigure = (props) => {
     }
   };
 
-  console.log(payFrequencyDetails);
 
   const getItemTypeIcon = () => {
     switch (selectedOption.department) {
@@ -416,43 +412,44 @@ const TablesToConfigure = (props) => {
             rows={2}
           />
 
-          {selectedOption.department === "5" && (
-            <Box sx={{ display: "flex", gap: 2 }}>
-              <FormControl fullWidth>
-                <InputLabel>Income Tax</InputLabel>
-                <Select
-                  value={selectedOption.IncomeTax}
-                  label="Income Tax"
-                  onChange={(e) =>
-                    setSelectedOption({
-                      ...selectedOption,
-                      IncomeTax: e.target.value,
-                    })
-                  }
-                >
-                  <MenuItem value="0">No</MenuItem>
-                  <MenuItem value="1">Yes</MenuItem>
-                </Select>
-              </FormControl>
+          {selectedOption.department === "5" &&
+            selectedOption.ConceptType !== "D" && (
+              <Box sx={{ display: "flex", gap: 2 }}>
+                <FormControl fullWidth>
+                  <InputLabel>Income Tax</InputLabel>
+                  <Select
+                    value={selectedOption.IncomeTax}
+                    label="Income Tax"
+                    onChange={(e) =>
+                      setSelectedOption({
+                        ...selectedOption,
+                        IncomeTax: e.target.value,
+                      })
+                    }
+                  >
+                    <MenuItem value="0">No</MenuItem>
+                    <MenuItem value="1">Yes</MenuItem>
+                  </Select>
+                </FormControl>
 
-              <FormControl fullWidth>
-                <InputLabel>Social Security</InputLabel>
-                <Select
-                  value={selectedOption.SocialSec}
-                  label="Social Security"
-                  onChange={(e) =>
-                    setSelectedOption({
-                      ...selectedOption,
-                      SocialSec: e.target.value,
-                    })
-                  }
-                >
-                  <MenuItem value="0">No</MenuItem>
-                  <MenuItem value="1">Yes</MenuItem>
-                </Select>
-              </FormControl>
-            </Box>
-          )}
+                <FormControl fullWidth>
+                  <InputLabel>Social Security</InputLabel>
+                  <Select
+                    value={selectedOption.SocialSec}
+                    label="Social Security"
+                    onChange={(e) =>
+                      setSelectedOption({
+                        ...selectedOption,
+                        SocialSec: e.target.value,
+                      })
+                    }
+                  >
+                    <MenuItem value="0">No</MenuItem>
+                    <MenuItem value="1">Yes</MenuItem>
+                  </Select>
+                </FormControl>
+              </Box>
+            )}
         </Box>
       </DialogContent>
 
@@ -482,4 +479,4 @@ const TablesToConfigure = (props) => {
   );
 };
 
-export default TablesToConfigure;
+export default ItemsAddition;

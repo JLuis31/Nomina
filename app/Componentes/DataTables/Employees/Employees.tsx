@@ -403,6 +403,7 @@ const EmployeesTable = (props) => {
           </TableContainer>
 
           <TablePagination
+            id="deductions-table-pagination"
             rowsPerPageOptions={[5, 10, 25]}
             component="div"
             count={filteredRows.length}

@@ -20,8 +20,8 @@ import {
 } from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
 import toast from "react-hot-toast";
-import "../TablesStyles.scss";
-import UpdateTable from "../UpdateTable";
+import "../Update_Table/UpdateTable.scss";
+import UpdateTable from "../Update_Table/UpdateTable";
 import { useUsersDetails } from "@/app/Context/UsersDetailsContext";
 
 const DeduccionesTable = (props) => {
@@ -149,7 +149,6 @@ const DeduccionesTable = (props) => {
       .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage);
   }, [filteredData, order, orderBy, page, rowsPerPage]);
 
-  console.log("filteredData", paginatedData);
 
   return (
     <Box sx={{ width: "100%", mt: 3 }}>
@@ -386,6 +385,7 @@ const DeduccionesTable = (props) => {
 
         {Array.isArray(filteredData) && filteredData.length > 0 && (
           <TablePagination
+            id="deductions-table-pagination"
             rowsPerPageOptions={[5, 10, 25]}
             component="div"
             count={filteredData.length}

@@ -20,7 +20,6 @@ export async function GET(request) {
     filters = { ...filters, Status: status };
   }
 
-  console.log("Filters applied:", filters);
   const employees = await prisma.employees.findMany({
     where: {
       ...filters,

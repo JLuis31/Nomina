@@ -45,7 +45,6 @@ const Settings = () => {
   };
   const { payFrequencyDetails } = useUsersDetails();
   const [selected, setSelected] = useState<number[]>([]);
-  console.log("Selected Rows:", selected);
   const [rows, setCalendars] = useState<PayrollRow[]>([]);
   const [rowsPerPage, setRowsPerPage] = useState(5);
   const [page, setPage] = useState(0);
@@ -488,6 +487,7 @@ const Settings = () => {
 
               {rows.length > 0 && (
                 <TablePagination
+                  id="deductions-table-pagination"
                   rowsPerPageOptions={[5, 10, 25]}
                   component="div"
                   count={rows.length}

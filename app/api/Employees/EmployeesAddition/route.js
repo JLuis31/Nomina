@@ -6,11 +6,7 @@ export async function POST(req) {
     ...data,
     salary: data.salary,
     status:
-      data.status === "Active"
-        ? "1"
-        : data.status === "In Process"
-        ? "4"
-        : null,
+      data.status === "Active" ? "1" : data.status === "Inactive" ? "2" : null,
   };
 
   const existingEmployeeEmail = await prisma.Employees.findFirst({
@@ -77,7 +73,7 @@ export async function POST(req) {
       Id_Department: Number(formatedData.department),
       Id_Employee_type: Number(formatedData.employeeType),
       Start_Date: new Date(formatedData.startDate),
-      Salary: formatedData.salary,
+      Salary: parseFloat(formatedData.salary),
       Status: formatedData.status,
       Curp: formatedData.curp,
       RFC: formatedData.rfc,
@@ -106,7 +102,6 @@ export async function DELETE(req) {
   const { searchParams } = new URL(req.url);
   const idEmployee = searchParams.get("idEmployee");
 
-  console.log("Deleting employee with ID:", idEmployee);
 
   await prisma.Employees.delete({
     where: { Id_Employee: Number(idEmployee) },

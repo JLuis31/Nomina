@@ -5,13 +5,6 @@ export async function GET(request) {
   const payFrequencyId = Number(searchParams.get("payFrequencyId"));
   const Year = Number(searchParams.get("year"));
 
-  console.log(
-    "Fetching specific periods for Pay Frequency ID:",
-    payFrequencyId,
-    "and Year:",
-    Year
-  );
-
   const response = await prisma.Payroll.findMany({
     select: {
       Id_Period: true,

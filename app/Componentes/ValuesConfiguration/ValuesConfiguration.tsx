@@ -6,7 +6,6 @@ import NavDesktop from "../NavDesktop/NavDesktop";
 import axios from "axios";
 import toast from "react-hot-toast";
 import { useState, useEffect } from "react";
-import TablesToConfigure from "./TablesToConfigure/TablesToConfigure";
 import { AnimatePresence } from "framer-motion";
 import { useUsersDetails } from "@/app/Context/UsersDetailsContext";
 import DeduccionesTable from "../DataTables/Deductions_Incomes/Deductions_Incomes";
@@ -15,6 +14,7 @@ import ClipLoader from "react-spinners/ClipLoader";
 import { useRouter } from "next/navigation";
 import GeneralTable from "../DataTables/GeneralTable/GeneralTable";
 import { FormControl, InputLabel, Select, MenuItem, Box } from "@mui/material";
+import ItemsAddition from "./ItemsAddition/ItemsAddition";
 const ValuesConfiguration = () => {
   const session = useSession();
   const Router = useRouter();
@@ -66,7 +66,6 @@ const ValuesConfiguration = () => {
             );
             break;
           case "Employee Types":
-            console.log(employeeTypesDetails);
             setEmployeeTypesDetails(
               employeeTypesDetails.filter(
                 (emp: any) => emp.Id_Employee_type !== id
@@ -159,10 +158,7 @@ const ValuesConfiguration = () => {
       <AnimatePresence>
         {showItemAddition === true && (
           <div className="overlay">
-            <TablesToConfigure
-              cancelData={datoRecibidoCancel}
-              catalog={catalog}
-            />
+            <ItemsAddition cancelData={datoRecibidoCancel} catalog={catalog} />
           </div>
         )}
       </AnimatePresence>

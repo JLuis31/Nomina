@@ -3,6 +3,7 @@
 import "@/app/Componentes/PayrollCalculation/PayrollCalculation.scss";
 import "@/app/Componentes/ValuesConfiguration/ValuesConfiguration.scss";
 import NavDesktop from "../NavDesktop/NavDesktop";
+import Exceptions from "./AddExceptions/AddExceptions";
 import { useUsersDetails } from "@/app/Context/UsersDetailsContext";
 import { useState } from "react";
 import {
@@ -34,62 +35,7 @@ const PayrollCalculation = () => {
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
   const [dense, setDense] = useState(false);
-
-  const subsidioMensual2025 = [
-    { limInf: 0.01, limSup: 9081.0, cantidad: 390.0 },
-    { limInf: 9081.01, limSup: Infinity, cantidad: 0.0 },
-  ];
-  const isrMensual2025 = [
-    { limInf: 0.01, limSup: 746.04, cuota: 0.0, porcentaje: 0.0192 },
-    { limInf: 746.05, limSup: 6332.05, cuota: 14.32, porcentaje: 0.064 },
-    { limInf: 6332.06, limSup: 11128.01, cuota: 371.83, porcentaje: 0.1088 },
-    { limInf: 11128.02, limSup: 12935.82, cuota: 893.63, porcentaje: 0.16 },
-    { limInf: 12935.83, limSup: 15487.71, cuota: 1182.88, porcentaje: 0.1792 },
-    { limInf: 15487.72, limSup: 31236.49, cuota: 1640.18, porcentaje: 0.2136 },
-    { limInf: 31236.5, limSup: 49233.0, cuota: 5004.12, porcentaje: 0.2352 },
-    { limInf: 49233.01, limSup: 93993.9, cuota: 9236.89, porcentaje: 0.3 },
-    { limInf: 93993.91, limSup: 125325.2, cuota: 22665.17, porcentaje: 0.32 },
-    { limInf: 125325.21, limSup: 375975.61, cuota: 32691.18, porcentaje: 0.34 },
-    { limInf: 375975.62, limSup: Infinity, cuota: 117912.32, porcentaje: 0.35 },
-  ];
-
-  const subsidioQuincenal2025 = [
-    { limInf: 0.01, limSup: 4480.76, cantidad: 192.46 },
-    { limInf: 4480.77, limSup: Infinity, cantidad: 0.0 },
-  ];
-
-  const isrQuincenal2025 = [
-    { limInf: 0.01, limSup: 368.1, cuota: 0.0, porcentaje: 0.0192 },
-    { limInf: 368.11, limSup: 3124.35, cuota: 7.05, porcentaje: 0.064 },
-    { limInf: 3124.36, limSup: 5490.75, cuota: 183.45, porcentaje: 0.1088 },
-    { limInf: 5490.76, limSup: 6382.8, cuota: 441.0, porcentaje: 0.16 },
-    { limInf: 6382.81, limSup: 7641.9, cuota: 583.65, porcentaje: 0.1792 },
-    { limInf: 7641.91, limSup: 15412.8, cuota: 809.25, porcentaje: 0.2136 },
-    { limInf: 15412.81, limSup: 24292.65, cuota: 2469.15, porcentaje: 0.2352 },
-    { limInf: 24292.66, limSup: 46378.5, cuota: 4557.75, porcentaje: 0.3 },
-    { limInf: 46378.51, limSup: 61838.1, cuota: 11183.4, porcentaje: 0.32 },
-    { limInf: 61838.11, limSup: 185514.3, cuota: 16130.55, porcentaje: 0.34 },
-    { limInf: 185514.31, limSup: Infinity, cuota: 58180.35, porcentaje: 0.35 },
-  ];
-
-  const subsidioSemanal2025 = [
-    { limInf: 0.01, limSup: 2091.04, cantidad: 89.84 },
-    { limInf: 2091.05, limSup: Infinity, cantidad: 0.0 },
-  ];
-
-  const isrSemanal2025 = [
-    { limInf: 0.01, limSup: 171.78, cuota: 0.0, porcentaje: 0.0192 },
-    { limInf: 171.79, limSup: 1458.03, cuota: 3.29, porcentaje: 0.064 },
-    { limInf: 1458.04, limSup: 2562.35, cuota: 85.61, porcentaje: 0.1088 },
-    { limInf: 2562.36, limSup: 2978.64, cuota: 205.8, porcentaje: 0.16 },
-    { limInf: 2978.65, limSup: 3566.22, cuota: 272.37, porcentaje: 0.1792 },
-    { limInf: 3566.23, limSup: 7192.64, cuota: 377.65, porcentaje: 0.2136 },
-    { limInf: 7192.65, limSup: 11336.57, cuota: 1152.27, porcentaje: 0.2352 },
-    { limInf: 11336.58, limSup: 21643.3, cuota: 2126.95, porcentaje: 0.3 },
-    { limInf: 21643.31, limSup: 28857.78, cuota: 5218.92, porcentaje: 0.32 },
-    { limInf: 28857.79, limSup: 86573.34, cuota: 7527.59, porcentaje: 0.34 },
-    { limInf: 86573.35, limSup: Infinity, cuota: 27150.83, porcentaje: 0.35 },
-  ];
+  const [showExceptionsModal, setShowExceptionsModal] = useState(false);
 
   const handleChangePage = (event: unknown, newPage: number) => {
     setPage(newPage);
@@ -141,14 +87,65 @@ const PayrollCalculation = () => {
               ))}
             </Select>
           </FormControl>
-          <Button
-            style={{ opacity: data.payFrequency === "" ? "0" : "1" }}
-            variant="contained"
-            color="primary"
-            sx={{ mt: 2 }}
+          <button
+            className="addPayrollPeriods"
+            style={{
+              backgroundColor: "#345d8a",
+              color: "white",
+              border: "none",
+              padding: "10px 20px",
+              borderRadius: "6px",
+              cursor: "pointer",
+              fontWeight: "500",
+              fontSize: "14px",
+              transition: "all 0.3s ease",
+              boxShadow: "0 2px 4px rgba(0,0,0,0.1)",
+            }}
+            onMouseOver={(e) => {
+              e.currentTarget.style.backgroundColor = "#2a4a6e";
+              e.currentTarget.style.boxShadow = "0 4px 8px rgba(0,0,0,0.15)";
+              e.currentTarget.style.transform = "translateY(-1px)";
+            }}
+            onMouseOut={(e) => {
+              e.currentTarget.style.backgroundColor = "#345d8a";
+              e.currentTarget.style.boxShadow = "0 2px 4px rgba(0,0,0,0.1)";
+              e.currentTarget.style.transform = "translateY(0)";
+            }}
           >
-            Add incident
-          </Button>{" "}
+            {" "}
+            Calculate Payroll
+          </button>
+          <button
+            className="addPayrollPeriods"
+            style={{
+              opacity: data.payFrequency === "" ? "0" : "1",
+              backgroundColor: "#345d8a",
+              color: "white",
+              border: "none",
+              padding: "10px 20px",
+              borderRadius: "6px",
+              cursor: "pointer",
+              fontWeight: "500",
+              fontSize: "14px",
+              transition: "all 0.3s ease",
+              boxShadow: "0 2px 4px rgba(0,0,0,0.1)",
+              pointerEvents: data.payFrequency === "" ? "none" : "auto",
+            }}
+            onClick={() => setShowExceptionsModal(true)}
+            onMouseOver={(e) => {
+              e.currentTarget.style.backgroundColor = "#2a4a6e";
+              e.currentTarget.style.boxShadow = "0 4px 8px rgba(0,0,0,0.15)";
+              e.currentTarget.style.transform = "translateY(-1px)";
+            }}
+            onMouseOut={(e) => {
+              e.currentTarget.style.backgroundColor = "#345d8a";
+              e.currentTarget.style.boxShadow = "0 2px 4px rgba(0,0,0,0.1)";
+              e.currentTarget.style.transform = "translateY(0)";
+            }}
+          >
+            {" "}
+            Add Exceptions
+          </button>
         </Box>
 
         {data.payFrequency && (
@@ -222,6 +219,7 @@ const PayrollCalculation = () => {
 
               {filteredConcepts.length > 0 && (
                 <TablePagination
+                  id="deductions-table-pagination"
                   rowsPerPageOptions={[5, 10, 25]}
                   component="div"
                   count={filteredConcepts.length}
@@ -245,6 +243,13 @@ const PayrollCalculation = () => {
           </Box>
         )}
       </div>
+      {showExceptionsModal && (
+        <Exceptions
+          isOpen={showExceptionsModal}
+          onClose={() => setShowExceptionsModal(false)}
+          payFrequencyId={data.payFrequency}
+        />
+      )}{" "}
     </div>
   );
 };

@@ -37,7 +37,7 @@ model Employees {
   Id_Department    Int
   Id_Employee_type      Int 
   Start_Date   DateTime
-  Salary   String
+  Salary   Float
   Status   String
   Curp      String
   RFC       String
@@ -91,15 +91,13 @@ model Employees_Movements{
     Id_Concept String   
     Id_PayFrequency Int 
 	  Id_Period Int  
-    Movement_Type String    
-    Total_Amount String
-    Deduction String
+    Id_Concept_Type String    
+    Total_Amount Float
+    Balance Float
 	  Last_Time_Update DateTime
 	  Increase_or_Rest String
     Created_By String
     Is_Processed Boolean @default(false)
-    Is_Deleted Boolean @default(false)
-
 }
 
 model  Payroll {
@@ -121,9 +119,20 @@ model Default_Concepts{
   Id_PayFrequency Int
 	Id_Concept String
 	Id_Concept_Type String
-  Per_Hour String
-  Per_Amount String
+  Per_Hour Float
+  Per_Amount Float
   Description String
 
 
+}
+
+
+model Employee_Exceptions{
+  Id_Movement   Int    @id @default(autoincrement())
+  Id_Employee  Int  
+  Id_Concept String
+  Id_PayFrequency Int  
+  Id_Concept_Type String    
+  Per_Hour Float
+  Per_Amount Float
 }

@@ -4,7 +4,6 @@ export async function DELETE(request) {
   const { searchParams } = new URL(request.url);
   const idUser = searchParams.get("idUser");
   const description = searchParams.get("description");
-  console.log("Delete Request Params:", { idUser, description });
 
   if (description === "Departments") {
     const hasEmployees = await prisma.Employees.findFirst({

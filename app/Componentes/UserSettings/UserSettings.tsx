@@ -30,7 +30,6 @@ import { useUsersDetails } from "@/app/Context/UsersDetailsContext";
 
 const UserSettings = () => {
   const { empleadosDetails, departmentDetails } = useUsersDetails();
-  console.log(departmentDetails);
   const router = useRouter();
   const session = useSession();
   const userName =
@@ -132,21 +131,6 @@ const UserSettings = () => {
                     secondaryTypographyProps={{ fontSize: "0.7rem" }}
                   />
                 </ListItem>
-                <ListItem sx={{ py: 0.5 }}>
-                  <ListItemIcon sx={{ minWidth: 36 }}>
-                    <Business sx={{ color: "#1976d2", fontSize: 20 }} />
-                  </ListItemIcon>
-                  <ListItemText
-                    primary="Department"
-                    secondary={
-                      departmentDetails?.find(
-                        (dep) => dep.Id_Department === Number(userDepartment)
-                      )?.Description || "Not assigned"
-                    }
-                    primaryTypographyProps={{ fontSize: "0.75rem" }}
-                    secondaryTypographyProps={{ fontSize: "0.7rem" }}
-                  />
-                </ListItem>
               </List>
             </CardContent>
           </Card>
@@ -183,28 +167,6 @@ const UserSettings = () => {
               <Divider sx={{ my: 1.5 }} />
 
               <List dense sx={{ py: 0 }}>
-                <ListItem sx={{ py: 0.5 }}>
-                  <ListItemIcon sx={{ minWidth: 36 }}>
-                    <Language sx={{ color: "#2e7d32", fontSize: 20 }} />
-                  </ListItemIcon>
-                  <ListItemText
-                    primary="Language"
-                    secondary="English (US)"
-                    primaryTypographyProps={{ fontSize: "0.75rem" }}
-                    secondaryTypographyProps={{ fontSize: "0.7rem" }}
-                  />
-                </ListItem>
-                <ListItem sx={{ py: 0.5 }}>
-                  <ListItemIcon sx={{ minWidth: 36 }}>
-                    <Palette sx={{ color: "#9c27b0", fontSize: 20 }} />
-                  </ListItemIcon>
-                  <ListItemText
-                    primary="Theme"
-                    secondary="Light Mode"
-                    primaryTypographyProps={{ fontSize: "0.75rem" }}
-                    secondaryTypographyProps={{ fontSize: "0.7rem" }}
-                  />
-                </ListItem>
                 <ListItem sx={{ py: 0.5 }}>
                   <ListItemIcon sx={{ minWidth: 36 }}>
                     <AttachMoney sx={{ color: "#ed6c02", fontSize: 20 }} />

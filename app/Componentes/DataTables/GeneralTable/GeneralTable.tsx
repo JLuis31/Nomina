@@ -20,10 +20,19 @@ import {
   Toolbar,
   Button,
   TableSortLabel,
+  Select,
+  MenuItem,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
+  FormControl,
+  InputLabel,
 } from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
+import AddIcon from "@mui/icons-material/Add";
 import toast from "react-hot-toast";
-import UpdateTable from "../UpdateTable";
+import UpdateTable from "../Update_Table/UpdateTable";
 import { useUsersDetails } from "@/app/Context/UsersDetailsContext";
 
 const GeneralTable = (props) => {
@@ -37,6 +46,13 @@ const GeneralTable = (props) => {
   const [order, setOrder] = useState<"asc" | "desc">("asc");
   const [orderBy, setOrderBy] = useState<string>("Description");
   const [filterText, setFilterText] = useState("");
+  const [showFrequencyModal, setShowFrequencyModal] = useState(false);
+  const [selectedConceptForFrequency, setSelectedConceptForFrequency] =
+    useState<{
+      conceptId: string;
+      conceptDescription: string;
+    } | null>(null);
+  const [selectedNewFrequency, setSelectedNewFrequency] = useState("");
 
   const confirmDelete = ({ id, description }) => {
     toast(
@@ -134,7 +150,7 @@ const GeneralTable = (props) => {
     };
 
     fetchDefaultConcepts();
-  }, [setDefaultConceptsDetails, defaultConcepts]);
+  }, [setDefaultConceptsDetails]);
 
   const dataToRender =
     [
@@ -189,11 +205,136 @@ const GeneralTable = (props) => {
       if (response.status === 200) {
         toast.success("Default concepts changes saved successfully");
 
+        const refreshResponse = await axios.get(
+          "/api/CatalogsDetails/DefaultConcepts"
+        );
+        setDefaultConceptsDetails(refreshResponse.data);
+
         setDefaultConcepts({});
       }
     } catch (error) {
       if (axios.isAxiosError(error)) {
         toast.error("Error saving default concepts changes");
+      }
+    }
+  };
+
+  useEffect(() => {
+
+    if (Object.keys(defaultConcepts).length === 0) return;
+
+    const hasOnlyFrequencyChanges = Object.values(defaultConcepts).every(
+      (c: any) =>
+        c.Id_PayFrequency !== undefined &&
+        c.Per_Hour === undefined &&
+        c.Per_Amount === undefined
+    );
+
+
+    if (!hasOnlyFrequencyChanges) return;
+
+    const combinedKeys = Object.keys(defaultConcepts).join(", ");
+    const values = Object.values(defaultConcepts);
+    const dataToSend = { values, combinedKeys };
+
+    const UpdatePayFrequencyDefaults = async () => {
+      try {
+        const response = await axios.put(
+          `/api/CatalogsDetails/DefaultConcepts/PaymentFrequency`,
+          {
+            data: dataToSend,
+          }
+        );
+        if (response.status === 200) {
+          toast.success("Pay frequency updated successfully");
+
+          const refreshResponse = await axios.get(
+            "/api/CatalogsDetails/DefaultConcepts"
+          );
+          setDefaultConceptsDetails(refreshResponse.data);
+
+          setDefaultConcepts({});
+        }
+      } catch (error) {
+        if (axios.isAxiosError(error)) {
+          toast.error(
+            error.response?.data?.error || "Error updating pay frequency"
+          );
+        }
+      }
+    };
+
+    UpdatePayFrequencyDefaults();
+  }, [defaultConcepts, setDefaultConceptsDetails]);
+
+  const handleAddFrequency = (
+    conceptId: string,
+    conceptDescription: string
+  ) => {
+    const usedFrequencies = props.defaultConceptsDetails
+      .filter((item: any) => item.Id_Concept === conceptId)
+      .map((item: any) => item.Id_PayFrequency);
+
+    const availableFrequencies = props.payFrequencyDetails.filter(
+      (freq: any) => !usedFrequencies.includes(freq.Id_PayFrequency)
+    );
+
+    if (availableFrequencies.length === 0) {
+      toast.error(
+        "All payment frequencies are already configured for this concept"
+      );
+      return;
+    }
+
+    setSelectedConceptForFrequency({ conceptId, conceptDescription });
+    setShowFrequencyModal(true);
+  };
+
+  const handleConfirmAddFrequency = async () => {
+    if (!selectedConceptForFrequency || !selectedNewFrequency) {
+      toast.error("Please select a payment frequency");
+      return;
+    }
+
+    try {
+      const response = await axios.post(
+        "/api/CatalogsDetails/DefaultConcepts",
+        {
+          Id_Concept: selectedConceptForFrequency.conceptId,
+          Id_Concept_Type: props.defaultConceptsDetails.find(
+            (item: any) =>
+              item.Id_Concept === selectedConceptForFrequency.conceptId
+          )?.Id_Concept_Type,
+          Description: selectedConceptForFrequency.conceptDescription,
+          Id_PayFrequency: selectedNewFrequency,
+          Per_Hour: 0,
+          Per_Amount: 0,
+        }
+      );
+
+      if (response.status === 201 || response.status === 200) {
+        const frequencyName = props.payFrequencyDetails.find(
+          (f: any) => f.Id_PayFrequency === Number(selectedNewFrequency)
+        )?.Description;
+
+        toast.success(
+          `New ${frequencyName} configuration added to ${selectedConceptForFrequency.conceptDescription}`
+        );
+
+        const refreshResponse = await axios.get(
+          "/api/CatalogsDetails/DefaultConcepts"
+        );
+        setDefaultConceptsDetails(refreshResponse.data);
+
+        setDefaultConcepts({});
+
+        setShowFrequencyModal(false);
+        setSelectedConceptForFrequency(null);
+        setSelectedNewFrequency("");
+      }
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        toast.error("Error adding new frequency configuration");
       }
     }
   };
@@ -271,7 +412,13 @@ const GeneralTable = (props) => {
                 onClick={handleSaveDefaultConceptsChanges}
                 style={{
                   display: Object.values(defaultConcepts).filter(
-                    (c) => c.Per_Hour !== "" || c.Per_Amount !== ""
+                    (c: any) =>
+                      (c.Per_Hour !== undefined &&
+                        c.Per_Hour !== "" &&
+                        c.Per_Hour !== null) ||
+                      (c.Per_Amount !== undefined &&
+                        c.Per_Amount !== "" &&
+                        c.Per_Amount !== null)
                   ).length
                     ? ""
                     : "none",
@@ -415,7 +562,7 @@ const GeneralTable = (props) => {
                   )}
 
                   <TableCell
-                    style={{ color: "white" }}
+                    style={{ color: "white", minWidth: "120px" }}
                     className="header"
                     align="center"
                   >
@@ -483,46 +630,91 @@ const GeneralTable = (props) => {
                       )}
                       {props.selectedCatalog.value === 8 && (
                         <TableCell>
-                          {props.payFrequencyDetails.map((freq) =>
-                            freq.Id_PayFrequency === dep.Id_PayFrequency
-                              ? freq.Description
-                              : ""
-                          )}
+                          <Tooltip
+                            title={
+                              Object.values(defaultConcepts).some(
+                                (c: any) =>
+                                  c.Per_Hour !== undefined ||
+                                  c.Per_Amount !== undefined
+                              )
+                                ? "Please save pending input changes before modifying frequency"
+                                : ""
+                            }
+                          >
+                            <Select
+                              value={
+                                defaultConcepts[
+                                  `${dep.Id_Concept}-${dep.Id_PayFrequency}`
+                                ]?.Id_PayFrequency || dep.Id_PayFrequency
+                              }
+                              disabled={Object.values(defaultConcepts).some(
+                                (c: any) =>
+                                  c.Per_Hour !== undefined ||
+                                  c.Per_Amount !== undefined
+                              )}
+                              onChange={(e) =>
+                                setDefaultConcepts({
+                                  ...defaultConcepts,
+                                  [`${dep.Id_Concept}-${dep.Id_PayFrequency}`]:
+                                    {
+                                      ...(defaultConcepts[
+                                        `${dep.Id_Concept}-${dep.Id_PayFrequency}`
+                                      ] || {}),
+                                      Id_PayFrequency: e.target.value,
+                                      Id_Default_Concept:
+                                        dep.Id_Default_Concept,
+                                    },
+                                })
+                              }
+                              size="small"
+                              sx={{
+                                minWidth: 120,
+                                backgroundColor: "#f5f5f5",
+                              }}
+                            >
+                              {props.payFrequencyDetails.map((freq: any) => (
+                                <MenuItem
+                                  key={freq.Id_PayFrequency}
+                                  value={freq.Id_PayFrequency}
+                                >
+                                  {freq.Description}
+                                </MenuItem>
+                              ))}
+                            </Select>
+                          </Tooltip>
                         </TableCell>
                       )}
 
                       {props.selectedCatalog.value === 8 && (
                         <TableCell align="center">
                           <Input
-                            disabled={
-                              (defaultConcepts[
-                                `${dep.Id_Concept}-${dep.Id_PayFrequency}`
-                              ]?.Per_Amount !== undefined &&
+                            inputProps={{
+                              min: 0,
+                            }}
+                            disabled={(() => {
+                              const conceptKey = `${dep.Id_Concept}-${dep.Id_PayFrequency}`;
+                              const perAmount =
+                                defaultConcepts[conceptKey]?.Per_Amount !==
+                                undefined
+                                  ? defaultConcepts[conceptKey].Per_Amount
+                                  : dep.Per_Amount;
+                              return (
+                                perAmount !== undefined &&
+                                perAmount !== "" &&
+                                perAmount !== 0 &&
+                                perAmount !== "0"
+                              );
+                            })()}
+                            value={(() => {
+                              const concept =
                                 defaultConcepts[
                                   `${dep.Id_Concept}-${dep.Id_PayFrequency}`
-                                ]?.Per_Amount !== "" &&
-                                defaultConcepts[
-                                  `${dep.Id_Concept}-${dep.Id_PayFrequency}`
-                                ]?.Per_Amount !== 0 &&
-                                defaultConcepts[
-                                  `${dep.Id_Concept}-${dep.Id_PayFrequency}`
-                                ]?.Per_Amount !== "0") ||
-                              (dep.Per_Amount !== undefined &&
-                                dep.Per_Amount !== "" &&
-                                dep.Per_Amount !== 0 &&
-                                dep.Per_Amount !== "0")
-                                ? true
-                                : false
-                            }
-                            value={
-                              defaultConcepts[
-                                `${dep.Id_Concept}-${dep.Id_PayFrequency}`
-                              ]
-                                ? defaultConcepts[
-                                    `${dep.Id_Concept}-${dep.Id_PayFrequency}`
-                                  ].Per_Hour
-                                : dep.Per_Hour || ""
-                            }
+                                ];
+                              if (concept && concept.Per_Hour !== undefined) {
+                                return String(concept.Per_Hour);
+                              }
+                              return String(dep.Per_Hour || "");
+                            })()}
                             onChange={(e) =>
                               setDefaultConcepts({
                                 ...defaultConcepts,
@@ -543,6 +735,20 @@ const GeneralTable = (props) => {
                               background: "#f5f5f5",
                               fontWeight: "bold",
                               width: 80,
+                              cursor: (() => {
+                                const conceptKey = `${dep.Id_Concept}-${dep.Id_PayFrequency}`;
+                                const perAmount =
+                                  defaultConcepts[conceptKey]?.Per_Amount !==
+                                  undefined
+                                    ? defaultConcepts[conceptKey].Per_Amount
+                                    : dep.Per_Amount;
+                                return perAmount !== undefined &&
+                                  perAmount !== "" &&
+                                  perAmount !== 0 &&
+                                  perAmount !== "0"
+                                  ? "not-allowed"
+                                  : "text";
+                              })(),
                             }}
                           />
                         </TableCell>
@@ -551,36 +757,34 @@ const GeneralTable = (props) => {
                       {props.selectedCatalog.value === 8 && (
                         <TableCell align="center">
                           <Input
-                            disabled={
-                              (defaultConcepts[
-                                `${dep.Id_Concept}-${dep.Id_PayFrequency}`
-                              ]?.Per_Hour !== undefined &&
+                            inputProps={{
+                              min: 0,
+                            }}
+                            disabled={(() => {
+                              const conceptKey = `${dep.Id_Concept}-${dep.Id_PayFrequency}`;
+                              const perHour =
+                                defaultConcepts[conceptKey]?.Per_Hour !==
+                                undefined
+                                  ? defaultConcepts[conceptKey].Per_Hour
+                                  : dep.Per_Hour;
+                              return (
+                                perHour !== undefined &&
+                                perHour !== "" &&
+                                perHour !== 0 &&
+                                perHour !== "0"
+                              );
+                            })()}
+                            value={(() => {
+                              const concept =
                                 defaultConcepts[
                                   `${dep.Id_Concept}-${dep.Id_PayFrequency}`
-                                ]?.Per_Hour !== "" &&
-                                defaultConcepts[
-                                  `${dep.Id_Concept}-${dep.Id_PayFrequency}`
-                                ]?.Per_Hour !== 0 &&
-                                defaultConcepts[
-                                  `${dep.Id_Concept}-${dep.Id_PayFrequency}`
-                                ]?.Per_Hour !== "0") ||
-                              (dep.Per_Hour !== undefined &&
-                                dep.Per_Hour !== "" &&
-                                dep.Per_Hour !== 0 &&
-                                dep.Per_Hour !== "0")
-                                ? true
-                                : false
-                            }
-                            value={
-                              defaultConcepts[
-                                `${dep.Id_Concept}-${dep.Id_PayFrequency}`
-                              ]
-                                ? defaultConcepts[
-                                    `${dep.Id_Concept}-${dep.Id_PayFrequency}`
-                                  ].Per_Amount
-                                : dep.Per_Amount || ""
-                            }
-                            onChange={(e) =>
+                                ];
+                              if (concept && concept.Per_Amount !== undefined) {
+                                return String(concept.Per_Amount);
+                              }
+                              return String(dep.Per_Amount || "");
+                            })()}
+                            onChange={(e) => {
                               setDefaultConcepts({
                                 ...defaultConcepts,
                                 [`${dep.Id_Concept}-${dep.Id_PayFrequency}`]: {
@@ -590,8 +794,8 @@ const GeneralTable = (props) => {
                                   Id_PayFrequency: dep.Id_PayFrequency,
                                   Per_Amount: e.target.value,
                                 },
-                              })
-                            }
+                              });
+                            }}
                             type="number"
                             disableUnderline
                             sx={{
@@ -600,12 +804,48 @@ const GeneralTable = (props) => {
                               background: "#f5f5f5",
                               fontWeight: "bold",
                               width: 80,
+                              cursor: (() => {
+                                const conceptKey = `${dep.Id_Concept}-${dep.Id_PayFrequency}`;
+                                const perHour =
+                                  defaultConcepts[conceptKey]?.Per_Hour !==
+                                  undefined
+                                    ? defaultConcepts[conceptKey].Per_Hour
+                                    : dep.Per_Hour;
+                                return perHour !== undefined &&
+                                  perHour !== "" &&
+                                  perHour !== 0 &&
+                                  perHour !== "0"
+                                  ? "not-allowed"
+                                  : "text";
+                              })(),
                             }}
                           />
                         </TableCell>
                       )}
 
                       <TableCell align="center">
+                        {props.selectedCatalog.value === 8 && (
+                          <Tooltip title="Add Frequency">
+                            <IconButton
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                handleAddFrequency(
+                                  dep.Id_Concept,
+                                  dep.Description
+                                );
+                              }}
+                              size="small"
+                              sx={{
+                                color: "#345d8a",
+                                "&:hover": {
+                                  backgroundColor: "rgba(52, 93, 138, 0.1)",
+                                },
+                              }}
+                            >
+                              <AddIcon />
+                            </IconButton>
+                          </Tooltip>
+                        )}
                         <Tooltip title="Delete">
                           <IconButton
                             onClick={(e) => {
@@ -638,6 +878,7 @@ const GeneralTable = (props) => {
                                     : "",
                               });
                             }}
+                            size="small"
                           >
                             <DeleteIcon color="error" />
                           </IconButton>
@@ -652,6 +893,7 @@ const GeneralTable = (props) => {
 
           {Array.isArray(filteredData) && filteredData.length > 0 && (
             <TablePagination
+              id="deductions-table-pagination"
               rowsPerPageOptions={[5, 10, 25]}
               component="div"
               count={filteredData.length}
@@ -662,6 +904,79 @@ const GeneralTable = (props) => {
             />
           )}
         </Paper>
+
+        <Dialog
+          open={showFrequencyModal}
+          onClose={() => {
+            setShowFrequencyModal(false);
+            setSelectedConceptForFrequency(null);
+            setSelectedNewFrequency("");
+          }}
+          maxWidth="sm"
+          fullWidth
+        >
+          <DialogTitle>
+            Select Payment Frequency
+            {selectedConceptForFrequency && (
+              <Typography variant="body2" color="text.secondary">
+                Adding new frequency for:{" "}
+                {selectedConceptForFrequency.conceptDescription} (
+                {selectedConceptForFrequency.conceptId})
+              </Typography>
+            )}
+          </DialogTitle>
+          <DialogContent>
+            <Box sx={{ mt: 2 }}>
+              <FormControl fullWidth>
+                <InputLabel>Payment Frequency</InputLabel>
+                <Select
+                  value={selectedNewFrequency}
+                  label="Payment Frequency"
+                  onChange={(e) => setSelectedNewFrequency(e.target.value)}
+                >
+                  {selectedConceptForFrequency &&
+                    props.payFrequencyDetails
+                      .filter(
+                        (freq: any) =>
+                          !props.defaultConceptsDetails.some(
+                            (dc: any) =>
+                              dc.Id_Concept ===
+                                selectedConceptForFrequency.conceptId &&
+                              dc.Id_PayFrequency === freq.Id_PayFrequency
+                          )
+                      )
+                      .map((freq: any) => (
+                        <MenuItem
+                          key={freq.Id_PayFrequency}
+                          value={freq.Id_PayFrequency}
+                        >
+                          {freq.Description}
+                        </MenuItem>
+                      ))}
+                </Select>
+              </FormControl>
+            </Box>
+          </DialogContent>
+          <DialogActions>
+            <Button
+              onClick={() => {
+                setShowFrequencyModal(false);
+                setSelectedConceptForFrequency(null);
+                setSelectedNewFrequency("");
+              }}
+            >
+              Cancel
+            </Button>
+            <Button
+              onClick={handleConfirmAddFrequency}
+              variant="contained"
+              color="primary"
+              disabled={!selectedNewFrequency}
+            >
+              Add Frequency
+            </Button>
+          </DialogActions>
+        </Dialog>
 
         <FormControlLabel
           control={

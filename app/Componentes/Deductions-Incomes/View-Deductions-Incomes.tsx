@@ -73,7 +73,6 @@ const ViewDeductions = () => {
           "/api/EmployeesMovements/AllMovements"
         );
         setAllMovements(response.data);
-        console.log("Fetched Movements:", response.data);
       } catch (error) {
         if (axios.isAxiosError(error)) {
           toast.error("Error fetching movements", { duration: 2000 });
@@ -449,6 +448,7 @@ const ViewDeductions = () => {
               </TableContainer>
 
               <TablePagination
+                id="deductions-table-pagination"
                 rowsPerPageOptions={[5, 10, 25]}
                 component="div"
                 count={rows.length}

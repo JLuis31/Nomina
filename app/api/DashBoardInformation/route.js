@@ -9,9 +9,6 @@ export async function GET() {
     },
   });
 
-  console.log(totalCost);
-  console.log(totalEmployees);
-
   return new Response(
     JSON.stringify({
       totalEmployees: totalEmployees,

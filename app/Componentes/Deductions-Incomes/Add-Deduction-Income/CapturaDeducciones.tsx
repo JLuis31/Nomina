@@ -33,7 +33,6 @@ import SaveIcon from "@mui/icons-material/Save";
 const CapturaDeducciones = (props) => {
   const session = useSession();
   const Router = useRouter();
-  console.log("Session Status:", session);
 
   const {
     deduccionesDetails,
@@ -233,7 +232,6 @@ const CapturaDeducciones = (props) => {
       }
     } catch (error) {
       if (axios.isAxiosError(error)) {
-        console.log("Axios error:", error.message);
       }
     }
   };
@@ -253,7 +251,6 @@ const CapturaDeducciones = (props) => {
       const response = await axios.get("/api/EmployeesMovements", {
         params: { idPaymentFrequency: idInput },
       });
-      console.log("Payment Frequency Response:", response.data);
 
       setPaymentFrquencyByEmployee(response.data);
     } catch (error) {

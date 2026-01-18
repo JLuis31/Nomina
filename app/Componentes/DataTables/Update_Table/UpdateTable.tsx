@@ -75,22 +75,17 @@ const UpdateTable = (props) => {
     social_Security: props.selectedDeduction.Social_Security ? 1 : 2,
     concept_Selected: props.selectedDeduction,
     Id_Concept: props.selectedDeduction.Id_Concept,
-    Id_PayFrequency: defaultConceptsDetails.find(
-      (dc) => dc.Id_Concept === props.selectedDeduction.Id_Concept
-    )?.Id_PayFrequency,
     is_Default_Concept: defaultConceptsDetails.some(
       (dc) => dc.Id_Concept === props.selectedDeduction.Id_Concept
     )
       ? 1
       : 2,
-    payment_Frequency: props.selectedDeduction.Payment_Frequency || "",
   });
 
-  const [enableDefaultConcept, setEnableDefaultConcept] = useState(
-    defaultConceptsDetails.some(
+  const hasExistingDefaults =
+    defaultConceptsDetails.filter(
       (dc) => dc.Id_Concept === props.selectedDeduction.Id_Concept
-    )
-  );
+    ).length > 0;
 
   const getDepartmentIcon = () => {
     switch (props.selectedDeduction.Department) {
@@ -123,29 +118,11 @@ const UpdateTable = (props) => {
       return;
     }
 
-    if (
-      data.is_Default_Concept === 1 &&
-      (data.payment_Frequency === "" ||
-        data.payment_Frequency === null ||
-        data.payment_Frequency === undefined)
-    ) {
+    // Validar que no se pueda cambiar a "No" si hay defaults existentes
+    if (data.is_Default_Concept === 2 && hasExistingDefaults) {
       toast.error(
-        "Payment Frequency cannot be empty when Default Concept is set to Yes.",
-        { duration: 2000 }
-      );
-      return;
-    }
-
-    if (
-      enableDefaultConcept &&
-      data.is_Default_Concept === 2 &&
-      (data.payment_Frequency === "" ||
-        data.payment_Frequency === null ||
-        data.payment_Frequency === undefined)
-    ) {
-      toast.error(
-        "Payment Frequency must be empty when Default Concept is set to No.",
-        { duration: 2000 }
+        "Cannot change to 'No' because there are existing default concepts for this concept. Please remove them first from the Default Concepts table.",
+        { duration: 4000 }
       );
       return;
     }
@@ -328,185 +305,146 @@ const UpdateTable = (props) => {
           )}
 
           {props.selectedDeduction.Department === "Deductions" && (
-            <Tooltip title="Unique identifier for the concept" arrow>
+            <Box sx={{ display: "flex", flexDirection: "column", gap: 2.5 }}>
+              <Tooltip title="Unique identifier for the concept" arrow>
+                <TextField
+                  fullWidth
+                  label="ID Concept"
+                  value={data.Id_Concept}
+                  onChange={(e) =>
+                    setData({ ...data, Id_Concept: e.target.value })
+                  }
+                  inputProps={{ maxLength: 10 }}
+                  helperText={`${data.Id_Concept?.length || 0}/10 characters`}
+                />
+              </Tooltip>
+
               <TextField
                 fullWidth
-                label="ID Concept"
-                value={data.Id_Concept}
+                required
+                label="Description"
+                value={data.description}
                 onChange={(e) =>
-                  setData({ ...data, Id_Concept: e.target.value })
+                  setData({ ...data, description: e.target.value })
                 }
-                inputProps={{ maxLength: 10 }}
-                helperText={`${data.Id_Concept?.length || 0}/10 characters`}
+                multiline
+                rows={2}
+                inputProps={{ maxLength: 50 }}
+                helperText={`${data.description?.length || 0} characters`}
               />
-            </Tooltip>
-          )}
 
-          {props.selectedDeduction.Department === "Deductions" && (
-            <TextField
-              fullWidth
-              required
-              label="Description"
-              value={data.description}
-              onChange={(e) =>
-                setData({ ...data, description: e.target.value })
-              }
-              multiline
-              rows={2}
-              inputProps={{ maxLength: 50 }}
-              helperText={`${data.description?.length || 0} characters`}
-            />
-          )}
-
-          {props.selectedDeduction.Department === "Deductions" && (
-            <FormControl fullWidth>
-              <InputLabel>Concept Type</InputLabel>
-              <Select
-                value={data.concept_Type}
-                label="Concept Type"
-                onChange={(e) =>
-                  setData({ ...data, concept_Type: e.target.value })
-                }
-              >
-                <MenuItem value="I">
-                  <Chip
-                    label="Income"
-                    size="small"
-                    sx={{
-                      backgroundColor: "#e8f5e9",
-                      color: "#2e7d32",
-                      fontWeight: 550,
-                    }}
-                  />
-                </MenuItem>
-                <MenuItem value="D">
-                  <Chip
-                    label="Deduction"
-                    size="small"
-                    sx={{
-                      backgroundColor: "#ffebee",
-                      color: "#c62828",
-                      fontWeight: 550,
-                    }}
-                  />
-                </MenuItem>
-              </Select>
-            </FormControl>
-          )}
-
-          {props.selectedDeduction.Department === "Deductions" && (
-            <Box sx={{ display: "flex", gap: 2 }}>
               <FormControl fullWidth>
-                <InputLabel>Income Tax</InputLabel>
+                <InputLabel>Concept Type</InputLabel>
                 <Select
-                  value={data.income_Tax === 1 ? "Yes" : "No"}
-                  label="Income Tax"
+                  value={data.concept_Type}
+                  label="Concept Type"
                   onChange={(e) =>
-                    setData({
-                      ...data,
-                      income_Tax: e.target.value === "Yes" ? 1 : 2,
-                    })
+                    setData({ ...data, concept_Type: e.target.value })
                   }
                 >
-                  <MenuItem value="Yes">Yes</MenuItem>
-                  <MenuItem value="No">No</MenuItem>
+                  <MenuItem value="I">
+                    <Chip
+                      label="Income"
+                      size="small"
+                      sx={{
+                        backgroundColor: "#e8f5e9",
+                        color: "#2e7d32",
+                        fontWeight: 550,
+                      }}
+                    />
+                  </MenuItem>
+                  <MenuItem value="D">
+                    <Chip
+                      label="Deduction"
+                      size="small"
+                      sx={{
+                        backgroundColor: "#ffebee",
+                        color: "#c62828",
+                        fontWeight: 550,
+                      }}
+                    />
+                  </MenuItem>
                 </Select>
               </FormControl>
 
-              <FormControl fullWidth>
-                <InputLabel>Social Security</InputLabel>
-                <Select
-                  value={data.social_Security === 1 ? "Yes" : "No"}
-                  label="Social Security"
-                  onChange={(e) =>
-                    setData({
-                      ...data,
-                      social_Security: e.target.value === "Yes" ? 1 : 2,
-                    })
-                  }
-                >
-                  <MenuItem value="Yes">Yes</MenuItem>
-                  <MenuItem value="No">No</MenuItem>
-                </Select>
-              </FormControl>
-            </Box>
-          )}
+              {data.concept_Type !== "D" && (
+                <Box sx={{ display: "flex", gap: 2 }}>
+                  <FormControl fullWidth>
+                    <InputLabel>Income Tax</InputLabel>
+                    <Select
+                      value={data.income_Tax === 1 ? "Yes" : "No"}
+                      label="Income Tax"
+                      onChange={(e) =>
+                        setData({
+                          ...data,
+                          income_Tax: e.target.value === "Yes" ? 1 : 2,
+                        })
+                      }
+                    >
+                      <MenuItem value="Yes">Yes</MenuItem>
+                      <MenuItem value="No">No</MenuItem>
+                    </Select>
+                  </FormControl>
 
-          {props.selectedDeduction.Department === "Deductions" && (
-            <FormControlLabel
-              control={
-                <Switch
-                  checked={enableDefaultConcept || data.concept_Type === "D"}
-                  onChange={(e) => {
-                    setEnableDefaultConcept(e.target.checked);
-                    if (!e.target.checked) {
-                      setData({
-                        ...data,
-                        is_Default_Concept: 2,
-                        payment_Frequency: "",
-                      });
-                    }
-                  }}
-                  color="primary"
-                />
-              }
-              label="Enable Default Concept Settings"
-            />
-          )}
+                  <FormControl fullWidth>
+                    <InputLabel>Social Security</InputLabel>
+                    <Select
+                      value={data.social_Security === 1 ? "Yes" : "No"}
+                      label="Social Security"
+                      onChange={(e) =>
+                        setData({
+                          ...data,
+                          social_Security: e.target.value === "Yes" ? 1 : 2,
+                        })
+                      }
+                    >
+                      <MenuItem value="Yes">Yes</MenuItem>
+                      <MenuItem value="No">No</MenuItem>
+                    </Select>
+                  </FormControl>
+                </Box>
+              )}
 
-          {props.selectedDeduction.Department === "Deductions" && (
-            <Box sx={{ display: "flex", gap: 2 }}>
               <FormControl fullWidth>
                 <InputLabel>Is Default Concept</InputLabel>
                 <Select
-                  disabled={!enableDefaultConcept || data.concept_Type === "D"}
+                  disabled={data.concept_Type === "D"}
                   value={data.is_Default_Concept === 1 ? "Yes" : "No"}
                   label="Is Default Concept"
-                  onChange={(e) =>
+                  onChange={(e) => {
+                    const newValue = e.target.value === "Yes" ? 1 : 2;
+                    if (newValue === 2 && hasExistingDefaults) {
+                      toast.error(
+                        "Cannot change to 'No' because there are existing default concepts. Remove them first from the Default Concepts catalog.",
+                        { duration: 4000 }
+                      );
+                      return;
+                    }
                     setData({
                       ...data,
-                      is_Default_Concept: e.target.value === "Yes" ? 1 : 2,
-                    })
-                  }
+                      is_Default_Concept: newValue,
+                    });
+                  }}
                 >
                   <MenuItem value="Yes">Yes</MenuItem>
                   <MenuItem value="No">No</MenuItem>
                 </Select>
-              </FormControl>
-              <FormControl fullWidth>
-                <InputLabel>Payment Frequency Period</InputLabel>
-                <Select
-                  disabled={
-                    !enableDefaultConcept ||
-                    data.concept_Type === "D" ||
-                    (data.is_Default_Concept === 2 &&
-                      !defaultConceptsDetails.some(
+                {hasExistingDefaults && (
+                  <Typography
+                    variant="caption"
+                    color="text.secondary"
+                    sx={{ mt: 0.5, ml: 1 }}
+                  >
+                    Note: This concept has{" "}
+                    {
+                      defaultConceptsDetails.filter(
                         (dc) =>
                           dc.Id_Concept === props.selectedDeduction.Id_Concept
-                      ))
-                  }
-                  value={data.payment_Frequency}
-                  label={
-                    defaultConceptsDetails.length === 0
-                      ? "No available periods"
-                      : "Payment Frequency Period"
-                  }
-                  onChange={(e) =>
-                    setData({
-                      ...data,
-                      payment_Frequency: e.target.value,
-                    })
-                  }
-                >
-                  {payFrequencyDetails.map((payFreq: any) => (
-                    <MenuItem
-                      key={payFreq.Id_PayFrequency}
-                      value={String(payFreq.Id_PayFrequency)}
-                    >
-                      {payFreq.Description}
-                    </MenuItem>
-                  ))}
-                </Select>
+                      ).length
+                    }{" "}
+                    default configuration(s) in the Default Concepts catalog.
+                  </Typography>
+                )}
               </FormControl>
             </Box>
           )}

@@ -19,11 +19,13 @@ import { useSession } from "next-auth/react";
 import { useUsersDetails } from "@/app/Context/UsersDetailsContext";
 import Clock from "../../Shared/Clock/Clock";
 import Avatar from "@mui/material/Avatar";
+import Image from "next/image";
 import Tooltip from "@mui/material/Tooltip";
 
 const NavDesktop = () => {
   const [showMenu, setShowMenu] = useState(false);
   const [localStorageName, setLocalStorageName] = useState("");
+  const [userImage, setUserImage] = useState("");
   const [localStorageDepartment, setLocalStorageDepartment] = useState("");
   const { departmentDetails } = useUsersDetails();
   const [showDeduccionesSubmenu, setShowDeduccionesSubmenu] = useState(false);
@@ -36,6 +38,7 @@ const NavDesktop = () => {
       localStorage.setItem("userDepartment", session.data.user.department);
       setLocalStorageName(session.data.user.name);
       setLocalStorageDepartment(session.data.user.department);
+      setUserImage(session.data.user.image || "");
     }
   }, [session.data]);
 
@@ -92,20 +95,43 @@ const NavDesktop = () => {
           {" "}
           <Link href="/UserSettings" style={{ textDecoration: "none" }}>
             <Tooltip title={`${localStorageName}`}>
-              <Avatar
-                style={{ cursor: "pointer" }}
-                className="avatar"
-                sx={{
-                  listStyle: "none",
-                  width: 40,
-                  height: 40,
-                  bgcolor: "#1976d2",
-                  fontSize: 14,
-                  mb: 2,
-                }}
-              >
-                {localStorageName?.charAt(0)?.toUpperCase() || "U"}
-              </Avatar>
+              {session.data?.user?.image || userImage ? (
+                <Avatar
+                  style={{ cursor: "pointer" }}
+                  className="avatar"
+                  sx={{
+                    listStyle: "none",
+                    width: 40,
+                    height: 40,
+                    bgcolor: "#1976d2",
+                    fontSize: 14,
+                    mb: 2,
+                  }}
+                >
+                  <Image
+                    src={session.data?.user?.image || userImage}
+                    alt="User avatar"
+                    width={40}
+                    height={40}
+                    style={{ borderRadius: "50%" }}
+                  />
+                </Avatar>
+              ) : (
+                <Avatar
+                  style={{ cursor: "pointer" }}
+                  className="avatar"
+                  sx={{
+                    listStyle: "none",
+                    width: 40,
+                    height: 40,
+                    bgcolor: "#1976d2",
+                    fontSize: 14,
+                    mb: 2,
+                  }}
+                >
+                  {localStorageName?.charAt(0)?.toUpperCase() || "U"}
+                </Avatar>
+              )}
             </Tooltip>
           </Link>
         </div>

@@ -29,7 +29,6 @@ import PersonAddIcon from "@mui/icons-material/PersonAdd";
 import axios from "axios";
 import toast from "react-hot-toast";
 import ViewExceptions from "../ViewExceptions/ViewExceptions";
-import { on } from "events";
 
 interface ExceptionsProps {
   isOpen: boolean;
@@ -104,7 +103,13 @@ const Exceptions = ({ isOpen, onClose, payFrequencyId }: ExceptionsProps) => {
           `${empleado.Name} ${empleado.First_SurName} ${empleado.Second_Surname}`.toLowerCase();
         return fullName.includes(value.toLowerCase());
       });
-      setSuggestions(filtered);
+
+      const filteredByPayFrequency = filtered.filter((empleado: any) =>
+        payFrequencyId
+          ? empleado.Id_PayFrequency === Number(payFrequencyId)
+          : true
+      );
+      setSuggestions(filteredByPayFrequency);
     } else {
       setSuggestions([]);
     }
@@ -123,7 +128,12 @@ const Exceptions = ({ isOpen, onClose, payFrequencyId }: ExceptionsProps) => {
       const filtered = empleadosDetails.filter((empleado: any) =>
         String(empleado.Id_Employee).includes(value)
       );
-      setIdSuggestions(filtered);
+      const filteredByPayFrequency = filtered.filter((empleado: any) =>
+        payFrequencyId
+          ? empleado.Id_PayFrequency === Number(payFrequencyId)
+          : true
+      );
+      setIdSuggestions(filteredByPayFrequency);
     } else {
       setIdSuggestions([]);
     }

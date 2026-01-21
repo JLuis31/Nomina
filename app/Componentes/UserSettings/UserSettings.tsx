@@ -43,8 +43,7 @@ const UserSettings = () => {
   const handleLogOut = async () => {
     await signOut({ redirect: false });
     router.push("/Login");
-    localStorage.removeItem("userName");
-    localStorage.removeItem("userDepartment");
+    localStorage.clear();
   };
 
   return (
@@ -84,6 +83,7 @@ const UserSettings = () => {
                 }}
               >
                 <Avatar
+                  src={session.data?.user?.image || undefined}
                   sx={{
                     width: 70,
                     height: 70,
@@ -92,7 +92,8 @@ const UserSettings = () => {
                     mb: 2,
                   }}
                 >
-                  {userName?.charAt(0)?.toUpperCase() || "U"}
+                  {!session.data?.user?.image &&
+                    (userName?.charAt(0)?.toUpperCase() || "U")}
                 </Avatar>
                 <Typography
                   variant="subtitle1"

@@ -147,10 +147,11 @@ const ValuesConfiguration = () => {
 
   const configurarDivisa = (valor) => {
     setValorMoneda(valor);
-    localStorage.setItem("valorMoneda", valor);
+    localStorage.setItem("valorMonedaLocalStorage", valor);
   };
 
-  const valorMoedaLocalStorage = localStorage.getItem("valorMoneda") || "MXN";
+  const valorMoedaLocalStorage =
+    localStorage.getItem("valorMonedaLocalStorage") || "MXN";
 
   return (
     <div>

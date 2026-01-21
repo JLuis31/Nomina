@@ -1,4 +1,6 @@
 import NextAuth from "next-auth";
+import AppleProvider from "next-auth/providers/apple";
+import GoogleProvider from "next-auth/providers/google";
 import CredentialsProvider from "next-auth/providers/credentials";
 import { PrismaClient } from "@prisma/client";
 import bcrypt from "bcrypt";
@@ -35,6 +37,14 @@ export const authOptions = {
         };
       },
     }),
+    AppleProvider({
+      clientId: process.env.APPLE_ID,
+      clientSecret: process.env.APPLE_SECRET,
+    }),
+    GoogleProvider({
+      clientId: process.env.GOOGLE_ID,
+      clientSecret: process.env.GOOGLE_SECRET,
+    }),
   ],
   session: { strategy: "jwt" },
   pages: {
@@ -42,12 +52,16 @@ export const authOptions = {
     error: "/Error",
   },
   callbacks: {
-    async jwt({ token, user }) {
+    async jwt({ token, user, account, profile }) {
       if (user) {
         token.id = user.id;
         token.name = user.name;
         token.email = user.email;
         token.department = user.department;
+        token.picture = user.image;
+      }
+      if (profile?.picture) {
+        token.picture = profile.picture;
       }
       if (!token.id && token.sub) {
         token.id = token.sub;
@@ -60,6 +74,7 @@ export const authOptions = {
         session.user.name = token.name;
         session.user.email = token.email;
         session.user.department = token.department;
+        session.user.image = token.picture;
       }
       return session;
     },

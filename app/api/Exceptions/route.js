@@ -3,8 +3,6 @@ import { prisma } from "@/lib/prisma";
 export async function POST(request) {
   const receivedData = await request.json();
 
-  console.log("Received Data:", receivedData);
-
   for (const key of Object.keys(receivedData.Exceptions)) {
     const ex = receivedData.Exceptions[key];
 

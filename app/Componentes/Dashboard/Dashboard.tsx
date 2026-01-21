@@ -39,6 +39,7 @@ const Dashboard = () => {
     totalPaid: 0,
     totalEmployees: 0,
   });
+  console.log(dashboardData);
 
   const [totalNeto, setTotalNeto] = useState(0);
   const [residuoNeto, setResiduoNeto] = useState(0);
@@ -114,7 +115,9 @@ const Dashboard = () => {
     dashboardInfo();
   }, []);
 
-  const valorMoedaLocalStorage = localStorage.getItem("valorMoneda");
+  const valorMoedaLocalStorage = localStorage.getItem(
+    "valorMonedaLocalStorage"
+  );
 
   return (
     <div className="global-dash-container">
@@ -137,7 +140,9 @@ const Dashboard = () => {
                     style: "currency",
                     currency: "USD",
                   }).format(dashboardData.totalPaid)
-                : valorMoedaLocalStorage === "MXN"
+                : valorMoedaLocalStorage === "MXN" ||
+                  valorMoedaLocalStorage === "" ||
+                  valorMoedaLocalStorage === null
                 ? new Intl.NumberFormat("es-MX", {
                     style: "currency",
                     currency: "MXN",
@@ -153,7 +158,9 @@ const Dashboard = () => {
                     style: "currency",
                     currency: "USD",
                   }).format(totalNeto)
-                : valorMoedaLocalStorage === "MXN"
+                : valorMoedaLocalStorage === "MXN" ||
+                  valorMoedaLocalStorage === "" ||
+                  valorMoedaLocalStorage === null
                 ? new Intl.NumberFormat("es-MX", {
                     style: "currency",
                     currency: "MXN",
@@ -169,7 +176,9 @@ const Dashboard = () => {
                     style: "currency",
                     currency: "USD",
                   }).format(residuoNeto)
-                : valorMoedaLocalStorage === "MXN"
+                : valorMoedaLocalStorage === "MXN" ||
+                  valorMoedaLocalStorage === "" ||
+                  valorMoedaLocalStorage === null
                 ? new Intl.NumberFormat("es-MX", {
                     style: "currency",
                     currency: "MXN",

@@ -16,12 +16,15 @@ export async function POST(req) {
   }
   const encryptedPassword = await bcrypt.hash(body.Password, 10);
 
-  const newUser = await prisma.Users.create({
+  await prisma.Users.create({
     data: {
       Name: body.Name,
       Email: body.Email,
       Password: encryptedPassword,
     },
   });
-  return new Response(JSON.stringify(newUser), { status: 201 });
+  return new Response(
+    JSON.stringify({ message: "User registered successfully" }),
+    { status: 201 }
+  );
 }

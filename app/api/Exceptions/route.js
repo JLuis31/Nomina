@@ -14,9 +14,15 @@ export async function POST(request) {
     });
 
     if (existingException) {
-      console.log(`Exception already exists for concept ${ex.Id_Concept}`);
       continue;
     }
+
+    await prisma.Payroll_Detail.deleteMany({
+      where: {
+        Id_Employee: receivedData.selectedEmployee.Id_Employee,
+        Id_Concept: ex.Id_Concept,
+      },
+    });
 
     await prisma.Employee_Exceptions.create({
       data: {
@@ -34,13 +40,12 @@ export async function POST(request) {
     JSON.stringify({ message: "Exceptions saved successfully" }),
     {
       status: 200,
-    }
+    },
   );
 }
 
 export async function GET(request) {
   const { searchParams } = new URL(request.url);
-  console.log("Pay Frequency ID:", searchParams.get("payFrequencyId"));
 
   const respone = await prisma.Employee_Exceptions.findMany({
     where: {
@@ -49,4 +54,25 @@ export async function GET(request) {
   });
 
   return new Response(JSON.stringify(respone), { status: 200 });
+}
+
+export async function DELETE(request) {
+  const { searchParams } = new URL(request.url);
+  const idConcept = searchParams.get("idConcept");
+  const idEmployee = searchParams.get("idEmployee");
+
+  await prisma.Employee_Exceptions.delete({
+    where: {
+      Id_Movement: Number(searchParams.get("idException")),
+    },
+  });
+
+  return new Response(
+    JSON.stringify({
+      message: `Exception ${idConcept} deleted successfully for employee ${idEmployee}`,
+    }),
+    {
+      status: 200,
+    },
+  );
 }

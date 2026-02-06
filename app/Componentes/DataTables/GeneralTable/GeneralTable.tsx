@@ -36,7 +36,7 @@ import UpdateTable from "../Update_Table/UpdateTable";
 import { useUsersDetails } from "@/app/Context/UsersDetailsContext";
 
 const GeneralTable = (props) => {
-  const { setDefaultConceptsDetails } = useUsersDetails();
+  const { setDefaultConceptsDetails, umaValues } = useUsersDetails();
   const [selectedDeduction, setSelectedDeduction] = useState();
   const [showEditForm, setShowEditForm] = useState(false);
   const [page, setPage] = useState(0);
@@ -98,7 +98,7 @@ const GeneralTable = (props) => {
           </button>
         </span>
       ),
-      { duration: Infinity }
+      { duration: Infinity },
     );
   };
 
@@ -129,7 +129,7 @@ const GeneralTable = (props) => {
 
   function getComparator<Key extends keyof any>(
     order: "asc" | "desc",
-    orderBy: Key
+    orderBy: Key,
   ) {
     return order === "desc"
       ? (a, b) => descendingComparator(a, b, orderBy)
@@ -140,7 +140,7 @@ const GeneralTable = (props) => {
     const fetchDefaultConcepts = async () => {
       try {
         const response = await axios.get(
-          "/api/CatalogsDetails/DefaultConcepts"
+          "/api/CatalogsDetails/DefaultConcepts",
         );
         const data = response.data;
         setDefaultConceptsDetails(data);
@@ -162,6 +162,7 @@ const GeneralTable = (props) => {
       props.statesDetails,
       props.cityDetails,
       props.defaultConceptsDetails,
+      props.umaValues,
     ][props.selectedCatalog.value - 1] || [];
 
   const filteredData = Array.isArray(dataToRender)
@@ -178,8 +179,8 @@ const GeneralTable = (props) => {
           item.Id_Concept_Type === "I"
             ? "income"
             : item.Id_Concept_Type === "D"
-            ? "deduction"
-            : "";
+              ? "deduction"
+              : "";
 
         return (
           description.includes(searchText) ||
@@ -203,10 +204,10 @@ const GeneralTable = (props) => {
       });
 
       if (response.status === 200) {
-        toast.success("Default concepts changes saved successfully");
+        toast.success(response.data.message || "Changes saved successfully");
 
         const refreshResponse = await axios.get(
-          "/api/CatalogsDetails/DefaultConcepts"
+          "/api/CatalogsDetails/DefaultConcepts",
         );
         setDefaultConceptsDetails(refreshResponse.data);
 
@@ -214,22 +215,24 @@ const GeneralTable = (props) => {
       }
     } catch (error) {
       if (axios.isAxiosError(error)) {
-        toast.error("Error saving default concepts changes");
+        toast.error(
+          error.response?.data?.error ||
+            "Error saving default concepts changes",
+          { duration: 2000 },
+        );
       }
     }
   };
 
   useEffect(() => {
-
     if (Object.keys(defaultConcepts).length === 0) return;
 
     const hasOnlyFrequencyChanges = Object.values(defaultConcepts).every(
       (c: any) =>
         c.Id_PayFrequency !== undefined &&
         c.Per_Hour === undefined &&
-        c.Per_Amount === undefined
+        c.Per_Amount === undefined,
     );
-
 
     if (!hasOnlyFrequencyChanges) return;
 
@@ -243,13 +246,13 @@ const GeneralTable = (props) => {
           `/api/CatalogsDetails/DefaultConcepts/PaymentFrequency`,
           {
             data: dataToSend,
-          }
+          },
         );
         if (response.status === 200) {
           toast.success("Pay frequency updated successfully");
 
           const refreshResponse = await axios.get(
-            "/api/CatalogsDetails/DefaultConcepts"
+            "/api/CatalogsDetails/DefaultConcepts",
           );
           setDefaultConceptsDetails(refreshResponse.data);
 
@@ -258,7 +261,7 @@ const GeneralTable = (props) => {
       } catch (error) {
         if (axios.isAxiosError(error)) {
           toast.error(
-            error.response?.data?.error || "Error updating pay frequency"
+            error.response?.data?.error || "Error updating pay frequency",
           );
         }
       }
@@ -269,19 +272,19 @@ const GeneralTable = (props) => {
 
   const handleAddFrequency = (
     conceptId: string,
-    conceptDescription: string
+    conceptDescription: string,
   ) => {
     const usedFrequencies = props.defaultConceptsDetails
       .filter((item: any) => item.Id_Concept === conceptId)
       .map((item: any) => item.Id_PayFrequency);
 
     const availableFrequencies = props.payFrequencyDetails.filter(
-      (freq: any) => !usedFrequencies.includes(freq.Id_PayFrequency)
+      (freq: any) => !usedFrequencies.includes(freq.Id_PayFrequency),
     );
 
     if (availableFrequencies.length === 0) {
       toast.error(
-        "All payment frequencies are already configured for this concept"
+        "All payment frequencies are already configured for this concept",
       );
       return;
     }
@@ -303,26 +306,26 @@ const GeneralTable = (props) => {
           Id_Concept: selectedConceptForFrequency.conceptId,
           Id_Concept_Type: props.defaultConceptsDetails.find(
             (item: any) =>
-              item.Id_Concept === selectedConceptForFrequency.conceptId
+              item.Id_Concept === selectedConceptForFrequency.conceptId,
           )?.Id_Concept_Type,
           Description: selectedConceptForFrequency.conceptDescription,
           Id_PayFrequency: selectedNewFrequency,
           Per_Hour: 0,
           Per_Amount: 0,
-        }
+        },
       );
 
       if (response.status === 201 || response.status === 200) {
         const frequencyName = props.payFrequencyDetails.find(
-          (f: any) => f.Id_PayFrequency === Number(selectedNewFrequency)
+          (f: any) => f.Id_PayFrequency === Number(selectedNewFrequency),
         )?.Description;
 
         toast.success(
-          `New ${frequencyName} configuration added to ${selectedConceptForFrequency.conceptDescription}`
+          `New ${frequencyName} configuration added to ${selectedConceptForFrequency.conceptDescription}`,
         );
 
         const refreshResponse = await axios.get(
-          "/api/CatalogsDetails/DefaultConcepts"
+          "/api/CatalogsDetails/DefaultConcepts",
         );
         setDefaultConceptsDetails(refreshResponse.data);
 
@@ -354,39 +357,42 @@ const GeneralTable = (props) => {
               onChange={(e) => setFilterText(e.target.value)}
             />
           </div>
-          {props.onAddItem && (
-            <div className="botonesfiltro">
-              <button
-                onClick={props.onAddItem}
-                className="addPayrollPeriods"
-                style={{
-                  backgroundColor: "#345d8a",
-                  color: "white",
-                  border: "none",
-                  padding: "10px 20px",
-                  borderRadius: "6px",
-                  cursor: "pointer",
-                  fontWeight: "500",
-                  fontSize: "14px",
-                  transition: "all 0.3s ease",
-                  boxShadow: "0 2px 4px rgba(0,0,0,0.1)",
-                }}
-                onMouseOver={(e) => {
-                  e.currentTarget.style.backgroundColor = "#2a4a6e";
-                  e.currentTarget.style.boxShadow =
-                    "0 4px 8px rgba(0,0,0,0.15)";
-                  e.currentTarget.style.transform = "translateY(-1px)";
-                }}
-                onMouseOut={(e) => {
-                  e.currentTarget.style.backgroundColor = "#345d8a";
-                  e.currentTarget.style.boxShadow = "0 2px 4px rgba(0,0,0,0.1)";
-                  e.currentTarget.style.transform = "translateY(0)";
-                }}
-              >
-                Add new item
-              </button>
-            </div>
-          )}
+          {props.onAddItem &&
+            props.selectedCatalog.value !== 8 &&
+            props.selectedCatalog.value !== 9 && (
+              <div className="botonesfiltro">
+                <button
+                  onClick={props.onAddItem}
+                  className="addPayrollPeriods"
+                  style={{
+                    backgroundColor: "#345d8a",
+                    color: "white",
+                    border: "none",
+                    padding: "10px 20px",
+                    borderRadius: "6px",
+                    cursor: "pointer",
+                    fontWeight: "500",
+                    fontSize: "14px",
+                    transition: "all 0.3s ease",
+                    boxShadow: "0 2px 4px rgba(0,0,0,0.1)",
+                  }}
+                  onMouseOver={(e) => {
+                    e.currentTarget.style.backgroundColor = "#2a4a6e";
+                    e.currentTarget.style.boxShadow =
+                      "0 4px 8px rgba(0,0,0,0.15)";
+                    e.currentTarget.style.transform = "translateY(-1px)";
+                  }}
+                  onMouseOut={(e) => {
+                    e.currentTarget.style.backgroundColor = "#345d8a";
+                    e.currentTarget.style.boxShadow =
+                      "0 2px 4px rgba(0,0,0,0.1)";
+                    e.currentTarget.style.transform = "translateY(0)";
+                  }}
+                >
+                  Add new item
+                </button>
+              </div>
+            )}
         </div>
         <Paper sx={{ width: "100%", mb: 2 }}>
           <Toolbar>
@@ -394,18 +400,20 @@ const GeneralTable = (props) => {
               {props.selectedCatalog.value === 1
                 ? "Departments"
                 : props.selectedCatalog.value === 2
-                ? "Employee Types"
-                : props.selectedCatalog.value === 3
-                ? "Job Positions"
-                : props.selectedCatalog.value === 4
-                ? "Payment Frequency"
-                : props.selectedCatalog.value === 6
-                ? "States"
-                : props.selectedCatalog.value === 7
-                ? "Cities"
-                : props.selectedCatalog.value === 8
-                ? "Default Concepts"
-                : ""}
+                  ? "Employee Types"
+                  : props.selectedCatalog.value === 3
+                    ? "Job Positions"
+                    : props.selectedCatalog.value === 4
+                      ? "Payment Frequency"
+                      : props.selectedCatalog.value === 6
+                        ? "States"
+                        : props.selectedCatalog.value === 7
+                          ? "Cities"
+                          : props.selectedCatalog.value === 8
+                            ? "Default Concepts"
+                            : props.selectedCatalog.value === 9
+                              ? "UMA Values"
+                              : ""}
             </Typography>
             {props.selectedCatalog.value === 8 && (
               <Button
@@ -418,7 +426,7 @@ const GeneralTable = (props) => {
                         c.Per_Hour !== null) ||
                       (c.Per_Amount !== undefined &&
                         c.Per_Amount !== "" &&
-                        c.Per_Amount !== null)
+                        c.Per_Amount !== null),
                   ).length
                     ? ""
                     : "none",
@@ -435,7 +443,11 @@ const GeneralTable = (props) => {
               <TableHead>
                 <TableRow>
                   {props.selectedCatalog.value === 8 && (
-                    <TableCell style={{ color: "white" }} className="header">
+                    <TableCell
+                      align="center"
+                      style={{ color: "white" }}
+                      className="header"
+                    >
                       <TableSortLabel
                         active={orderBy === "Id_Concept"}
                         direction={orderBy === "Id_Concept" ? order : "asc"}
@@ -452,56 +464,66 @@ const GeneralTable = (props) => {
                       </TableSortLabel>
                     </TableCell>
                   )}
-                  <TableCell style={{ color: "white" }} className="header">
-                    <TableSortLabel
-                      active={
-                        orderBy === "Description" ||
-                        orderBy === "State" ||
-                        orderBy === "City"
-                      }
-                      direction={
-                        orderBy === "Description" ||
-                        orderBy === "State" ||
-                        orderBy === "City"
-                          ? order
-                          : "asc"
-                      }
-                      onClick={() =>
-                        handleRequestSort(
-                          props.selectedCatalog.value === 6
-                            ? "State"
-                            : props.selectedCatalog.value === 7
-                            ? "City"
-                            : "Description"
-                        )
-                      }
-                      sx={{
-                        color: "white",
-                        "&.Mui-active": { color: "white" },
-                        "& .MuiTableSortLabel-icon": {
-                          color: "white !important",
-                        },
-                      }}
+                  {props.selectedCatalog.value !== 9 && (
+                    <TableCell
+                      align="center"
+                      style={{ color: "white" }}
+                      className="header"
                     >
-                      {props.selectedCatalog.value === 1
-                        ? "Department Name"
-                        : props.selectedCatalog.value === 2
-                        ? "Employee Type Name"
-                        : props.selectedCatalog.value === 3
-                        ? "Job Position Name"
-                        : props.selectedCatalog.value === 4
-                        ? "Payment Frequency Name"
-                        : props.selectedCatalog.value === 6
-                        ? "State Name"
-                        : props.selectedCatalog.value === 7
-                        ? "City Name"
-                        : props.selectedCatalog.value === 8
-                        ? "Concept Description"
-                        : ""}
-                    </TableSortLabel>
-                  </TableCell>
+                      <TableSortLabel
+                        active={
+                          orderBy === "Description" ||
+                          orderBy === "State" ||
+                          orderBy === "City"
+                        }
+                        direction={
+                          orderBy === "Description" ||
+                          orderBy === "State" ||
+                          orderBy === "City"
+                            ? order
+                            : "asc"
+                        }
+                        onClick={() =>
+                          handleRequestSort(
+                            props.selectedCatalog.value === 6
+                              ? "State"
+                              : props.selectedCatalog.value === 7
+                                ? "City"
+                                : "Description",
+                          )
+                        }
+                        sx={{
+                          color: "white",
+                          "&.Mui-active": { color: "white" },
+                          "& .MuiTableSortLabel-icon": {
+                            color: "white !important",
+                          },
+                        }}
+                      >
+                        {props.selectedCatalog.value === 1
+                          ? "Department Name"
+                          : props.selectedCatalog.value === 2
+                            ? "Employee Type Name"
+                            : props.selectedCatalog.value === 3
+                              ? "Job Position Name"
+                              : props.selectedCatalog.value === 4
+                                ? "Payment Frequency Name"
+                                : props.selectedCatalog.value === 6
+                                  ? "State Name"
+                                  : props.selectedCatalog.value === 7
+                                    ? "City Name"
+                                    : props.selectedCatalog.value === 8
+                                      ? "Concept Description"
+                                      : ""}
+                      </TableSortLabel>
+                    </TableCell>
+                  )}
                   {props.selectedCatalog.value === 8 && (
-                    <TableCell style={{ color: "white" }} className="header">
+                    <TableCell
+                      align="center"
+                      style={{ color: "white" }}
+                      className="header"
+                    >
                       <TableSortLabel
                         active={orderBy === "Id_Concept_Type"}
                         direction={
@@ -521,7 +543,11 @@ const GeneralTable = (props) => {
                     </TableCell>
                   )}
                   {props.selectedCatalog.value === 8 && (
-                    <TableCell style={{ color: "white" }} className="header">
+                    <TableCell
+                      align="center"
+                      style={{ color: "white" }}
+                      className="header"
+                    >
                       <TableSortLabel
                         active={orderBy === "Id_PayFrequency"}
                         direction={
@@ -561,6 +587,35 @@ const GeneralTable = (props) => {
                     </TableCell>
                   )}
 
+                  {props.selectedCatalog.value === 9 && (
+                    <TableCell
+                      style={{ color: "white" }}
+                      className="header"
+                      align="center"
+                    >
+                      Year
+                    </TableCell>
+                  )}
+
+                  {props.selectedCatalog.value === 9 && (
+                    <TableCell
+                      style={{ color: "white" }}
+                      className="header"
+                      align="center"
+                    >
+                      Value
+                    </TableCell>
+                  )}
+
+                  {props.selectedCatalog.value === 9 && (
+                    <TableCell
+                      style={{ color: "white" }}
+                      className="header"
+                      align="center"
+                    >
+                      Status
+                    </TableCell>
+                  )}
                   <TableCell
                     style={{ color: "white", minWidth: "120px" }}
                     className="header"
@@ -574,7 +629,7 @@ const GeneralTable = (props) => {
                 {Array.isArray(dataToRender) && dataToRender.length === 0 ? (
                   <TableRow>
                     <TableCell colSpan={2} align="center">
-                      No hay datos por mostrar
+                      No data available
                     </TableCell>
                   </TableRow>
                 ) : (
@@ -587,7 +642,8 @@ const GeneralTable = (props) => {
                         dep.Id_Job ||
                         dep.Id_PayFrequency ||
                         dep.Id_State ||
-                        dep.Id_City
+                        dep.Id_City ||
+                        dep.Id_UMA
                       }
                       onClick={() => {
                         if (props.selectedCatalog.value !== 8) {
@@ -596,16 +652,18 @@ const GeneralTable = (props) => {
                               props.selectedCatalog.value === 1
                                 ? "Departments"
                                 : props.selectedCatalog.value === 2
-                                ? "Employee Types"
-                                : props.selectedCatalog.value === 3
-                                ? "Job Positions"
-                                : props.selectedCatalog.value === 4
-                                ? "Pay Frequency"
-                                : props.selectedCatalog.value === 6
-                                ? "States"
-                                : props.selectedCatalog.value === 7
-                                ? "Cities"
-                                : "",
+                                  ? "Employee Types"
+                                  : props.selectedCatalog.value === 3
+                                    ? "Job Positions"
+                                    : props.selectedCatalog.value === 4
+                                      ? "Pay Frequency"
+                                      : props.selectedCatalog.value === 6
+                                        ? "States"
+                                        : props.selectedCatalog.value === 7
+                                          ? "Cities"
+                                          : props.selectedCatalog.value === 9
+                                            ? "UMA Values"
+                                            : "",
                             ...dep,
                           });
                           setShowEditForm(true);
@@ -618,24 +676,27 @@ const GeneralTable = (props) => {
                       }
                     >
                       {props.selectedCatalog.value === 8 && (
-                        <TableCell>{dep.Id_Concept}</TableCell>
+                        <TableCell align="center">{dep.Id_Concept}</TableCell>
                       )}
-                      <TableCell>
-                        {dep.Description || dep.State || dep.City}
+                      <TableCell align="center">
+                        {dep.Description ||
+                          dep.State ||
+                          dep.City ||
+                          dep.UMA_Year}
                       </TableCell>
                       {props.selectedCatalog.value === 8 && (
-                        <TableCell>
+                        <TableCell align="center">
                           {dep.Id_Concept_Type === "I" ? "Income" : "Deduction"}
                         </TableCell>
                       )}
                       {props.selectedCatalog.value === 8 && (
-                        <TableCell>
+                        <TableCell align="center">
                           <Tooltip
                             title={
                               Object.values(defaultConcepts).some(
                                 (c: any) =>
                                   c.Per_Hour !== undefined ||
-                                  c.Per_Amount !== undefined
+                                  c.Per_Amount !== undefined,
                               )
                                 ? "Please save pending input changes before modifying frequency"
                                 : ""
@@ -650,7 +711,7 @@ const GeneralTable = (props) => {
                               disabled={Object.values(defaultConcepts).some(
                                 (c: any) =>
                                   c.Per_Hour !== undefined ||
-                                  c.Per_Amount !== undefined
+                                  c.Per_Amount !== undefined,
                               )}
                               onChange={(e) =>
                                 setDefaultConcepts({
@@ -823,6 +884,15 @@ const GeneralTable = (props) => {
                         </TableCell>
                       )}
 
+                      {props.selectedCatalog.value === 9 && (
+                        <TableCell align="center">{dep.UMA_Values}</TableCell>
+                      )}
+                      {props.selectedCatalog.value === 9 && (
+                        <TableCell align="center">
+                          {dep.Is_Active === true ? "Active" : "Inactive"}
+                        </TableCell>
+                      )}
+
                       <TableCell align="center">
                         {props.selectedCatalog.value === 8 && (
                           <Tooltip title="Add Frequency">
@@ -831,7 +901,7 @@ const GeneralTable = (props) => {
                                 e.stopPropagation();
                                 handleAddFrequency(
                                   dep.Id_Concept,
-                                  dep.Description
+                                  dep.Description,
                                 );
                               }}
                               size="small"
@@ -846,6 +916,7 @@ const GeneralTable = (props) => {
                             </IconButton>
                           </Tooltip>
                         )}
+
                         <Tooltip title="Delete">
                           <IconButton
                             onClick={(e) => {
@@ -858,24 +929,29 @@ const GeneralTable = (props) => {
                                   dep.Id_Job ||
                                   dep.Id_PayFrequency ||
                                   dep.Id_State ||
-                                  dep.Id_City,
+                                  dep.Id_City ||
+                                  dep.Id_UMA,
 
                                 description:
                                   props.selectedCatalog.value === 1
                                     ? "Departments"
                                     : props.selectedCatalog.value === 2
-                                    ? "Employee Types"
-                                    : props.selectedCatalog.value === 3
-                                    ? "Job Positions"
-                                    : props.selectedCatalog.value === 4
-                                    ? "Pay Frequency"
-                                    : props.selectedCatalog.value === 6
-                                    ? "States"
-                                    : props.selectedCatalog.value === 7
-                                    ? "Cities"
-                                    : props.selectedCatalog.value === 8
-                                    ? "Default Concepts"
-                                    : "",
+                                      ? "Employee Types"
+                                      : props.selectedCatalog.value === 3
+                                        ? "Job Positions"
+                                        : props.selectedCatalog.value === 4
+                                          ? "Pay Frequency"
+                                          : props.selectedCatalog.value === 6
+                                            ? "States"
+                                            : props.selectedCatalog.value === 7
+                                              ? "Cities"
+                                              : props.selectedCatalog.value ===
+                                                  8
+                                                ? "Default Concepts"
+                                                : props.selectedCatalog
+                                                      .value === 9
+                                                  ? "UMA Values"
+                                                  : "",
                               });
                             }}
                             size="small"
@@ -942,8 +1018,8 @@ const GeneralTable = (props) => {
                             (dc: any) =>
                               dc.Id_Concept ===
                                 selectedConceptForFrequency.conceptId &&
-                              dc.Id_PayFrequency === freq.Id_PayFrequency
-                          )
+                              dc.Id_PayFrequency === freq.Id_PayFrequency,
+                          ),
                       )
                       .map((freq: any) => (
                         <MenuItem

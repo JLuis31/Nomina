@@ -18,7 +18,7 @@ ChartJS.register(
   BarElement,
   Title,
   Tooltip,
-  Legend
+  Legend,
 );
 
 import "../../Componentes/Dashboard/Dashboard.scss";
@@ -33,20 +33,20 @@ import axios from "axios";
 import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import { useUsersDetails } from "@/app/Context/UsersDetailsContext";
+import { Box } from "@mui/material";
 
 const Dashboard = () => {
   const [dashboardData, setDashboardData] = useState({
-    totalPaid: 0,
-    totalEmployees: 0,
+    GrossSalary: 0,
+    Total_Net_Payroll: 0,
+    Taxes: 0,
+    Total_Employees: 0,
+    Next_PaymentDate: "",
   });
-  console.log(dashboardData);
 
-  const [totalNeto, setTotalNeto] = useState(0);
-  const [residuoNeto, setResiduoNeto] = useState(0);
   const session = useSession();
   const router = useRouter();
-  const { valorUSDToMXN } = useUsersDetails();
-
+  const { valorUSDToMXN, payFrequencyDetails } = useUsersDetails();
   const data = {
     labels: ["January", "February", "March", "April", "May"],
     datasets: [
@@ -57,7 +57,6 @@ const Dashboard = () => {
       },
     ],
   };
-
   const options = {
     responsive: true,
     aspectRatio: 2,
@@ -66,10 +65,12 @@ const Dashboard = () => {
       title: { display: true, text: "Payroll Cost Over Time" },
     },
   };
-
   const handleEmployees = () => {
     router.push("/Employees");
   };
+  const [valorMoedaLocalStorage, setValorMoedaLocalStorage] = useState("MXN");
+  const [payFrequency, setPayFrequency] = useState("");
+  const [actualPeriod, setActualPeriod] = useState("");
 
   useEffect(() => {
     if (session.status === "unauthenticated") {
@@ -86,38 +87,44 @@ const Dashboard = () => {
     const dashboardInfo = async () => {
       try {
         const response = await axios.get("/api/DashBoardInformation");
-        const totalCost = response.data.totalCost;
-        const totalEmployees = response.data.totalEmployees;
-
-        const suma = totalCost
-          .map((item) => Number(String(item.Salary).replace(/,/g, "")))
-          .filter((n) => !isNaN(n))
-          .reduce((acc, n) => acc + n, 0);
-        let resultanteNeto: number;
-        let residuoNeto: number;
-
-        resultanteNeto = suma - suma * 0.16;
-        residuoNeto = suma * 0.16;
-
-        setDashboardData({ totalPaid: suma, totalEmployees: totalEmployees });
-        setTotalNeto(resultanteNeto);
-        setResiduoNeto(residuoNeto);
+        if (response.status === 200) {
+          setDashboardData({
+            ...dashboardData,
+            Next_PaymentDate: response.data[0].Next_Payment_Date,
+            GrossSalary: response.data[0].Last_Month_Cost,
+            Total_Net_Payroll: response.data[0].Total_Net_Payment,
+            Taxes: response.data[0].Total_Taxes,
+            Total_Employees: response.data[0].Total_Employees,
+          });
+        }
       } catch (error) {
         if (axios.isAxiosError(error)) {
           toast.error(
             `Error fetching dashboard data: ${
               error.response?.data.message || error.message
-            }`
+            }`,
           );
         }
       }
     };
     dashboardInfo();
-  }, []);
+    const valorMoedaLocalStorage = localStorage.getItem(
+      "valorMonedaLocalStorage",
+    );
+    const payFrequency = localStorage.getItem("payFrequency");
+    const actualPeriod = localStorage.getItem("actualPeriod");
 
-  const valorMoedaLocalStorage = localStorage.getItem(
-    "valorMonedaLocalStorage"
-  );
+    if (valorMoedaLocalStorage) {
+      setValorMoedaLocalStorage(valorMoedaLocalStorage);
+    }
+
+    if (payFrequency) {
+      setPayFrequency(payFrequency);
+    }
+    if (actualPeriod) {
+      setActualPeriod(actualPeriod);
+    }
+  }, []);
 
   return (
     <div className="global-dash-container">
@@ -131,23 +138,97 @@ const Dashboard = () => {
         </div>
         <hr />
 
+        <Box
+          sx={{
+            display: "flex",
+            gap: "1rem",
+            marginTop: "2rem",
+            marginBottom: "1rem",
+            flexWrap: "wrap",
+          }}
+        >
+          <Box
+            sx={{
+              backgroundColor: "#e6f7ff",
+              borderLeft: "5px solid #1890ff",
+              boxShadow: "0 4px 6px rgba(0, 0, 0, 0.1)",
+              padding: "1rem",
+              borderRadius: "5px",
+              flex: "1",
+              minWidth: "250px",
+              textAlign: "left",
+              fontWeight: "bold",
+              fontSize: "0.9rem",
+              color: "#333",
+            }}
+          >
+            <div
+              style={{
+                opacity: 0.7,
+                marginBottom: "0.5rem",
+                fontSize: "0.75rem",
+                textTransform: "uppercase",
+                letterSpacing: "1px",
+              }}
+            >
+              Last Pay Frequency calculated
+            </div>
+            <div style={{ fontSize: "1.2rem", color: "#123453" }}>
+              {payFrequencyDetails.find(
+                (freq) => freq.Id_PayFrequency === Number(payFrequency),
+              )?.Description || "Not set"}
+            </div>
+          </Box>
+
+          <Box
+            sx={{
+              backgroundColor: "#fff7e6",
+              borderLeft: "5px solid #ff4d4f",
+              boxShadow: "0 4px 6px rgba(0, 0, 0, 0.1)",
+              padding: "1rem",
+              borderRadius: "5px",
+              flex: "1",
+              minWidth: "250px",
+              textAlign: "left",
+              fontWeight: "bold",
+              fontSize: "0.9rem",
+              color: "#333",
+            }}
+          >
+            <div
+              style={{
+                opacity: 0.7,
+                marginBottom: "0.5rem",
+                fontSize: "0.75rem",
+                textTransform: "uppercase",
+                letterSpacing: "1px",
+              }}
+            >
+              Last Period Calculated
+            </div>
+            <div style={{ fontSize: "1.2rem", color: "#490e0f" }}>
+              {actualPeriod || "Not set"}
+            </div>
+          </Box>
+        </Box>
+
         <section className="stats">
           <div className="div1">
-            Total Payroll Cost
+            Gross Payroll
             <p>
               {valorMoedaLocalStorage === "USD"
                 ? new Intl.NumberFormat("en-US", {
                     style: "currency",
                     currency: "USD",
-                  }).format(dashboardData.totalPaid)
+                  }).format(dashboardData.GrossSalary)
                 : valorMoedaLocalStorage === "MXN" ||
-                  valorMoedaLocalStorage === "" ||
-                  valorMoedaLocalStorage === null
-                ? new Intl.NumberFormat("es-MX", {
-                    style: "currency",
-                    currency: "MXN",
-                  }).format(dashboardData.totalPaid * valorUSDToMXN)
-                : null}
+                    valorMoedaLocalStorage === "" ||
+                    valorMoedaLocalStorage === null
+                  ? new Intl.NumberFormat("es-MX", {
+                      style: "currency",
+                      currency: "MXN",
+                    }).format(dashboardData.GrossSalary * valorUSDToMXN)
+                  : null}
             </p>
           </div>
           <div className="div2">
@@ -157,38 +238,38 @@ const Dashboard = () => {
                 ? new Intl.NumberFormat("en-US", {
                     style: "currency",
                     currency: "USD",
-                  }).format(totalNeto)
+                  }).format(dashboardData.Total_Net_Payroll)
                 : valorMoedaLocalStorage === "MXN" ||
-                  valorMoedaLocalStorage === "" ||
-                  valorMoedaLocalStorage === null
-                ? new Intl.NumberFormat("es-MX", {
-                    style: "currency",
-                    currency: "MXN",
-                  }).format(totalNeto * valorUSDToMXN)
-                : null}
+                    valorMoedaLocalStorage === "" ||
+                    valorMoedaLocalStorage === null
+                  ? new Intl.NumberFormat("es-MX", {
+                      style: "currency",
+                      currency: "MXN",
+                    }).format(dashboardData.Total_Net_Payroll * valorUSDToMXN)
+                  : null}
             </p>
           </div>
           <div className="div3">
-            Taxes
+            Federal Taxes
             <p>
               {valorMoedaLocalStorage === "USD"
                 ? new Intl.NumberFormat("en-US", {
                     style: "currency",
                     currency: "USD",
-                  }).format(residuoNeto)
+                  }).format(dashboardData.Taxes)
                 : valorMoedaLocalStorage === "MXN" ||
-                  valorMoedaLocalStorage === "" ||
-                  valorMoedaLocalStorage === null
-                ? new Intl.NumberFormat("es-MX", {
-                    style: "currency",
-                    currency: "MXN",
-                  }).format(residuoNeto * valorUSDToMXN)
-                : null}
+                    valorMoedaLocalStorage === "" ||
+                    valorMoedaLocalStorage === null
+                  ? new Intl.NumberFormat("es-MX", {
+                      style: "currency",
+                      currency: "MXN",
+                    }).format(dashboardData.Taxes * valorUSDToMXN)
+                  : null}
             </p>
           </div>
           <div className="div4">
             Total Employees
-            <p>{dashboardData.totalEmployees}</p>
+            <p>{dashboardData.Total_Employees}</p>
           </div>
         </section>
 
@@ -199,10 +280,23 @@ const Dashboard = () => {
                 <div className="next-payment">
                   <p>Ready for Payroll</p>
                   <p className="next">
-                    Next pay <span>March 15, 2023</span>
+                    Next pay{" "}
+                    <span>
+                      {dashboardData.Next_PaymentDate
+                        ? new Date(
+                            dashboardData.Next_PaymentDate,
+                          ).toLocaleDateString("en-US", {
+                            year: "numeric",
+                            month: "long",
+                            day: "numeric",
+                          })
+                        : "(Not period available)"}
+                    </span>
                   </p>
                 </div>
-                <button>Start Payroll</button>
+                <button onClick={() => router.push("/PayrollCalculation")}>
+                  Start Payroll
+                </button>
               </div>
             </div>
             <div className="actions1div2">

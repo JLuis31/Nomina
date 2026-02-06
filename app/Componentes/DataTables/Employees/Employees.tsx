@@ -13,7 +13,6 @@ import {
   Toolbar,
   Typography,
   Paper,
-  Checkbox,
   IconButton,
   Tooltip,
   FormControlLabel,
@@ -130,10 +129,10 @@ const EmployeesTable = (props) => {
 
   function getComparator<Key extends keyof Employee>(
     order: Order,
-    orderBy: Key
+    orderBy: Key,
   ): (
     a: { [key in Key]: number | string },
-    b: { [key in Key]: number | string }
+    b: { [key in Key]: number | string },
   ) => number {
     return order === "desc"
       ? (a, b) => descendingComparator(a, b, orderBy)
@@ -169,7 +168,7 @@ const EmployeesTable = (props) => {
   };
 
   const handleChangeRowsPerPage = (
-    event: React.ChangeEvent<HTMLInputElement>
+    event: React.ChangeEvent<HTMLInputElement>,
   ) => {
     setRowsPerPage(parseInt(event.target.value, 10));
     setPage(0);
@@ -182,8 +181,8 @@ const EmployeesTable = (props) => {
         .toLowerCase()
         .includes(props.filterText?.toLowerCase() || "") ||
       (row.status === 1 ? "active" : "inactive").includes(
-        props.filterText?.toLowerCase() || ""
-      )
+        props.filterText?.toLowerCase() || "",
+      ),
   );
 
   const visibleRows = useMemo(() => {
@@ -198,12 +197,17 @@ const EmployeesTable = (props) => {
         params: { idEmployee: id },
       });
       if (response.status === 200) {
-        toast.success("Usuario borrado con éxito", { duration: 2000 });
+        toast.success(
+          response.data.message || "Employee deleted successfully",
+          { duration: 2000 },
+        );
         props.onUpdate();
       }
     } catch (error) {
       if (axios.isAxiosError(error)) {
-        toast.error("Error al borrar el usuario", { duration: 2000 });
+        toast.error(error.response?.data?.error || "Error deleting employee", {
+          duration: 2000,
+        });
         return;
       }
     }
@@ -253,7 +257,7 @@ const EmployeesTable = (props) => {
           </button>
         </span>
       ),
-      { duration: Infinity }
+      { duration: Infinity },
     );
   };
 
@@ -293,8 +297,7 @@ const EmployeesTable = (props) => {
             <Table size={dense ? "small" : "medium"}>
               <TableHead>
                 <TableRow>
-                  <TableCell padding="checkbox"></TableCell>
-                  <TableCell>
+                  <TableCell align="center">
                     <TableSortLabel
                       active={orderBy === "name"}
                       direction={orderBy === "name" ? order : "asc"}
@@ -303,8 +306,8 @@ const EmployeesTable = (props) => {
                       Employee Name
                     </TableSortLabel>
                   </TableCell>
-                  <TableCell>Job Title</TableCell>
-                  <TableCell>
+                  <TableCell align="center">Job Title</TableCell>
+                  <TableCell align="center">
                     <TableSortLabel
                       active={orderBy === "name"}
                       direction={orderBy === "name" ? order : "asc"}
@@ -313,7 +316,7 @@ const EmployeesTable = (props) => {
                       Salary
                     </TableSortLabel>
                   </TableCell>
-                  <TableCell>Status</TableCell>
+                  <TableCell align="center">Status</TableCell>
                   <TableCell align="center">Actions</TableCell>
                 </TableRow>
               </TableHead>
@@ -331,20 +334,10 @@ const EmployeesTable = (props) => {
                       selected={isSelected}
                       sx={{ cursor: "pointer" }}
                     >
-                      <TableCell padding="checkbox">
-                        <Checkbox
-                          color="primary"
-                          checked={isSelected}
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            setSelected(isSelected ? [] : [row.id]);
-                          }}
-                        />{" "}
-                      </TableCell>
-                      <TableCell>{row.name}</TableCell>
+                      <TableCell align="center">{row.name}</TableCell>
 
-                      <TableCell>{row.jobTitle}</TableCell>
-                      <TableCell>
+                      <TableCell align="center">{row.jobTitle}</TableCell>
+                      <TableCell align="center">
                         {valorMoedaLocalStorage === "USD"
                           ? new Intl.NumberFormat("en-US", {
                               style: "currency",
@@ -356,26 +349,26 @@ const EmployeesTable = (props) => {
                             }).format(row.salary * valorUSDToMXN)}
                       </TableCell>
 
-                      <TableCell>
+                      <TableCell align="center">
                         <span
                           style={{
                             color:
                               row.status === 1
                                 ? "green"
                                 : row.status === 2
-                                ? "gray"
-                                : row.status === 3
-                                ? "#e95b5bff"
-                                : "#f0c544ff",
+                                  ? "gray"
+                                  : row.status === 3
+                                    ? "#e95b5bff"
+                                    : "#f0c544ff",
                             fontWeight: "bold",
                             backgroundColor:
                               row.status === 1
                                 ? "rgba(0, 128, 0, 0.1)"
                                 : row.status === 2
-                                ? "rgba(128, 128, 128, 0.1)"
-                                : row.status === 3
-                                ? "rgba(233, 91, 91, 0.1)"
-                                : "rgba(240, 197, 68, 0.1)",
+                                  ? "rgba(128, 128, 128, 0.1)"
+                                  : row.status === 3
+                                    ? "rgba(233, 91, 91, 0.1)"
+                                    : "rgba(240, 197, 68, 0.1)",
                             padding: "4px 8px",
                             borderRadius: "10px",
                           }}

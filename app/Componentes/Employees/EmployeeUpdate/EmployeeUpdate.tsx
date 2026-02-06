@@ -95,7 +95,10 @@ const UserActions = (props) => {
       });
       if (response.status === 200) {
         props.onUpdate();
-        toast.success("Employee updated successfully!", { duration: 2000 });
+        toast.success(
+          response.data.message || "Employee updated successfully!",
+          { duration: 2000 }
+        );
         reloadEmpleadosDetails();
       }
     } catch (error) {

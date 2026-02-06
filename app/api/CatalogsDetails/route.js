@@ -152,6 +152,10 @@ export async function DELETE(request) {
       JSON.stringify({ message: "Deleted", department: description }),
       { status: 200 }
     );
+  } else if (description === "UMA Values") {
+    await prisma.UMA_Values.delete({
+      where: { Id_UMA: Number(idUser) },
+    });
   } else {
     return new Response("Invalid type", { status: 400 });
   }

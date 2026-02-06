@@ -33,7 +33,6 @@ import CalendarMonthIcon from "@mui/icons-material/CalendarMonth";
 import AttachMoneyIcon from "@mui/icons-material/AttachMoney";
 import LocationOnIcon from "@mui/icons-material/LocationOn";
 import LocationCityIcon from "@mui/icons-material/LocationCity";
-import DescriptionIcon from "@mui/icons-material/Description";
 
 const UpdateTable = (props) => {
   useEffect(() => {
@@ -54,6 +53,8 @@ const UpdateTable = (props) => {
     setEmployeeTypesDetails,
     setJobPositionsDetails,
     setDeduccionesDetails,
+    setUMAValues,
+    umaValues,
     departmentDetails,
     payFrequencyDetails,
     employeeTypesDetails,
@@ -80,6 +81,9 @@ const UpdateTable = (props) => {
     )
       ? 1
       : 2,
+    UMA_Year: props.selectedDeduction.UMA_Year || "",
+    UMA_Values: props.selectedDeduction.UMA_Values || "",
+    UMA_Status: props.selectedDeduction.Is_Active === false ? "0" : "1",
   });
 
   const hasExistingDefaults =
@@ -110,15 +114,13 @@ const UpdateTable = (props) => {
 
   const handleSubmit = async () => {
     if (
-      data.description === "" ||
-      data.description === null ||
-      data.description === undefined
+      props.selectedDeduction.Department !== "UMA Values" &&
+      (!data.description || data.description.trim() === "")
     ) {
       toast.error("Description cannot be empty.", { duration: 2000 });
       return;
     }
 
-    // Validar que no se pueda cambiar a "No" si hay defaults existentes
     if (data.is_Default_Concept === 2 && hasExistingDefaults) {
       toast.error(
         "Cannot change to 'No' because there are existing default concepts for this concept. Please remove them first from the Default Concepts table.",
@@ -200,6 +202,18 @@ const UpdateTable = (props) => {
                   : deduction
               )
             );
+
+          case "UMA Values":
+            setUMAValues(
+              umaValues.map((uma) =>
+                uma.Id_UMA === response.data.updatedData.Id_UMA
+                  ? response.data.updatedData
+                  : uma.Is_Active !== response.data.updatedData.Is_Active
+                  ? response.data.updatedData
+                  : uma
+              )
+            );
+            break;
         }
       }
 
@@ -284,25 +298,26 @@ const UpdateTable = (props) => {
 
           <Divider />
 
-          {props.selectedDeduction.Department !== "Deductions" && (
-            <TextField
-              fullWidth
-              required
-              label={
-                props.selectedDeduction.Department === "States"
-                  ? "State Name"
-                  : props.selectedDeduction.Department === "Cities"
-                  ? "City Name"
-                  : "Description"
-              }
-              value={data.description}
-              onChange={(e) =>
-                setData({ ...data, description: e.target.value })
-              }
-              inputProps={{ maxLength: 100 }}
-              helperText={`${data.description?.length || 0}/100 characters`}
-            />
-          )}
+          {props.selectedDeduction.Department !== "Deductions" &&
+            props.selectedDeduction.Department !== "UMA Values" && (
+              <TextField
+                fullWidth
+                required
+                label={
+                  props.selectedDeduction.Department === "States"
+                    ? "State Name"
+                    : props.selectedDeduction.Department === "Cities"
+                    ? "City Name"
+                    : "Description"
+                }
+                value={data.description}
+                onChange={(e) =>
+                  setData({ ...data, description: e.target.value })
+                }
+                inputProps={{ maxLength: 100 }}
+                helperText={`${data.description?.length || 0}/100 characters`}
+              />
+            )}
 
           {props.selectedDeduction.Department === "Deductions" && (
             <Box sx={{ display: "flex", flexDirection: "column", gap: 2.5 }}>
@@ -449,6 +464,65 @@ const UpdateTable = (props) => {
             </Box>
           )}
         </Box>
+
+        {props.selectedDeduction.Department === "UMA Values" && (
+          <Box sx={{ display: "flex", gap: 2 }}>
+            <FormControl fullWidth>
+              <InputLabel>Year</InputLabel>
+              <Select
+                value={data.UMA_Year}
+                required
+                label="Year"
+                onChange={(e) =>
+                  setData({
+                    ...data,
+                    UMA_Year: e.target.value,
+                  })
+                }
+              >
+                <MenuItem value="2025">2025</MenuItem>
+                <MenuItem value="2026">2026</MenuItem>
+                <MenuItem value="2027">2027</MenuItem>
+              </Select>
+            </FormControl>
+            <FormControl fullWidth>
+              <TextField
+                type="number"
+                fullWidth
+                required
+                label="UMA Value"
+                value={data.UMA_Values}
+                onChange={(e) =>
+                  setData({
+                    ...data,
+                    UMA_Values: e.target.value,
+                  })
+                }
+                inputProps={{ maxLength: 50 }}
+                helperText={`${data.UMA_Values.length}/50 characters`}
+                rows={2}
+              />{" "}
+            </FormControl>
+
+            <FormControl fullWidth>
+              <InputLabel>Status</InputLabel>
+              <Select
+                value={data.UMA_Status}
+                required
+                label="Status"
+                onChange={(e) =>
+                  setData({
+                    ...data,
+                    UMA_Status: e.target.value,
+                  })
+                }
+              >
+                <MenuItem value="0">Inactive</MenuItem>
+                <MenuItem value="1">Active</MenuItem>
+              </Select>
+            </FormControl>
+          </Box>
+        )}
       </DialogContent>
 
       <Divider />

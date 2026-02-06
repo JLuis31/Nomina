@@ -68,18 +68,18 @@ const Exceptions = ({ isOpen, onClose, payFrequencyId }: ExceptionsProps) => {
 
       try {
         const response = await axios.get(
-          `/api/Exceptions?payFrequencyId=${payFrequencyId}`
+          `/api/Exceptions?payFrequencyId=${payFrequencyId}`,
         );
         if (response.status === 200) {
           const employeeExceptions = response.data.filter(
-            (ex: any) => ex.Id_Employee === selectedEmployee.Id_Employee
+            (ex: any) => ex.Id_Employee === selectedEmployee.Id_Employee,
           );
           setExistingExceptions(employeeExceptions);
         }
       } catch (error) {
         if (axios.isAxiosError(error)) {
           toast.error(
-            error.response?.data.error || "Error fetching existing exceptions"
+            error.response?.data.error || "Error fetching existing exceptions",
           );
         }
       }
@@ -107,7 +107,7 @@ const Exceptions = ({ isOpen, onClose, payFrequencyId }: ExceptionsProps) => {
       const filteredByPayFrequency = filtered.filter((empleado: any) =>
         payFrequencyId
           ? empleado.Id_PayFrequency === Number(payFrequencyId)
-          : true
+          : true,
       );
       setSuggestions(filteredByPayFrequency);
     } else {
@@ -126,12 +126,12 @@ const Exceptions = ({ isOpen, onClose, payFrequencyId }: ExceptionsProps) => {
 
     if (value.length > 0) {
       const filtered = empleadosDetails.filter((empleado: any) =>
-        String(empleado.Id_Employee).includes(value)
+        String(empleado.Id_Employee).includes(value),
       );
       const filteredByPayFrequency = filtered.filter((empleado: any) =>
         payFrequencyId
           ? empleado.Id_PayFrequency === Number(payFrequencyId)
-          : true
+          : true,
       );
       setIdSuggestions(filteredByPayFrequency);
     } else {
@@ -154,7 +154,7 @@ const Exceptions = ({ isOpen, onClose, payFrequencyId }: ExceptionsProps) => {
     }
 
     const hasException = existingExceptions.some(
-      (ex: any) => ex.Id_Concept === concept.Id_Concept
+      (ex: any) => ex.Id_Concept === concept.Id_Concept,
     );
 
     return !hasException;
@@ -169,7 +169,7 @@ const Exceptions = ({ isOpen, onClose, payFrequencyId }: ExceptionsProps) => {
     const modifiedExceptions = Object.keys(exceptions).reduce((acc, key) => {
       const exception = exceptions[key];
       const originalConcept = filteredConcepts.find(
-        (c: any) => c.Id_Concept === key
+        (c: any) => c.Id_Concept === key,
       );
 
       const hasPerHourChange =
@@ -204,7 +204,7 @@ const Exceptions = ({ isOpen, onClose, payFrequencyId }: ExceptionsProps) => {
 
       if (response.status === 200) {
         toast.success(
-          response.data.message || "Exceptions saved successfully."
+          response.data.message || "Exceptions saved successfully.",
         );
         setExceptions({});
       }
@@ -212,7 +212,7 @@ const Exceptions = ({ isOpen, onClose, payFrequencyId }: ExceptionsProps) => {
       if (axios.isAxiosError(error)) {
         toast.error(
           error.response?.data?.error ||
-            "An error occurred while saving exceptions."
+            "An error occurred while saving exceptions.",
         );
       }
     }
@@ -275,8 +275,9 @@ const Exceptions = ({ isOpen, onClose, payFrequencyId }: ExceptionsProps) => {
             },
           }}
         >
-          <Tab label="Add Exceptions" />
           <Tab label="View Exceptions" />
+
+          <Tab label="Add Exceptions" />
         </Tabs>
       </Box>
 
@@ -284,124 +285,93 @@ const Exceptions = ({ isOpen, onClose, payFrequencyId }: ExceptionsProps) => {
 
       <DialogContent sx={{ pt: 3 }}>
         {activeTab === 0 ? (
+          <ViewExceptions payFrequencyId={payFrequencyId} />
+        ) : (
           <Box sx={{ display: "flex", flexDirection: "column", gap: 2.5 }}>
-            <Box sx={{ position: "relative" }}>
-              <TextField
-                fullWidth
-                label="Search Employee by Name"
-                value={nombreInput}
-                onChange={handleNombreChange}
-                placeholder="Type employee name..."
-              />
-              {suggestions.length > 0 && (
-                <Paper
-                  sx={{
-                    position: "absolute",
-                    top: "100%",
-                    left: 0,
-                    right: 0,
-                    zIndex: 1000,
-                    maxHeight: 200,
-                    overflow: "auto",
-                    mt: 0.5,
-                  }}
-                >
-                  {suggestions.map((empleado: any) => (
-                    <Box
-                      key={empleado.Id_Employee}
-                      sx={{
-                        p: 1.5,
-                        cursor: "pointer",
-                        "&:hover": { backgroundColor: "#f5f5f5" },
-                      }}
-                      onClick={() => handleSuggestionClick(empleado)}
-                    >
-                      <Typography variant="body2">
-                        {empleado.Id_Employee} -{" "}
-                        {`${empleado.Name} ${empleado.First_SurName} ${empleado.Second_Surname}`}
-                      </Typography>
-                    </Box>
-                  ))}
-                </Paper>
-              )}
-            </Box>
-
-            <Box sx={{ position: "relative" }}>
-              <TextField
-                fullWidth
-                label="Search Employee by ID"
-                value={idInput}
-                onChange={handleIdChange}
-                placeholder="Type employee ID..."
-              />
-              {idSuggestions.length > 0 && (
-                <Paper
-                  sx={{
-                    position: "absolute",
-                    top: "100%",
-                    left: 0,
-                    right: 0,
-                    zIndex: 1000,
-                    maxHeight: 200,
-                    overflow: "auto",
-                    mt: 0.5,
-                  }}
-                >
-                  {idSuggestions.map((empleado: any) => (
-                    <Box
-                      key={empleado.Id_Employee}
-                      sx={{
-                        p: 1.5,
-                        cursor: "pointer",
-                        "&:hover": { backgroundColor: "#f5f5f5" },
-                      }}
-                      onClick={() => handleSuggestionClick(empleado)}
-                    >
-                      <Typography variant="body2">
-                        {empleado.Id_Employee} -{" "}
-                        {`${empleado.Name} ${empleado.First_SurName} ${empleado.Second_Surname}`}
-                      </Typography>
-                    </Box>
-                  ))}
-                </Paper>
-              )}
+            <Box display="row" gap={2.5} sx={{ display: "flex" }}>
+              <Box width="50%" sx={{ position: "relative" }}>
+                <TextField
+                  fullWidth
+                  label="Search Employee by ID"
+                  value={idInput}
+                  onChange={handleIdChange}
+                  placeholder="Type employee ID..."
+                />
+                {idSuggestions.length > 0 && (
+                  <Paper
+                    sx={{
+                      position: "absolute",
+                      top: "100%",
+                      left: 0,
+                      right: 0,
+                      zIndex: 1000,
+                      maxHeight: 200,
+                      overflow: "auto",
+                      mt: 0.5,
+                    }}
+                  >
+                    {idSuggestions.map((empleado: any) => (
+                      <Box
+                        key={empleado.Id_Employee}
+                        sx={{
+                          p: 1.5,
+                          cursor: "pointer",
+                          "&:hover": { backgroundColor: "#f5f5f5" },
+                        }}
+                        onClick={() => handleSuggestionClick(empleado)}
+                      >
+                        <Typography variant="body2">
+                          {empleado.Id_Employee} -{" "}
+                          {`${empleado.Name} ${empleado.First_SurName} ${empleado.Second_Surname}`}
+                        </Typography>
+                      </Box>
+                    ))}
+                  </Paper>
+                )}
+              </Box>
+              <Box width="50%" sx={{ position: "relative" }}>
+                <TextField
+                  fullWidth
+                  label="Search Employee by Name"
+                  value={nombreInput}
+                  onChange={handleNombreChange}
+                  placeholder="Type employee name..."
+                />
+                {suggestions.length > 0 && (
+                  <Paper
+                    sx={{
+                      position: "absolute",
+                      top: "100%",
+                      left: 0,
+                      right: 0,
+                      zIndex: 1000,
+                      maxHeight: 200,
+                      overflow: "auto",
+                      mt: 0.5,
+                    }}
+                  >
+                    {suggestions.map((empleado: any) => (
+                      <Box
+                        key={empleado.Id_Employee}
+                        sx={{
+                          p: 1.5,
+                          cursor: "pointer",
+                          "&:hover": { backgroundColor: "#f5f5f5" },
+                        }}
+                        onClick={() => handleSuggestionClick(empleado)}
+                      >
+                        <Typography variant="body2">
+                          {empleado.Id_Employee} -{" "}
+                          {`${empleado.Name} ${empleado.First_SurName} ${empleado.Second_Surname}`}
+                        </Typography>
+                      </Box>
+                    ))}
+                  </Paper>
+                )}
+              </Box>
             </Box>
 
             <Divider />
-
-            {selectedEmployee && (
-              <Box
-                sx={{
-                  p: 2,
-                  backgroundColor: "#f5f5f5",
-                  borderRadius: 1,
-                  display: "flex",
-                  flexDirection: "column",
-                  gap: 1,
-                }}
-              >
-                <Typography variant="subtitle2" color="primary">
-                  Selected Employee:
-                </Typography>
-                <Typography variant="body2">
-                  <strong>ID:</strong> {selectedEmployee.Id_Employee}
-                </Typography>
-                <Typography variant="body2">
-                  <strong>Name:</strong> {selectedEmployee.Name}{" "}
-                  {selectedEmployee.First_SurName}{" "}
-                  {selectedEmployee.Second_Surname}
-                </Typography>
-                <Typography variant="body2">
-                  <strong>Payment Frequency:</strong>{" "}
-                  {
-                    payFrequencyDetails.find(
-                      (pf: any) =>
-                        pf.Id_PayFrequency === selectedEmployee.Id_PayFrequency
-                    )?.Description
-                  }
-                </Typography>
-              </Box>
-            )}
 
             {selectedEmployee && filteredConcepts.length > 0 && (
               <Box sx={{ mt: 2 }}>
@@ -510,7 +480,7 @@ const Exceptions = ({ isOpen, onClose, payFrequencyId }: ExceptionsProps) => {
                                 undefined
                                   ? String(
                                       exceptions[concept.Id_Concept]
-                                        ?.Per_Hour ?? ""
+                                        ?.Per_Hour ?? "",
                                     )
                                   : String(concept.Per_Hour ?? "")
                               }
@@ -572,7 +542,7 @@ const Exceptions = ({ isOpen, onClose, payFrequencyId }: ExceptionsProps) => {
                                 undefined
                                   ? String(
                                       exceptions[concept.Id_Concept]
-                                        ?.Per_Amount ?? ""
+                                        ?.Per_Amount ?? "",
                                     )
                                   : String(concept.Per_Amount ?? "")
                               }
@@ -637,15 +607,13 @@ const Exceptions = ({ isOpen, onClose, payFrequencyId }: ExceptionsProps) => {
               </Box>
             )}
           </Box>
-        ) : (
-          <ViewExceptions payFrequencyId={payFrequencyId} />
         )}
       </DialogContent>
 
       <Divider />
 
       <DialogActions sx={{ p: 2, gap: 1 }}>
-        {activeTab === 0 && (
+        {activeTab === 1 && (
           <>
             <Button onClick={onClose} variant="outlined" color="inherit">
               Cancel
@@ -664,7 +632,7 @@ const Exceptions = ({ isOpen, onClose, payFrequencyId }: ExceptionsProps) => {
             </Button>
           </>
         )}
-        {activeTab === 1 && (
+        {activeTab === 0 && (
           <Button onClick={onClose} variant="outlined" color="inherit">
             Close
           </Button>

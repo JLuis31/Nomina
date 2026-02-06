@@ -37,10 +37,20 @@ const ValuesConfiguration = () => {
     setCityDetails,
     defaultConceptsDetails,
     setDefaultConceptsDetails,
+    umaValues,
+    setUMAValues,
   } = useUsersDetails();
 
   const [showItemAddition, setShowItemAddition] = useState(false);
   const [catalog, setCatalog] = useState({ value: 1 });
+  const [valorMoedaLocalStorage, setValorMoedaLocalStorage] = useState("MXN");
+
+  useEffect(() => {
+    const storedValue = localStorage.getItem("valorMonedaLocalStorage");
+    if (storedValue) {
+      setValorMoedaLocalStorage(storedValue);
+    }
+  }, []);
 
   useEffect(() => {
     const handleKeyDown = (e) => {
@@ -52,6 +62,12 @@ const ValuesConfiguration = () => {
     return () => window.removeEventListener("keydown", handleKeyDown);
   }, []);
 
+  useEffect(() => {
+    if (session.status === "unauthenticated") {
+      Router.push("/api/auth/signin");
+    }
+  }, [session.status, Router]);
+
   const handleDelete = async ({ id, description }) => {
     try {
       const response = await axios.delete("/api/CatalogsDetails", {
@@ -62,80 +78,73 @@ const ValuesConfiguration = () => {
         switch (response.data.department) {
           case "Departments":
             setDepartmentDetails(
-              departmentDetails.filter((dep: any) => dep.Id_Department !== id)
+              departmentDetails.filter((dep: any) => dep.Id_Department !== id),
             );
             break;
           case "Employee Types":
             setEmployeeTypesDetails(
               employeeTypesDetails.filter(
-                (emp: any) => emp.Id_Employee_type !== id
-              )
+                (emp: any) => emp.Id_Employee_type !== id,
+              ),
             );
             break;
           case "Job Positions":
             setJobPositionsDetails(
-              jobPositionsDetails.filter((job: any) => job.Id_Job !== id)
+              jobPositionsDetails.filter((job: any) => job.Id_Job !== id),
             );
             break;
           case "Pay Frequency":
             setPayFrequencyDetails(
               payFrequencyDetails.filter(
-                (pay: any) => pay.Id_PayFrequency !== id
-              )
+                (pay: any) => pay.Id_PayFrequency !== id,
+              ),
             );
             break;
           case "States":
             setStatesDetails(
-              statesDetails.filter((state: any) => state.Id_State !== id)
+              statesDetails.filter((state: any) => state.Id_State !== id),
             );
             break;
           case "Cities":
             setCityDetails(
-              cityDetails.filter((city: any) => city.Id_City !== id)
+              cityDetails.filter((city: any) => city.Id_City !== id),
             );
             break;
           case "Deductions":
             setDeduccionesDetails(
               deduccionesDetails.filter(
-                (deduccion: any) => deduccion.Id_Concept !== id
-              )
+                (deduccion: any) => deduccion.Id_Concept !== id,
+              ),
             );
+            break;
           case "Default Concepts":
             setDefaultConceptsDetails(
               defaultConceptsDetails.filter(
-                (concept: any) => concept.Id_Default_Concept !== id
-              )
+                (concept: any) => concept.Id_Default_Concept !== id,
+              ),
             );
+            break;
+          case "UMA Values":
+            setUMAValues(umaValues.filter((uma: any) => uma.Id_UMA !== id));
             break;
         }
 
-        toast.success("Item deleted successfully", { duration: 2000 });
+        toast.success(response.data.message || "Item deleted successfully", {
+          duration: 2000,
+        });
       }
     } catch (error) {
       if (axios.isAxiosError(error)) {
         toast.error(
           `Error deleting item: ${
             error.response?.data?.message || error.message
-          }`
+          }`,
         );
       } else {
         toast.error("An unexpected error occurred");
       }
     }
   };
-
-  if (session.status === "loading") {
-    return (
-      <div className="loading-container">
-        <ClipLoader size={100} color={"#123abc"} loading={true} />
-      </div>
-    );
-  }
-
-  if (session.status === "unauthenticated") {
-    Router.push("/api/auth/signin");
-    return null;
-  }
 
   const handleEditTable = async () => {
     setShowItemAddition(true);
@@ -147,11 +156,9 @@ const ValuesConfiguration = () => {
 
   const configurarDivisa = (valor) => {
     setValorMoneda(valor);
+    setValorMoedaLocalStorage(valor);
     localStorage.setItem("valorMonedaLocalStorage", valor);
   };
-
-  const valorMoedaLocalStorage =
-    localStorage.getItem("valorMonedaLocalStorage") || "MXN";
 
   return (
     <div>
@@ -206,6 +213,7 @@ const ValuesConfiguration = () => {
                 <MenuItem value={6}>States</MenuItem>
                 <MenuItem value={7}>Cities</MenuItem>
                 <MenuItem value={8}>Default Concepts</MenuItem>
+                <MenuItem value={9}>UMA Values</MenuItem>
               </Select>
             </FormControl>
           </Box>
@@ -220,6 +228,7 @@ const ValuesConfiguration = () => {
                 statesDetails={statesDetails}
                 cityDetails={cityDetails}
                 defaultConceptsDetails={defaultConceptsDetails}
+                umaValues={umaValues}
                 selectedCatalog={catalog}
                 handleDelete={handleDelete}
                 onAddItem={handleEditTable}

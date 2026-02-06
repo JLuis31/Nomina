@@ -72,6 +72,8 @@ const ItemsAddition = (props) => {
     cityDetails,
     defaultConceptsDetails,
     setDefaultConceptsDetails,
+    umaValues,
+    setUMAValues,
   } = useUsersDetails();
 
   const [selectedOption, setSelectedOption] = useState({
@@ -82,6 +84,8 @@ const ItemsAddition = (props) => {
     IncomeTax: "0",
     SocialSec: "0",
     Id_PayFrequency: "",
+    UMA_Year: "",
+    UMA_Value: "",
   });
 
   const handleAddItem = async () => {
@@ -114,7 +118,8 @@ const ItemsAddition = (props) => {
 
     if (
       selectedOption.department !== "5" &&
-      selectedOption.department !== "8"
+      selectedOption.department !== "8" &&
+      selectedOption.department !== "9"
     ) {
       if (selectedOption.Name === "") {
         toast.error("Description cannot be empty");
@@ -129,7 +134,7 @@ const ItemsAddition = (props) => {
       );
 
       if (response.status === 200) {
-        toast.success("Item added successfully");
+        toast.success(response.data.message || "Item added successfully");
 
         switch (response.data.department) {
           case "1":
@@ -180,6 +185,9 @@ const ItemsAddition = (props) => {
               response.data.addedData,
             ]);
             break;
+          case "9":
+            setUMAValues([...umaValues, response.data.addedData]);
+            break;
         }
       }
     } catch (error) {
@@ -189,7 +197,6 @@ const ItemsAddition = (props) => {
       }
     }
   };
-
 
   const getItemTypeIcon = () => {
     switch (selectedOption.department) {
@@ -209,6 +216,8 @@ const ItemsAddition = (props) => {
         return <LocationCityIcon />;
       case "8":
         return <DescriptionIcon />;
+      case "9":
+        return <AttachMoneyIcon />;
       default:
         return <AddCircleOutlineIcon />;
     }
@@ -223,6 +232,7 @@ const ItemsAddition = (props) => {
       "5": "Income / Deduction",
       "6": "State",
       "7": "City",
+      "9": "UMA Value",
     };
     return types[selectedOption.department] || "Item";
   };
@@ -320,6 +330,11 @@ const ItemsAddition = (props) => {
                   <LocationCityIcon fontSize="small" /> City
                 </Box>
               </MenuItem>
+              <MenuItem value="9">
+                <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+                  <LocationCityIcon fontSize="small" /> UMA Values
+                </Box>
+              </MenuItem>
             </Select>
           </FormControl>
 
@@ -395,23 +410,24 @@ const ItemsAddition = (props) => {
             </Box>
           )}
 
-          <TextField
-            fullWidth
-            required
-            label="Description"
-            value={selectedOption.Name}
-            onChange={(e) =>
-              setSelectedOption({
-                ...selectedOption,
-                Name: e.target.value,
-              })
-            }
-            inputProps={{ maxLength: 50 }}
-            helperText={`${selectedOption.Name.length}/50 characters`}
-            multiline
-            rows={2}
-          />
-
+          {selectedOption.department !== "9" && (
+            <TextField
+              fullWidth
+              required
+              label="Description"
+              value={selectedOption.Name}
+              onChange={(e) =>
+                setSelectedOption({
+                  ...selectedOption,
+                  Name: e.target.value,
+                })
+              }
+              inputProps={{ maxLength: 50 }}
+              helperText={`${selectedOption.Name.length}/50 characters`}
+              multiline
+              rows={2}
+            />
+          )}
           {selectedOption.department === "5" &&
             selectedOption.ConceptType !== "D" && (
               <Box sx={{ display: "flex", gap: 2 }}>
@@ -450,6 +466,47 @@ const ItemsAddition = (props) => {
                 </FormControl>
               </Box>
             )}
+
+          {selectedOption.department === "9" && (
+            <Box sx={{ display: "flex", gap: 2 }}>
+              <FormControl fullWidth>
+                <InputLabel>Year</InputLabel>
+                <Select
+                  value={selectedOption.UMA_Year}
+                  required
+                  label="Year"
+                  onChange={(e) =>
+                    setSelectedOption({
+                      ...selectedOption,
+                      UMA_Year: e.target.value,
+                    })
+                  }
+                >
+                  <MenuItem value="2025">2025</MenuItem>
+                  <MenuItem value="2026">2026</MenuItem>
+                  <MenuItem value="2027">2027</MenuItem>
+                </Select>
+              </FormControl>
+              <FormControl fullWidth>
+                <TextField
+                  type="number"
+                  fullWidth
+                  required
+                  label="UMA Value"
+                  value={selectedOption.UMA_Value}
+                  onChange={(e) =>
+                    setSelectedOption({
+                      ...selectedOption,
+                      UMA_Value: e.target.value,
+                    })
+                  }
+                  inputProps={{ maxLength: 50 }}
+                  helperText={`${selectedOption.Name.length}/50 characters`}
+                  rows={2}
+                />{" "}
+              </FormControl>
+            </Box>
+          )}
         </Box>
       </DialogContent>
 

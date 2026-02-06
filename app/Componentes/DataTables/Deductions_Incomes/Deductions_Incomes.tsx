@@ -15,7 +15,6 @@ import {
   TablePagination,
   FormControlLabel,
   Switch,
-  Checkbox,
   TableSortLabel,
 } from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
@@ -80,7 +79,7 @@ const DeduccionesTable = (props) => {
           </button>
         </span>
       ),
-      { duration: Infinity }
+      { duration: Infinity },
     );
   };
 
@@ -111,7 +110,7 @@ const DeduccionesTable = (props) => {
 
   function getComparator<Key extends keyof any>(
     order: "asc" | "desc",
-    orderBy: Key
+    orderBy: Key,
   ) {
     return order === "desc"
       ? (a, b) => descendingComparator(a, b, orderBy)
@@ -127,8 +126,8 @@ const DeduccionesTable = (props) => {
           item.Id_Concept_Type === "I"
             ? "income"
             : item.Id_Concept_Type === "D"
-            ? "deduction"
-            : "";
+              ? "deduction"
+              : "";
         const incomeTax = item.Income_Tax === false ? "no" : "yes";
         const socialSec = item.Social_Sec === false ? "no" : "yes";
 
@@ -148,7 +147,6 @@ const DeduccionesTable = (props) => {
       .sort(getComparator(order, orderBy))
       .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage);
   }, [filteredData, order, orderBy, page, rowsPerPage]);
-
 
   return (
     <Box sx={{ width: "100%", mt: 3 }}>
@@ -205,7 +203,11 @@ const DeduccionesTable = (props) => {
           <Table className="table" size={dense ? "small" : "medium"}>
             <TableHead>
               <TableRow>
-                <TableCell style={{ color: "white" }} className="header">
+                <TableCell
+                  align="center"
+                  style={{ color: "white" }}
+                  className="header"
+                >
                   <TableSortLabel
                     active={orderBy === "Id_Concept"}
                     direction={orderBy === "Id_Concept" ? order : "asc"}
@@ -222,7 +224,11 @@ const DeduccionesTable = (props) => {
                     Id Concept
                   </TableSortLabel>
                 </TableCell>
-                <TableCell style={{ color: "white" }} className="header">
+                <TableCell
+                  align="center"
+                  style={{ color: "white" }}
+                  className="header"
+                >
                   <TableSortLabel
                     active={orderBy === "Description"}
                     direction={orderBy === "Description" ? order : "asc"}
@@ -322,7 +328,7 @@ const DeduccionesTable = (props) => {
               {Array.isArray(filteredData) && filteredData.length === 0 ? (
                 <TableRow>
                   <TableCell colSpan={7} align="center">
-                    No hay datos por mostrar
+                    No data available
                   </TableCell>
                 </TableRow>
               ) : (
@@ -341,8 +347,8 @@ const DeduccionesTable = (props) => {
                       }}
                       style={{ cursor: "pointer" }}
                     >
-                      <TableCell>{dep.Id_Concept}</TableCell>
-                      <TableCell>{dep.Description}</TableCell>
+                      <TableCell align="center">{dep.Id_Concept}</TableCell>
+                      <TableCell align="center">{dep.Description}</TableCell>
                       <TableCell align="center">
                         {dep.Id_Concept_Type === "I" ? "Income" : "Deduction"}
                       </TableCell>
@@ -355,7 +361,7 @@ const DeduccionesTable = (props) => {
                       <TableCell align="center">
                         {" "}
                         {defaultConceptsDetails.some(
-                          (dc) => dc.Id_Concept === dep.Id_Concept
+                          (dc) => dc.Id_Concept === dep.Id_Concept,
                         )
                           ? "Yes"
                           : "No"}

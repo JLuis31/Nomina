@@ -15,7 +15,6 @@ import {
   Toolbar,
   Typography,
   Paper,
-  Checkbox,
   IconButton,
   Tooltip,
   FormControlLabel,
@@ -37,7 +36,7 @@ const ViewDeductions = () => {
     Id_Concept_Type: string;
     Total_Amount: string;
     Last_Time_Update: string;
-    Deduction: string;
+    Balance: string;
   };
   const [selected, setSelected] = useState<number[]>([]);
   const [rows, setAllMovements] = useState<AllMovements[]>([]);
@@ -57,7 +56,7 @@ const ViewDeductions = () => {
   };
 
   useEffect(() => {
-    const handleKeyDown = (e) => {
+    const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === "Escape") {
         setShowUpdateModal(false);
       }
@@ -70,7 +69,7 @@ const ViewDeductions = () => {
     const fetchCalendars = async () => {
       try {
         const response = await axios.get(
-          "/api/EmployeesMovements/AllMovements"
+          "/api/EmployeesMovements/AllMovements",
         );
         setAllMovements(response.data);
       } catch (error) {
@@ -95,7 +94,7 @@ const ViewDeductions = () => {
         `/api/EmployeesMovements/AllMovements`,
         {
           params: { Id_Movement },
-        }
+        },
       );
       if (response.status === 200) {
         toast.success(response.data.message, { duration: 2000 });
@@ -103,7 +102,9 @@ const ViewDeductions = () => {
       }
     } catch (error) {
       if (axios.isAxiosError(error)) {
-        toast.error("Error deleting period", { duration: 2000 });
+        toast.error(error.response?.data?.error || "Error deleting movement", {
+          duration: 2000,
+        });
         return;
       }
     }
@@ -153,7 +154,7 @@ const ViewDeductions = () => {
           </button>
         </span>
       ),
-      { duration: Infinity }
+      { duration: Infinity },
     );
   };
 
@@ -162,7 +163,7 @@ const ViewDeductions = () => {
   };
 
   const handleChangeRowsPerPage = (
-    event: React.ChangeEvent<HTMLInputElement>
+    event: React.ChangeEvent<HTMLInputElement>,
   ) => {
     setRowsPerPage(parseInt(event.target.value, 10));
     setPage(0);
@@ -176,7 +177,7 @@ const ViewDeductions = () => {
 
   function getComparator<Key extends keyof any>(
     order: "asc" | "desc",
-    orderBy: Key
+    orderBy: Key,
   ) {
     return order === "desc"
       ? (a, b) => descendingComparator(a, b, orderBy)
@@ -196,7 +197,7 @@ const ViewDeductions = () => {
       row.FullName.toLowerCase().includes(filterText.toLowerCase()) ||
       getConceptTypeName(row.Id_Concept_Type)
         .toLowerCase()
-        .includes(filterText.toLowerCase())
+        .includes(filterText.toLowerCase()),
   );
 
   const visibleRows = useMemo(() => {
@@ -305,10 +306,9 @@ const ViewDeductions = () => {
                 <Table size={dense ? "small" : "medium"}>
                   <TableHead>
                     <TableRow>
-                      <TableCell padding="checkbox"></TableCell>
-                      <TableCell>Id</TableCell>
+                      <TableCell align="center">Id</TableCell>
 
-                      <TableCell>
+                      <TableCell align="center">
                         {" "}
                         <TableSortLabel
                           active={orderBy === "FullName"}
@@ -320,7 +320,7 @@ const ViewDeductions = () => {
                         </TableSortLabel>
                       </TableCell>
 
-                      <TableCell>
+                      <TableCell align="center">
                         {" "}
                         <TableSortLabel
                           active={orderBy === "Description"}
@@ -331,7 +331,7 @@ const ViewDeductions = () => {
                         </TableSortLabel>
                       </TableCell>
 
-                      <TableCell>
+                      <TableCell align="center">
                         <TableSortLabel
                           active={orderBy === "Id_Concept_Type"}
                           direction={
@@ -342,7 +342,7 @@ const ViewDeductions = () => {
                           Concept Type
                         </TableSortLabel>
                       </TableCell>
-                      <TableCell>
+                      <TableCell align="center">
                         <TableSortLabel
                           active={orderBy === "Total_Amount"}
                           direction={orderBy === "Total_Amount" ? order : "asc"}
@@ -351,7 +351,7 @@ const ViewDeductions = () => {
                           Total Amount
                         </TableSortLabel>
                       </TableCell>
-                      <TableCell>
+                      <TableCell align="center">
                         <TableSortLabel
                           active={orderBy === "Deduction"}
                           direction={orderBy === "Deduction" ? order : "asc"}
@@ -360,7 +360,7 @@ const ViewDeductions = () => {
                           Balance
                         </TableSortLabel>
                       </TableCell>
-                      <TableCell>
+                      <TableCell align="center">
                         {" "}
                         <TableSortLabel
                           active={orderBy === "Last_Time_Update"}
@@ -380,7 +380,7 @@ const ViewDeductions = () => {
                   <TableBody>
                     {visibleRows.map((row, idx) => {
                       const isSelected = selected.includes(
-                        Number(row.Id_Movement)
+                        Number(row.Id_Movement),
                       );
                       return (
                         <TableRow
@@ -393,35 +393,29 @@ const ViewDeductions = () => {
                           selected={isSelected}
                           sx={{ cursor: "pointer" }}
                         >
-                          <TableCell padding="checkbox">
-                            <Checkbox
-                              color="primary"
-                              checked={isSelected}
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                setSelected(
-                                  isSelected ? [] : [Number(row.Id_Movement)]
-                                );
-                              }}
-                            />{" "}
+                          <TableCell align="center">
+                            {row.Id_Movement}
                           </TableCell>
-                          <TableCell>{row.Id_Movement}</TableCell>
 
-                          <TableCell>{row.FullName}</TableCell>
-                          <TableCell>{row.Description}</TableCell>
-                          <TableCell>
+                          <TableCell align="center">{row.FullName}</TableCell>
+                          <TableCell align="center">
+                            {row.Description}
+                          </TableCell>
+                          <TableCell align="center">
                             {getConceptTypeName(row.Id_Concept_Type)}
                           </TableCell>
 
-                          <TableCell>{row.Total_Amount}</TableCell>
-                          <TableCell>{row.Deduction}</TableCell>
+                          <TableCell align="center">
+                            {row.Total_Amount}
+                          </TableCell>
+                          <TableCell align="center">{row.Balance}</TableCell>
 
-                          <TableCell>
+                          <TableCell align="center">
                             {row.Last_Time_Update
                               ? (() => {
                                   const [y, m, d] =
                                     row.Last_Time_Update.split("T")[0].split(
-                                      "-"
+                                      "-",
                                     );
                                   return `${d}/${m}/${y}`;
                                 })()

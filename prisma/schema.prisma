@@ -136,3 +136,43 @@ model Employee_Exceptions{
   Per_Hour Float
   Per_Amount Float
 }
+
+model UMA_Values{
+  Id_UMA   Int    @id @default(autoincrement())
+  UMA_Year   String     
+  UMA_Values  Float
+  Is_Active Boolean @default(false)
+}
+
+model Payment_Records{
+  Id_Employee Int
+  Id_PayFrequency Int
+  Id_Period Int
+  GrossSalary Float
+  Incomes_Sumatory Float
+  Deductions_Sumatory Float
+  Federal_Tax_Withheld Float
+  Social_Security_Withholding Float
+  Total_Tax_Deductions Float
+  Net_Pay Float
+  Date DateTime
+
+    @@id([Id_Employee, Id_PayFrequency, Id_Period])
+
+}
+
+model Payroll_Detail{
+  Id_PayrollDetail Int
+  Id_Period Int
+  Id_PayFrequency Int
+  Id_Employee Int
+  Id_Department Int
+  Id_Concept String
+  Id_Concept_Type String
+  Worked_Hours Float
+  Salary_Per_Hour Float
+  Balance Float
+  Amount Float
+
+    @@id([Id_PayrollDetail])
+}

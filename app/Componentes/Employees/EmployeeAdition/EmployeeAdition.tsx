@@ -112,7 +112,9 @@ const EmployeeAdition = ({
         combinedData
       );
       if (response.status === 201) {
-        toast.success("Employee added successfully!", { duration: 2000 });
+        toast.success(response.data.message || "Employee added successfully!", {
+          duration: 2000,
+        });
         setTimeout(() => {
           window.location.reload();
         }, 2000);

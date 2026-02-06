@@ -16,7 +16,6 @@ import {
   Toolbar,
   Typography,
   Paper,
-  Checkbox,
   IconButton,
   Tooltip,
   FormControlLabel,
@@ -107,7 +106,7 @@ const Settings = () => {
   async function handleDelete(
     id_Period: number,
     Id_PayFrequency: number,
-    Year: number
+    Year: number,
   ) {
     try {
       const response = await axios.delete(`/api/Calendars`, {
@@ -128,7 +127,7 @@ const Settings = () => {
   const confirmDelete = (
     id_Period: number,
     Id_PayFrequency: number,
-    Year: number
+    Year: number,
   ) => {
     toast(
       (t) => (
@@ -173,7 +172,7 @@ const Settings = () => {
           </button>
         </span>
       ),
-      { duration: Infinity }
+      { duration: Infinity },
     );
   };
 
@@ -182,7 +181,7 @@ const Settings = () => {
   };
 
   const handleChangeRowsPerPage = (
-    event: React.ChangeEvent<HTMLInputElement>
+    event: React.ChangeEvent<HTMLInputElement>,
   ) => {
     setRowsPerPage(parseInt(event.target.value, 10));
     setPage(0);
@@ -196,7 +195,7 @@ const Settings = () => {
 
   function getComparator<Key extends keyof any>(
     order: "asc" | "desc",
-    orderBy: Key
+    orderBy: Key,
   ) {
     return order === "desc"
       ? (a, b) => descendingComparator(a, b, orderBy)
@@ -207,7 +206,7 @@ const Settings = () => {
     (row) =>
       String(row.Year).includes(filterText) ||
       months[row.Month]?.toLowerCase().includes(filterText.toLowerCase()) ||
-      row.Status.toLowerCase().includes(filterText.toLowerCase())
+      row.Status.toLowerCase().includes(filterText.toLowerCase()),
   );
 
   const visibleRows = useMemo(() => {
@@ -316,8 +315,7 @@ const Settings = () => {
                 <Table size={dense ? "small" : "medium"}>
                   <TableHead>
                     <TableRow>
-                      <TableCell padding="checkbox"></TableCell>
-                      <TableCell>
+                      <TableCell align="center">
                         {" "}
                         <TableSortLabel
                           active={orderBy === "Id_Period"}
@@ -329,7 +327,7 @@ const Settings = () => {
                         </TableSortLabel>
                       </TableCell>
 
-                      <TableCell>
+                      <TableCell align="center">
                         {" "}
                         <TableSortLabel
                           active={orderBy === "Id_PayFrequency"}
@@ -342,7 +340,7 @@ const Settings = () => {
                         </TableSortLabel>
                       </TableCell>
 
-                      <TableCell>
+                      <TableCell align="center">
                         <TableSortLabel
                           active={orderBy === "Year"}
                           direction={orderBy === "Year" ? order : "asc"}
@@ -351,7 +349,7 @@ const Settings = () => {
                           Year
                         </TableSortLabel>
                       </TableCell>
-                      <TableCell>
+                      <TableCell align="center">
                         <TableSortLabel
                           active={orderBy === "Month"}
                           direction={orderBy === "Month" ? order : "asc"}
@@ -360,7 +358,7 @@ const Settings = () => {
                           Month
                         </TableSortLabel>
                       </TableCell>
-                      <TableCell>
+                      <TableCell align="center">
                         <TableSortLabel
                           active={orderBy === "Period_Start"}
                           direction={orderBy === "Period_Start" ? order : "asc"}
@@ -369,7 +367,7 @@ const Settings = () => {
                           Start Date
                         </TableSortLabel>
                       </TableCell>
-                      <TableCell>
+                      <TableCell align="center">
                         {" "}
                         <TableSortLabel
                           active={orderBy === "Period_Start"}
@@ -380,7 +378,7 @@ const Settings = () => {
                         </TableSortLabel>
                       </TableCell>
 
-                      <TableCell>Status</TableCell>
+                      <TableCell align="center">Status</TableCell>
                       <TableCell align="center">Actions</TableCell>
                     </TableRow>
                   </TableHead>
@@ -408,28 +406,19 @@ const Settings = () => {
                                 : "pointer",
                           }}
                         >
-                          <TableCell padding="checkbox">
-                            <Checkbox
-                              color="primary"
-                              checked={isSelected}
-                              disabled={row.Status === "Closed"}
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                setSelected(isSelected ? [] : [row.Id_Payroll]);
-                              }}
-                            />{" "}
-                          </TableCell>
-                          <TableCell>{row.Id_Period}</TableCell>
-                          <TableCell>
+                          <TableCell align="center">{row.Id_Period}</TableCell>
+                          <TableCell align="center">
                             {payFrequencyDetails.find(
                               (item) =>
-                                item.Id_PayFrequency === row.Id_PayFrequency
+                                item.Id_PayFrequency === row.Id_PayFrequency,
                             )?.Description || row.Id_PayFrequency}
                           </TableCell>
-                          <TableCell>{row.Year}</TableCell>
+                          <TableCell align="center">{row.Year}</TableCell>
 
-                          <TableCell>{months[row.Month]}</TableCell>
-                          <TableCell>
+                          <TableCell align="center">
+                            {months[row.Month]}
+                          </TableCell>
+                          <TableCell align="center">
                             {row.Period_Start
                               ? (() => {
                                   const [y, m, d] =
@@ -439,7 +428,7 @@ const Settings = () => {
                               : ""}
                           </TableCell>
 
-                          <TableCell>
+                          <TableCell align="center">
                             {row.Period_End
                               ? (() => {
                                   const [y, m, d] =
@@ -449,6 +438,7 @@ const Settings = () => {
                               : ""}
                           </TableCell>
                           <TableCell
+                            align="center"
                             className={
                               row.Status === "Open" ? "open" : "closed"
                             }
@@ -470,7 +460,7 @@ const Settings = () => {
                                   confirmDelete(
                                     row.Id_Period,
                                     row.Id_PayFrequency,
-                                    row.Year
+                                    row.Year,
                                   );
                                 }}
                               >

@@ -1,13 +1,16 @@
 "use client";
 import { createContext, useContext, useState, useEffect } from "react";
 import axios from "axios";
+import toast from "react-hot-toast";
 const UsersDetailsContext = createContext({} as any);
+import { useSession } from "next-auth/react";
 
 export const UsersDetailsProvider = ({
   children,
 }: {
   children: React.ReactNode;
 }) => {
+  const { data } = useSession();
   const [departmentDetails, setDepartmentDetails] = useState([]);
   const [employeeTypesDetails, setEmployeeTypesDetails] = useState([]);
   const [jobPositionsDetails, setJobPositionsDetails] = useState([]);
@@ -18,9 +21,12 @@ export const UsersDetailsProvider = ({
   const [cityDetails, setCityDetails] = useState([]);
   const [defaultConceptsDetails, setDefaultConceptsDetails] = useState([]);
   const [valorMoneda, setValorMoneda] = useState();
+  const [umaValues, setUMAValues] = useState([]);
   const [valorUSDToMXN, setValorUSDToMXN] = useState(0);
+  const [lastPayrollPeriod, setLastPayrollPeriod] = useState();
 
   useEffect(() => {
+    if (!data?.user) return;
     const valorDelDolar = async () => {
       const response = await axios.get("https://open.er-api.com/v6/latest/USD");
       const valorUSDToMXN = response.data.rates.MXN;
@@ -32,7 +38,7 @@ export const UsersDetailsProvider = ({
         const data = response.data;
         setPayFrequencyDetails(data);
       } catch (error) {
-        console.error("Error fetching Pay Frequency Details:", error);
+        toast.error("Error fetching Pay Frequency Details: " + error);
       }
     };
 
@@ -42,7 +48,7 @@ export const UsersDetailsProvider = ({
         const data = response.data;
         setDepartmentDetails(data);
       } catch (error) {
-        console.error("Error fetching Departments Details:", error);
+        toast.error("Error fetching Departments Details: " + error);
       }
     };
 
@@ -52,7 +58,7 @@ export const UsersDetailsProvider = ({
         const data = response.data;
         setEmployeeTypesDetails(data);
       } catch (error) {
-        console.error("Error fetching Employee Types Details:", error);
+        toast.error("Error fetching Employee Types Details: " + error);
       }
     };
 
@@ -62,7 +68,7 @@ export const UsersDetailsProvider = ({
         const data = response.data;
         setJobPositionsDetails(data);
       } catch (error) {
-        console.error("Error fetching Job Positions Details:", error);
+        toast.error("Error fetching Job Positions Details: " + error);
       }
     };
 
@@ -72,19 +78,19 @@ export const UsersDetailsProvider = ({
         const data = response.data;
         setDeduccionesDetails(data);
       } catch (error) {
-        console.error("Error fetching Deducciones Details:", error);
+        toast.error("Error fetching Deducciones Details: " + error);
       }
     };
 
     const empleadosDetails = async () => {
       try {
         const response = await axios.get(
-          "/api/CatalogsDetails/EmployeesDetails"
+          "/api/CatalogsDetails/EmployeesDetails",
         );
         const data = response.data;
         setEmpleadosDetails(data);
       } catch (error) {
-        console.error("Error fetching Empleados Details:", error);
+        toast.error("Error fetching Empleados Details: " + error);
       }
     };
 
@@ -94,7 +100,7 @@ export const UsersDetailsProvider = ({
         const data = response.data;
         setStatesDetails(data);
       } catch (error) {
-        console.error("Error fetching States Details:", error);
+        toast.error("Error fetching States Details: " + error);
       }
     };
     const cityDetails = async () => {
@@ -103,19 +109,45 @@ export const UsersDetailsProvider = ({
         const data = response.data;
         setCityDetails(data);
       } catch (error) {
-        console.error("Error fetching City Details:", error);
+        toast.error("Error fetching City Details: " + error);
       }
     };
 
     const DefaultConceptsDetails = async () => {
       try {
         const response = await axios.get(
-          "/api/CatalogsDetails/DefaultConcepts"
+          "/api/CatalogsDetails/DefaultConcepts",
         );
         const data = response.data;
         setDefaultConceptsDetails(data);
       } catch (error) {
-        console.error("Error fetching Default Concepts Details:", error);
+        toast.error("Error fetching Default Concepts Details: " + error);
+      }
+    };
+
+    const UMAValues = async () => {
+      try {
+        const response = await axios.get("/api/CatalogsDetails/UMA_Values");
+        const data = response.data;
+
+        setUMAValues(data);
+      } catch (error) {
+        toast.error("Error fetching UMA Values: " + error);
+      }
+    };
+
+    const getLastPayrollPeriod = async () => {
+      try {
+        const response = await axios.get(
+          "/api/PayrollCalculation/LastPayrollCalculated",
+        );
+        setLastPayrollPeriod(response.data);
+      } catch (error) {
+        if (axios.isAxiosError(error)) {
+          toast.error(
+            "Error fetching Last Payroll Period: " + error.response?.data,
+          );
+        }
       }
     };
 
@@ -129,16 +161,20 @@ export const UsersDetailsProvider = ({
     statesDetails();
     cityDetails();
     DefaultConceptsDetails();
-  }, []);
+    UMAValues();
+    getLastPayrollPeriod();
+  }, [data?.user]);
 
   const reloadEmpleadosDetails = async () => {
+    if (!data?.user) return;
     try {
       const response = await axios.get("/api/CatalogsDetails/EmployeesDetails");
       setEmpleadosDetails(response.data);
     } catch (error) {
-      console.error("Error fetching Empleados Details:", error);
+      toast.error("Error fetching Empleados Details: " + error);
     }
   };
+
   return (
     <UsersDetailsContext.Provider
       value={{
@@ -164,6 +200,9 @@ export const UsersDetailsProvider = ({
         setCityDetails,
         defaultConceptsDetails,
         setDefaultConceptsDetails,
+        umaValues,
+        setUMAValues,
+        lastPayrollPeriod,
       }}
     >
       {children}

@@ -6,7 +6,7 @@ export async function GET() {
 }
 
 export async function POST(request) {
-  try {
+  
     const {
       Id_Concept,
       Id_Concept_Type,
@@ -44,14 +44,9 @@ export async function POST(request) {
     });
 
     return new Response(JSON.stringify(newDefaultConcept), { status: 201 });
-  } catch (error) {
-    console.error("Error creating default concept:", error);
-    return new Response(
-      JSON.stringify({ error: "Failed to create default concept" }),
-      { status: 500 }
-    );
+  
   }
-}
+
 
 export async function PUT(request) {
   const { defaultConcepts } = await request.json();

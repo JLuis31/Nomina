@@ -117,6 +117,29 @@ export async function POST(request) {
       });
       break;
     }
+
+    case "9": {
+      const existingUmaValueByYear = await prisma.UMA_Values.findFirst({
+        where: { UMA_Year: data.UMA_Year },
+      });
+
+      if (existingUmaValueByYear) {
+        return new Response(
+          JSON.stringify({
+            message: `UMA Value for year ${data.UMA_Year} already exists`,
+          }),
+          { status: 400 }
+        );
+      }
+
+      addedData = await prisma.UMA_Values.create({
+        data: {
+          UMA_Year: data.UMA_Year,
+          UMA_Values: parseFloat(data.UMA_Value),
+        },
+      });
+      break;
+    }
     default:
       return new Response(
         "Invalid department",
@@ -127,7 +150,7 @@ export async function POST(request) {
 
   return new Response(
     JSON.stringify({
-      message: "Data processed successfully",
+      message: "Item added successfully",
       department: data.department,
       addedData,
     }),
@@ -311,6 +334,40 @@ export async function PUT(request) {
         },
       });
 
+      break;
+    }
+    case "UMA Values": {
+      const current = await prisma.UMA_Values.findUnique({
+        where: { Id_UMA: data.data.concept_Selected.Id_UMA },
+      });
+      if (
+        current?.UMA_Year === data.data.UMA_Year &&
+        current?.UMA_Values === parseFloat(data.data.UMA_Values) &&
+        current?.Is_Active === (data.data.UMA_Status === "1" ? true : false)
+      ) {
+        return new Response(
+          JSON.stringify({ message: "UMA Year already exists." }),
+          { status: 400 }
+        );
+      }
+
+      await prisma.UMA_Values.updateMany({
+        where: {
+          NOT: { Id_UMA: data.data.concept_Selected.Id_UMA },
+        },
+        data: {
+          Is_Active: false,
+        },
+      });
+
+      updatedData = await prisma.UMA_Values.update({
+        where: { Id_UMA: data.data.concept_Selected.Id_UMA },
+        data: {
+          UMA_Year: data.data.UMA_Year,
+          UMA_Values: parseFloat(data.data.UMA_Values),
+          Is_Active: data.data.UMA_Status === "1" ? true : false,
+        },
+      });
       break;
     }
     default:

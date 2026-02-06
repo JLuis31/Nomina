@@ -99,32 +99,6 @@
   }
 }
 
-.checkbox {
-  width: 15px;
-  height: 20px;
-  cursor: pointer;
-  margin-left: -0.3rem;
-}
-
-.checkboxs {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-
-  .checkboxs2 {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-
-    select {
-      padding: 0.3rem;
-      border: 1px solid #ccc;
-      border-radius: 5px;
-      font-size: 0.8rem;
-    }
-  }
-}
-
 @media (max-width: 768px) {
   .deducciones-container {
     width: 95%;

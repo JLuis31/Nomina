@@ -71,7 +71,6 @@ const PayrollAdditions = (props) => {
   };
 
   const handleSubmit = async () => {
-
     if (data.Year === 0 || data.Period_Start === "" || data.Period_End === "") {
       toast.error("Please fill in all required fields.", { duration: 2000 });
       return;
@@ -81,7 +80,9 @@ const PayrollAdditions = (props) => {
       const response = await axios.post("/api/Calendars", data);
 
       if (response.status === 200) {
-        toast.success("Payroll Addition created successfully!");
+        toast.success(
+          response.data.message || "Payroll period added successfully."
+        );
         await fetchPeriods();
       }
     } catch (error) {

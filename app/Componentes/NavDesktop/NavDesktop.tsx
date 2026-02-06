@@ -7,11 +7,14 @@ import {
   faHouse,
   faUserGroup,
   faGear,
-  faMoneyBill,
-  faEye,
   faCalculator,
   faCalendar,
   faMoneyBillTransfer,
+  faMoneyCheckDollar,
+  faChartBar,
+  faDownload,
+  faLock,
+  faClipboardCheck,
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useState, useEffect } from "react";
@@ -21,6 +24,7 @@ import Clock from "../../Shared/Clock/Clock";
 import Avatar from "@mui/material/Avatar";
 import Image from "next/image";
 import Tooltip from "@mui/material/Tooltip";
+import { request } from "http";
 
 const NavDesktop = () => {
   const [showMenu, setShowMenu] = useState(false);
@@ -29,6 +33,7 @@ const NavDesktop = () => {
   const [localStorageDepartment, setLocalStorageDepartment] = useState("");
   const { departmentDetails } = useUsersDetails();
   const [showDeduccionesSubmenu, setShowDeduccionesSubmenu] = useState(false);
+  const [showPayrollSubmenu, setShowPayrollSubmenu] = useState(false);
 
   const session = useSession();
 
@@ -54,7 +59,7 @@ const NavDesktop = () => {
     {
       label: "Payroll Calculation",
       href: "/PayrollCalculation",
-      icon: faCalculator,
+      icon: faMoneyCheckDollar,
     },
     { label: "User Settings", href: "/UserSettings", icon: faUserGroup },
     {
@@ -64,7 +69,7 @@ const NavDesktop = () => {
     },
   ];
   useEffect(() => {
-    const handleKeyDown = (e) => {
+    const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === "Escape") {
         setShowMenu(false);
       }
@@ -162,6 +167,202 @@ const NavDesktop = () => {
                 </Link>
               </span>
             </li>
+          ) : option.label === "Payroll Calculation" ? (
+            <li className="menuOptions" key={option.label}>
+              <span
+                style={{ cursor: "pointer", color: "white", fontSize: "15px" }}
+                onClick={() => setShowPayrollSubmenu((prev) => !prev)}
+              >
+                <FontAwesomeIcon
+                  icon={option.icon}
+                  style={{ marginRight: "10px", color: "white" }}
+                />
+                {option.label}
+              </span>
+              {showPayrollSubmenu && (
+                <ul
+                  style={{
+                    paddingLeft: "20px",
+                    marginTop: "15px",
+                    marginBottom: "8px",
+                    listStyle: "none",
+                    borderLeft: "2px solid rgba(255, 255, 255, 0.2)",
+                  }}
+                >
+                  <li
+                    style={{
+                      marginBottom: "8px",
+                      padding: "8px 12px",
+                      borderRadius: "6px",
+                      transition: "all 0.2s ease",
+                      cursor: "pointer",
+                    }}
+                    onMouseEnter={(e) => {
+                      e.currentTarget.style.backgroundColor =
+                        "rgba(255, 255, 255, 0.1)";
+                      e.currentTarget.style.paddingLeft = "16px";
+                    }}
+                    onMouseLeave={(e) => {
+                      e.currentTarget.style.backgroundColor = "transparent";
+                      e.currentTarget.style.paddingLeft = "12px";
+                    }}
+                  >
+                    <Link
+                      href="/PayrollCalculation"
+                      onClick={() => setShowMenu(false)}
+                      style={{
+                        textDecoration: "none",
+                        color: "white",
+                        fontSize: "14px",
+                      }}
+                    >
+                      <FontAwesomeIcon
+                        icon={faCalculator}
+                        style={{ marginRight: "10px", width: "14px" }}
+                      />
+                      Calculate Payroll
+                    </Link>
+                  </li>
+                  <li
+                    style={{
+                      marginBottom: "8px",
+                      padding: "8px 12px",
+                      borderRadius: "6px",
+                      transition: "all 0.2s ease",
+                      cursor: "pointer",
+                    }}
+                    onMouseEnter={(e) => {
+                      e.currentTarget.style.backgroundColor =
+                        "rgba(255, 255, 255, 0.1)";
+                      e.currentTarget.style.paddingLeft = "16px";
+                    }}
+                    onMouseLeave={(e) => {
+                      e.currentTarget.style.backgroundColor = "transparent";
+                      e.currentTarget.style.paddingLeft = "12px";
+                    }}
+                  >
+                    <Link
+                      href="/ViewPayrollCalculations"
+                      onClick={() => setShowMenu(false)}
+                      style={{
+                        textDecoration: "none",
+                        color: "white",
+                        fontSize: "14px",
+                      }}
+                    >
+                      <FontAwesomeIcon
+                        icon={faClipboardCheck}
+                        style={{ marginRight: "10px", width: "14px" }}
+                      />
+                      View Calculations
+                    </Link>
+                  </li>
+                  <li
+                    style={{
+                      marginBottom: "8px",
+                      padding: "8px 12px",
+                      borderRadius: "6px",
+                      transition: "all 0.2s ease",
+                      cursor: "pointer",
+                    }}
+                    onMouseEnter={(e) => {
+                      e.currentTarget.style.backgroundColor =
+                        "rgba(255, 255, 255, 0.1)";
+                      e.currentTarget.style.paddingLeft = "16px";
+                    }}
+                    onMouseLeave={(e) => {
+                      e.currentTarget.style.backgroundColor = "transparent";
+                      e.currentTarget.style.paddingLeft = "12px";
+                    }}
+                  >
+                    <Link
+                      href="/Reports"
+                      onClick={() => setShowMenu(false)}
+                      style={{
+                        textDecoration: "none",
+                        color: "white",
+                        fontSize: "14px",
+                      }}
+                    >
+                      <FontAwesomeIcon
+                        icon={faChartBar}
+                        style={{ marginRight: "10px", width: "14px" }}
+                      />
+                      View Reports
+                    </Link>
+                  </li>
+
+                  <li
+                    style={{
+                      marginBottom: "8px",
+                      padding: "8px 12px",
+                      borderRadius: "6px",
+                      transition: "all 0.2s ease",
+                      cursor: "pointer",
+                    }}
+                    onMouseEnter={(e) => {
+                      e.currentTarget.style.backgroundColor =
+                        "rgba(255, 255, 255, 0.1)";
+                      e.currentTarget.style.paddingLeft = "16px";
+                    }}
+                    onMouseLeave={(e) => {
+                      e.currentTarget.style.backgroundColor = "transparent";
+                      e.currentTarget.style.paddingLeft = "12px";
+                    }}
+                  >
+                    <Link
+                      href="/Receipts"
+                      onClick={() => setShowMenu(false)}
+                      style={{
+                        textDecoration: "none",
+                        color: "white",
+                        fontSize: "14px",
+                      }}
+                    >
+                      <FontAwesomeIcon
+                        icon={faDownload}
+                        style={{ marginRight: "10px", width: "14px" }}
+                      />
+                      Download Receipts
+                    </Link>
+                  </li>
+                  <li
+                    style={{
+                      marginBottom: "8px",
+                      padding: "8px 12px",
+                      borderRadius: "6px",
+                      transition: "all 0.2s ease",
+                      cursor: "pointer",
+                    }}
+                    onMouseEnter={(e) => {
+                      e.currentTarget.style.backgroundColor =
+                        "rgba(255, 255, 255, 0.1)";
+                      e.currentTarget.style.paddingLeft = "16px";
+                    }}
+                    onMouseLeave={(e) => {
+                      e.currentTarget.style.backgroundColor = "transparent";
+                      e.currentTarget.style.paddingLeft = "12px";
+                    }}
+                  >
+                    <Link
+                      href="/ClosePeriod"
+                      onClick={() => setShowMenu(false)}
+                      style={{
+                        textDecoration: "none",
+                        color: "white",
+                        fontSize: "14px",
+                      }}
+                    >
+                      <FontAwesomeIcon
+                        icon={faLock}
+                        style={{ marginRight: "10px", width: "14px" }}
+                      />
+                      Close Payroll Period
+                    </Link>
+                  </li>
+                </ul>
+              )}
+            </li>
           ) : (
             <li key={option.label}>
               <Link href={option.href} onClick={() => setShowMenu(false)}>
@@ -172,7 +373,7 @@ const NavDesktop = () => {
                 {option.label}
               </Link>
             </li>
-          )
+          ),
         )}
       </ul>
     </div>

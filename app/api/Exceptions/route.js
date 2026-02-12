@@ -1,78 +1,27 @@
-import { prisma } from "@/lib/prisma";
+import { saveExceptions, getExceptions, removeException } from "./service";
 
 export async function POST(request) {
   const receivedData = await request.json();
-
-  for (const key of Object.keys(receivedData.Exceptions)) {
-    const ex = receivedData.Exceptions[key];
-
-    const existingException = await prisma.Employee_Exceptions.findFirst({
-      where: {
-        Id_Employee: receivedData.selectedEmployee.Id_Employee,
-        Id_Concept: ex.Id_Concept,
-      },
-    });
-
-    if (existingException) {
-      continue;
-    }
-
-    await prisma.Payroll_Detail.deleteMany({
-      where: {
-        Id_Employee: receivedData.selectedEmployee.Id_Employee,
-        Id_Concept: ex.Id_Concept,
-      },
-    });
-
-    await prisma.Employee_Exceptions.create({
-      data: {
-        Id_Employee: receivedData.selectedEmployee.Id_Employee,
-        Id_Concept: ex.Id_Concept,
-        Id_PayFrequency: receivedData.selectedEmployee.Id_PayFrequency,
-        Id_Concept_Type: ex.Id_Concept_Type,
-        Per_Amount: parseFloat(ex.Per_Amount) || 0,
-        Per_Hour: parseFloat(ex.Per_Hour) || 0,
-      },
-    });
-  }
-
-  return new Response(
-    JSON.stringify({ message: "Exceptions saved successfully" }),
-    {
-      status: 200,
-    },
-  );
+  const result = await saveExceptions(receivedData);
+  return new Response(JSON.stringify({ message: result.message }), {
+    status: result.status,
+  });
 }
 
 export async function GET(request) {
   const { searchParams } = new URL(request.url);
-
-  const respone = await prisma.Employee_Exceptions.findMany({
-    where: {
-      Id_PayFrequency: Number(searchParams.get("payFrequencyId")),
-    },
-  });
-
-  return new Response(JSON.stringify(respone), { status: 200 });
+  const payFrequencyId = Number(searchParams.get("payFrequencyId"));
+  const response = await getExceptions(payFrequencyId);
+  return new Response(JSON.stringify(response), { status: 200 });
 }
 
 export async function DELETE(request) {
   const { searchParams } = new URL(request.url);
   const idConcept = searchParams.get("idConcept");
   const idEmployee = searchParams.get("idEmployee");
-
-  await prisma.Employee_Exceptions.delete({
-    where: {
-      Id_Movement: Number(searchParams.get("idException")),
-    },
+  const idException = Number(searchParams.get("idException"));
+  const result = await removeException(idException, idConcept, idEmployee);
+  return new Response(JSON.stringify({ message: result.message }), {
+    status: result.status,
   });
-
-  return new Response(
-    JSON.stringify({
-      message: `Exception ${idConcept} deleted successfully for employee ${idEmployee}`,
-    }),
-    {
-      status: 200,
-    },
-  );
 }

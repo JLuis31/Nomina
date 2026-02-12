@@ -1,30 +1,12 @@
-import { prisma } from "@/lib/prisma";
-import bcrypt from "bcrypt";
+import { registerUser } from "../service";
 
 export async function POST(req) {
   const body = await req.json();
-
-  const userExists = await prisma.Users.findFirst({
-    where: { Email: body.Email },
-  });
-
-  if (userExists) {
-    return new Response(
-      JSON.stringify({ error: "User with this email already exists" }),
-      { status: 409 }
-    );
-  }
-  const encryptedPassword = await bcrypt.hash(body.Password, 10);
-
-  await prisma.Users.create({
-    data: {
-      Name: body.Name,
-      Email: body.Email,
-      Password: encryptedPassword,
-    },
-  });
+  const result = await registerUser(body);
   return new Response(
-    JSON.stringify({ message: "User registered successfully" }),
-    { status: 201 }
+    JSON.stringify(
+      result.error ? { error: result.error } : { message: result.message },
+    ),
+    { status: result.status },
   );
 }

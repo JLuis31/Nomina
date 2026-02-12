@@ -32,6 +32,7 @@ export const UsersDetailsProvider = ({
       const valorUSDToMXN = response.data.rates.MXN;
       setValorUSDToMXN(valorUSDToMXN);
     };
+
     const paymentFrquency = async () => {
       try {
         const response = await axios.get("/api/CatalogsDetails/PayFrequency");
@@ -103,6 +104,7 @@ export const UsersDetailsProvider = ({
         toast.error("Error fetching States Details: " + error);
       }
     };
+
     const cityDetails = async () => {
       try {
         const response = await axios.get("/api/CatalogsDetails/Cities");

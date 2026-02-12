@@ -1,4 +1,4 @@
-import { prisma } from "@/lib/prisma";
+import { getFilteredEmployees } from "../service";
 
 export async function GET(request) {
   const { searchParams } = new URL(request.url);
@@ -6,24 +6,11 @@ export async function GET(request) {
   const department = searchParams.get("department");
   const employeeType = searchParams.get("employeeType");
   const jobPosition = searchParams.get("jobPosition");
-  let filters = {};
-  if (department) {
-    filters = { ...filters, Id_Department: parseInt(department) };
-  }
-  if (employeeType) {
-    filters = { ...filters, Id_Employee_type: parseInt(employeeType) };
-  }
-  if (jobPosition) {
-    filters = { ...filters, Id_Job: parseInt(jobPosition) };
-  }
-  if (status) {
-    filters = { ...filters, Status: status };
-  }
-
-  const employees = await prisma.employees.findMany({
-    where: {
-      ...filters,
-    },
+  const employees = await getFilteredEmployees({
+    status,
+    department,
+    employeeType,
+    jobPosition,
   });
   return new Response(JSON.stringify(employees));
 }
